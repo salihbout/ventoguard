@@ -1,0 +1,27 @@
+bundle:
+  name: ventoguard
+
+variables:
+  catalog:
+    default: serverless_stable_7zqte5_catalog
+  schema:
+    default: wind_reliability
+  llm_endpoint:
+    default: databricks-claude-sonnet-4-5
+  llm_endpoint_fast:
+    default: databricks-claude-haiku-4-5
+
+include:
+  - resources/*.yml
+
+targets:
+  dev:
+    mode: development
+    default: true
+    workspace:
+      host: https://fevm-serverless-stable-7zqte5.cloud.databricks.com
+  prod:
+    mode: production
+    workspace:
+      host: https://fevm-serverless-stable-7zqte5.cloud.databricks.com
+      root_path: /Workspace/Users/${workspace.current_user.userName}/.bundle/${bundle.name}/prod

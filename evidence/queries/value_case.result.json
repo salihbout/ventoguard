@@ -1,0 +1,14 @@
+[
+  {
+    "availability_uplift_pp": "1.52",
+    "avoidable_annualised_at_100pct_eur": "5844621.0",
+    "avoidable_annualised_at_75pct_eur": "4383466.0",
+    "failures_observed": "22",
+    "false_alarm_inspection_cost_annualised_eur": "194467.0",
+    "net_annual_benefit_eur": "4188999.0",
+    "observed_days": "192",
+    "turbine_downtime_days_avoided_per_year": "664.0",
+    "unplanned_cost_annualised_eur": "1.132598E7",
+    "unplanned_cost_observed_eur": "5957776.0"
+  }
+]

@@ -1,0 +1,34 @@
+[
+  {
+    "avg_downtime_days": "36.4",
+    "component": "gearbox",
+    "failures": "8",
+    "lost_revenue_eur": "348075.0",
+    "repair_cost_eur": "3075900.0",
+    "total_event_cost_eur": "3423975.0"
+  },
+  {
+    "avg_downtime_days": "43.6",
+    "component": "main_bearing",
+    "failures": "5",
+    "lost_revenue_eur": "262043.0",
+    "repair_cost_eur": "1624100.0",
+    "total_event_cost_eur": "1886143.0"
+  },
+  {
+    "avg_downtime_days": "11.4",
+    "component": "generator_bearing",
+    "failures": "5",
+    "lost_revenue_eur": "70132.0",
+    "repair_cost_eur": "450700.0",
+    "total_event_cost_eur": "520832.0"
+  },
+  {
+    "avg_downtime_days": "3.1",
+    "component": "pitch_hydraulics",
+    "failures": "4",
+    "lost_revenue_eur": "17026.0",
+    "repair_cost_eur": "109800.0",
+    "total_event_cost_eur": "126826.0"
+  }
+]

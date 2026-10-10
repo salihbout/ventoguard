@@ -1,0 +1,58 @@
+{
+  "run_id": 805326719502111,
+  "job_id": 1081515418325428,
+  "run_page_url": "https://fevm-serverless-stable-7zqte5.cloud.databricks.com/?o=7474660468503815#job/1081515418325428/run/805326719502111",
+  "start_time": "2026-10-10T17:07:22Z",
+  "end_time": "2026-10-10T17:22:12Z",
+  "result": "SUCCESS",
+  "tasks": [
+    {
+      "task_key": "score_and_genai_briefs",
+      "run_id": 75994340528623,
+      "attempt_number": 0,
+      "result": "SUCCESS",
+      "start": "2026-10-10T17:11:51Z",
+      "duration_min": 8.8
+    },
+    {
+      "task_key": "generate_raw_data",
+      "run_id": 802053186807278,
+      "attempt_number": 0,
+      "result": "SUCCESS",
+      "start": "2026-10-10T17:07:22Z",
+      "duration_min": 1
+    },
+    {
+      "task_key": "lakeflow_medallion",
+      "run_id": 195621167147845,
+      "attempt_number": 0,
+      "result": "SUCCESS",
+      "start": "2026-10-10T17:08:28Z",
+      "duration_min": 1.2
+    },
+    {
+      "task_key": "uc_governance",
+      "run_id": 429474403016476,
+      "attempt_number": 0,
+      "result": "SUCCESS",
+      "start": "2026-10-10T17:20:42Z",
+      "duration_min": 1
+    },
+    {
+      "task_key": "train_failure_model",
+      "run_id": 23432760593289,
+      "attempt_number": 0,
+      "result": "SUCCESS",
+      "start": "2026-10-10T17:09:41Z",
+      "duration_min": 2.1
+    },
+    {
+      "task_key": "refresh_lakebase",
+      "run_id": 495394399834865,
+      "attempt_number": 0,
+      "result": "SUCCESS",
+      "start": "2026-10-10T17:20:42Z",
+      "duration_min": 1.4
+    }
+  ]
+}

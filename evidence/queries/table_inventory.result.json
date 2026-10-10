@@ -1,0 +1,62 @@
+[
+  {
+    "n": "3317760",
+    "t": "bronze_scada"
+  },
+  {
+    "n": "3310043",
+    "t": "silver_scada"
+  },
+  {
+    "n": "519",
+    "t": "bronze_maintenance_logs"
+  },
+  {
+    "n": "519",
+    "t": "silver_maintenance_logs"
+  },
+  {
+    "n": "120",
+    "t": "silver_turbines"
+  },
+  {
+    "n": "22",
+    "t": "silver_failure_events"
+  },
+  {
+    "n": "4608",
+    "t": "silver_market_prices"
+  },
+  {
+    "n": "23040",
+    "t": "gold_turbine_daily"
+  },
+  {
+    "n": "768",
+    "t": "gold_farm_daily"
+  },
+  {
+    "n": "22",
+    "t": "gold_failure_history"
+  },
+  {
+    "n": "23040",
+    "t": "turbine_health_features"
+  },
+  {
+    "n": "23040",
+    "t": "turbine_risk_history"
+  },
+  {
+    "n": "120",
+    "t": "turbine_risk_scores"
+  },
+  {
+    "n": "519",
+    "t": "maintenance_log_insights"
+  },
+  {
+    "n": "7",
+    "t": "turbine_ai_briefs"
+  }
+]

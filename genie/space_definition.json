@@ -1,0 +1,319 @@
+{
+  "version": 2,
+  "config": {
+    "sample_questions": [
+      {
+        "id": "537ed5d5a7f1519babcdadb11c4759f4",
+        "question": [
+          "Which wind farm lost the most revenue to unplanned failures, and which component caused it?"
+        ]
+      },
+      {
+        "id": "79bd0db5497f5d3cb5075d36c26c77ae",
+        "question": [
+          "Which technician notes mention failure precursors in the last 30 days?"
+        ]
+      },
+      {
+        "id": "8035576f99685291b6d0a282aa53c24c",
+        "question": [
+          "Show the 10 turbines with the highest failure probability and their likely component"
+        ]
+      },
+      {
+        "id": "90b8734171955cb7b81b63a57f4b15e4",
+        "question": [
+          "What was technical availability per farm by month?"
+        ]
+      },
+      {
+        "id": "a73d003537e75662a020218d4cbbeca0",
+        "question": [
+          "How much money is at stake on turbines currently at risk?"
+        ]
+      }
+    ]
+  },
+  "data_sources": {
+    "tables": [
+      {
+        "identifier": "serverless_stable_7zqte5_catalog.wind_reliability.gold_failure_history",
+        "column_configs": [
+          {
+            "column_name": "component",
+            "synonyms": [
+              "part",
+              "failed component"
+            ],
+            "enable_format_assistance": true,
+            "enable_entity_matching": true
+          },
+          {
+            "column_name": "total_event_cost_eur",
+            "synonyms": [
+              "cost of failure",
+              "total cost"
+            ]
+          }
+        ]
+      },
+      {
+        "identifier": "serverless_stable_7zqte5_catalog.wind_reliability.gold_farm_daily",
+        "column_configs": [
+          {
+            "column_name": "farm_name",
+            "synonyms": [
+              "wind park",
+              "site",
+              "farm"
+            ],
+            "enable_format_assistance": true,
+            "enable_entity_matching": true
+          }
+        ]
+      },
+      {
+        "identifier": "serverless_stable_7zqte5_catalog.wind_reliability.gold_turbine_daily",
+        "column_configs": [
+          {
+            "column_name": "farm_name",
+            "synonyms": [
+              "wind park",
+              "site"
+            ],
+            "enable_format_assistance": true,
+            "enable_entity_matching": true
+          },
+          {
+            "column_name": "lost_revenue_eur",
+            "synonyms": [
+              "revenue loss",
+              "lost income"
+            ]
+          },
+          {
+            "column_name": "technical_availability",
+            "synonyms": [
+              "availability",
+              "uptime"
+            ]
+          }
+        ]
+      },
+      {
+        "identifier": "serverless_stable_7zqte5_catalog.wind_reliability.maintenance_log_insights",
+        "column_configs": [
+          {
+            "column_name": "ai_component",
+            "synonyms": [
+              "component mentioned"
+            ],
+            "enable_format_assistance": true,
+            "enable_entity_matching": true
+          },
+          {
+            "column_name": "category",
+            "synonyms": [
+              "work order type"
+            ],
+            "enable_format_assistance": true,
+            "enable_entity_matching": true
+          }
+        ]
+      },
+      {
+        "identifier": "serverless_stable_7zqte5_catalog.wind_reliability.silver_turbines",
+        "column_configs": [
+          {
+            "column_name": "farm_name",
+            "synonyms": [
+              "wind park",
+              "site"
+            ],
+            "enable_format_assistance": true,
+            "enable_entity_matching": true
+          },
+          {
+            "column_name": "gearbox_supplier",
+            "synonyms": [
+              "gearbox vendor",
+              "supplier"
+            ],
+            "enable_format_assistance": true,
+            "enable_entity_matching": true
+          }
+        ]
+      },
+      {
+        "identifier": "serverless_stable_7zqte5_catalog.wind_reliability.turbine_risk_history"
+      },
+      {
+        "identifier": "serverless_stable_7zqte5_catalog.wind_reliability.turbine_risk_scores",
+        "column_configs": [
+          {
+            "column_name": "failure_prob_14d",
+            "synonyms": [
+              "failure probability",
+              "risk score"
+            ]
+          },
+          {
+            "column_name": "likely_component",
+            "synonyms": [
+              "predicted component"
+            ],
+            "enable_format_assistance": true,
+            "enable_entity_matching": true
+          },
+          {
+            "column_name": "risk_tier",
+            "synonyms": [
+              "risk level",
+              "priority"
+            ],
+            "enable_format_assistance": true,
+            "enable_entity_matching": true
+          }
+        ]
+      }
+    ]
+  },
+  "instructions": {
+    "text_instructions": [
+      {
+        "id": "09c6d832669d5f61a0f2a7058d600ad6",
+        "content": [
+          "You are the analytics assistant of an onshore wind operator's reliability engineering team (4 wind farms in Germany, 120 turbines).\n",
+          "Money is always EUR; energy is MWh. Format currency with thousands separators.\n",
+          "Technical availability = share of 10-minute intervals the turbine was NOT in FAULT. Fleet target is 97%. Express as a percentage.\n",
+          "Lost production / lost revenue (gold_turbine_daily.lost_energy_mwh / lost_revenue_eur) = expected energy from the power curve minus actual, incl. full loss during FAULT/MAINT.\n",
+          "For the cost of failures use gold_failure_history.total_event_cost_eur (repair cost + lost revenue during downtime).\n",
+          "For current/forward-looking risk use turbine_risk_scores (one row per turbine, latest score). risk_tier is CRITICAL (>=60%), HIGH (>=30%), MEDIUM (>=10%), LOW, or DOWN (already in repair).\n",
+          "'At risk' means risk_tier IN ('CRITICAL','HIGH'). expected_avoidable_cost_eur is risk-weighted; avoidable_cost_if_caught_eur is the full saving if the failure is prevented.\n",
+          "For risk trends over time use turbine_risk_history.failure_prob_14d by reading_date.\n",
+          "Maintenance notes: maintenance_log_insights holds technician notes with LLM-extracted ai_component, ai_severity (1-5) and ai_failure_precursor. technician_name is masked PII; never try to unmask it.\n",
+          "Join turbine-level tables on turbine_id; farm attributes come from silver_turbines.\n"
+        ]
+      }
+    ],
+    "example_question_sqls": [
+      {
+        "id": "030e9f9c66e457abbbd8caa3b1c6b903",
+        "question": [
+          "How has the failure risk of the riskiest turbine developed over the last 30 days?"
+        ],
+        "sql": [
+          "SELECT h.reading_date, round(h.failure_prob_14d * 100, 1) AS failure_prob_pct FROM serverless_stable_7zqte5_catalog.wind_reliability.turbine_risk_history h WHERE h.turbine_id = (SELECT turbine_id FROM serverless_stable_7zqte5_catalog.wind_reliability.turbine_risk_scores ORDER BY failure_prob_14d DESC LIMIT 1) AND h.reading_date >= (SELECT max(reading_date) FROM serverless_stable_7zqte5_catalog.wind_reliability.turbine_risk_history) - INTERVAL 30 DAYS ORDER BY h.reading_date"
+        ]
+      },
+      {
+        "id": "04c00ac5fe2d5ab3b2ee1902c1a43c2c",
+        "question": [
+          "Which turbines are currently at risk of failure?"
+        ],
+        "sql": [
+          "SELECT turbine_id, farm_name, risk_tier, round(failure_prob_14d * 100, 1) AS failure_prob_pct, likely_component, recommended_window, round(avoidable_cost_if_caught_eur) AS avoidable_cost_if_caught_eur FROM serverless_stable_7zqte5_catalog.wind_reliability.turbine_risk_scores WHERE risk_tier IN ('CRITICAL', 'HIGH') ORDER BY failure_prob_14d DESC"
+        ]
+      },
+      {
+        "id": "44f5aa60269359c6bab0f636eede5aa6",
+        "question": [
+          "What was technical availability per farm by month?"
+        ],
+        "sql": [
+          "SELECT farm_name, date_trunc('MONTH', reading_date) AS month, round(avg(technical_availability) * 100, 2) AS technical_availability_pct FROM serverless_stable_7zqte5_catalog.wind_reliability.gold_farm_daily GROUP BY ALL ORDER BY month, farm_name"
+        ]
+      },
+      {
+        "id": "5c9ad25768345c18bc36aa77058516fa",
+        "question": [
+          "Do older gearboxes or a specific supplier fail more often?"
+        ],
+        "sql": [
+          "SELECT t.gearbox_supplier, t.farm_name, count(DISTINCT t.turbine_id) AS turbines, count(f.failure_id) AS gearbox_failures, round(count(f.failure_id) / count(DISTINCT t.turbine_id) * 100, 1) AS failures_per_100_turbines, round(avg(t.turbine_age_years), 1) AS avg_age_years FROM serverless_stable_7zqte5_catalog.wind_reliability.silver_turbines t LEFT JOIN serverless_stable_7zqte5_catalog.wind_reliability.gold_failure_history f ON f.turbine_id = t.turbine_id AND f.component = 'gearbox' GROUP BY ALL ORDER BY failures_per_100_turbines DESC"
+        ]
+      },
+      {
+        "id": "835a1ec1875b5a44ac84afce5b5dd4c9",
+        "question": [
+          "What is the total cost of failures by component?"
+        ],
+        "sql": [
+          "SELECT component, count(*) AS failures, round(avg(downtime_hours)/24, 1) AS avg_downtime_days, round(sum(total_event_cost_eur)) AS total_event_cost_eur FROM serverless_stable_7zqte5_catalog.wind_reliability.gold_failure_history GROUP BY component ORDER BY total_event_cost_eur DESC"
+        ]
+      },
+      {
+        "id": "ec783dbbf92b5044861c43925aeb10b8",
+        "question": [
+          "Which wind farm lost the most revenue to unplanned failures?"
+        ],
+        "sql": [
+          "SELECT farm_name, count(*) AS failures, round(sum(lost_revenue_eur)) AS lost_revenue_eur, round(sum(repair_cost_eur)) AS repair_cost_eur, round(sum(total_event_cost_eur)) AS total_event_cost_eur FROM serverless_stable_7zqte5_catalog.wind_reliability.gold_failure_history GROUP BY farm_name ORDER BY total_event_cost_eur DESC"
+        ]
+      }
+    ],
+    "join_specs": [
+      {
+        "id": "5127f4b3091759c6ba5359ae178fa240",
+        "left": {
+          "identifier": "serverless_stable_7zqte5_catalog.wind_reliability.turbine_risk_scores",
+          "alias": "turbine_risk_scores"
+        },
+        "right": {
+          "identifier": "serverless_stable_7zqte5_catalog.wind_reliability.silver_turbines",
+          "alias": "silver_turbines"
+        },
+        "sql": [
+          "`turbine_risk_scores`.`turbine_id` = `silver_turbines`.`turbine_id`",
+          "--rt=FROM_RELATIONSHIP_TYPE_ONE_TO_ONE--"
+        ]
+      }
+    ]
+  },
+  "benchmarks": {
+    "questions": [
+      {
+        "id": "2ec3570eb8e552039b119442f4c8af7b",
+        "question": [
+          "How many turbines are currently HIGH or CRITICAL risk?"
+        ],
+        "answer": [
+          {
+            "format": "SQL",
+            "content": [
+              "SELECT count(*) AS turbines FROM serverless_stable_7zqte5_catalog.wind_reliability.turbine_risk_scores WHERE risk_tier IN ('CRITICAL', 'HIGH')"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "34fc6126d3a958d2a1cbf9aedc120368",
+        "question": [
+          "What was the fleet's total lost revenue in September 2026?"
+        ],
+        "answer": [
+          {
+            "format": "SQL",
+            "content": [
+              "SELECT round(sum(lost_revenue_eur)) FROM serverless_stable_7zqte5_catalog.wind_reliability.gold_farm_daily WHERE reading_date BETWEEN '2026-09-01' AND '2026-09-30'"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "abaa8e465409532ebd9c15ac0be6965c",
+        "question": [
+          "What is the total cost of all gearbox failures?"
+        ],
+        "answer": [
+          {
+            "format": "SQL",
+            "content": [
+              "SELECT round(sum(total_event_cost_eur)) FROM serverless_stable_7zqte5_catalog.wind_reliability.gold_failure_history WHERE component = 'gearbox'"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

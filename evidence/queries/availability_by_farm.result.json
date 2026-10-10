@@ -1,0 +1,30 @@
+[
+  {
+    "energy_mwh": "57941.0",
+    "farm_name": "Hunsrueck Hoehe",
+    "lost_energy_mwh": "3864.0",
+    "lost_revenue_eur": "312588.0",
+    "technical_availability_pct": "95.02"
+  },
+  {
+    "energy_mwh": "138648.0",
+    "farm_name": "Uckermark Nord",
+    "lost_energy_mwh": "5587.0",
+    "lost_revenue_eur": "403254.0",
+    "technical_availability_pct": "97.22"
+  },
+  {
+    "energy_mwh": "72552.0",
+    "farm_name": "Eifel West",
+    "lost_energy_mwh": "1807.0",
+    "lost_revenue_eur": "128595.0",
+    "technical_availability_pct": "98.87"
+  },
+  {
+    "energy_mwh": "216351.0",
+    "farm_name": "Ostfriesland Kueste",
+    "lost_energy_mwh": "4025.0",
+    "lost_revenue_eur": "300452.0",
+    "technical_availability_pct": "99.27"
+  }
+]

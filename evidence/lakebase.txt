@@ -1,0 +1,64 @@
+# Lakebase (Postgres 17, Autoscaling project 'ventoguard') psql session, 2026-10-10 17:23 UTC
+# endpoint: projects/ventoguard/branches/production/endpoints/primary
+
+{"name":"projects/ventoguard","pg_version":17,"display_name":"VentoGuard Wind Reliability","autoscaling":{"autoscaling_limit_max_cu":1,"autoscaling_limit_min_cu":1,"suspend_timeout_duration":"86400s"}}
+{"synced_table":"synced_tables/serverless_stable_7zqte5_catalog.vg_serving.gold_turbine_daily","source":null,"mode":null,"state":"SYNCED_TABLE_ONLINE_NO_PENDING_UPDATE"}
+{"synced_table":"synced_tables/serverless_stable_7zqte5_catalog.vg_serving.turbine_risk_scores","source":null,"mode":null,"state":"SYNCED_TABLE_ONLINE_NO_PENDING_UPDATE"}
+{"synced_table":"synced_tables/serverless_stable_7zqte5_catalog.vg_serving.turbine_ai_briefs","source":null,"mode":null,"state":"SYNCED_TABLE_ONLINE_NO_PENDING_UPDATE"}
+
+SELECT n.nspname AS schema, c.relname AS table, pg_get_userbyid(c.relowner) AS owner, c.reltuples::bigint AS approx_rows
+FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace
+WHERE n.nspname IN ('vg_serving', 'vg_ops') AND c.relkind IN ('r', 'p') ORDER BY 1, 2;
+   schema   |        table        |                owner                 | approx_rows 
+------------+---------------------+--------------------------------------+-------------
+ vg_ops     | work_orders         | d44291ff-6f77-48e5-9417-8a6887fb3d86 |          -1
+ vg_serving | gold_turbine_daily  | databricks_writer_16406              |       23040
+ vg_serving | turbine_ai_briefs   | databricks_writer_16406              |           7
+ vg_serving | turbine_risk_scores | databricks_writer_16406              |         120
+(4 rows)
+
+SELECT count(*) AS turbines, count(*) FILTER (WHERE risk_tier IN ('CRITICAL','HIGH')) AS at_risk FROM vg_serving.turbine_risk_scores;
+ turbines | at_risk 
+----------+---------
+      120 |       4
+(1 row)
+
+SELECT turbine_id, farm_name, risk_tier, failure_prob_14d, likely_component, round(avoidable_cost_if_caught_eur) AS avoidable_eur
+FROM vg_serving.turbine_risk_scores ORDER BY failure_prob_14d DESC LIMIT 6;
+ turbine_id |    farm_name    | risk_tier | failure_prob_14d | likely_component  | avoidable_eur 
+------------+-----------------+-----------+------------------+-------------------+---------------
+ F03-T07    | Hunsrueck Hoehe | CRITICAL  |           0.9953 | gearbox           |        206523
+ F03-T09    | Hunsrueck Hoehe | CRITICAL  |           0.9912 | gearbox           |        207747
+ F01-T20    | Uckermark Nord  | CRITICAL  |           0.9578 | gearbox           |        224811
+ F04-T16    | Eifel West      | HIGH      |           0.5529 | main_bearing      |        166517
+ F01-T06    | Uckermark Nord  | MEDIUM    |           0.2516 | generator_bearing |         67006
+ F03-T14    | Hunsrueck Hoehe | MEDIUM    |           0.1439 | pitch_hydraulics  |         19075
+(6 rows)
+
+SELECT turbine_id, left(headline, 70) AS headline, urgency_days FROM vg_serving.turbine_ai_briefs ORDER BY failure_prob_14d DESC;
+ turbine_id |                              headline                               | urgency_days 
+------------+---------------------------------------------------------------------+--------------
+ F03-T07    | F03-T07 Gearbox Bearing Failure Imminent Within Days                |            2
+ F03-T09    | F03-T09 Gearbox Bearing Failure Imminent Within Two Weeks           |            2
+ F01-T20    | F01-T20 Gearbox Critical: 95.8% Failure Risk Within 14 Days         |            2
+ F04-T16    | F04-T16 Main Bearing Failure Predicted Within 14 Days               |            7
+ F01-T06    | F01-T06 Generator Bearing Elevated Temperature, 25% Failure Risk    |            7
+ F03-T14    | F03-T14 Pitch Hydraulic Pressure Drop Indicates Medium Failure Risk |           10
+ F02-T07    | F02-T07 Pitch Hydraulics Degradation Detected, 10% Failure Risk     |           10
+(7 rows)
+
+SELECT wo_id, turbine_id, component, priority, status, planned_date, crew, created_by, created_at FROM vg_ops.work_orders ORDER BY wo_id;
+ wo_id | turbine_id | component | priority |  status   | planned_date |          crew          |            created_by            |          created_at           
+-------+------------+-----------+----------+-----------+--------------+------------------------+----------------------------------+-------------------------------
+     1 | F01-T20    | gearbox   | P1       | SCHEDULED | 2026-10-12   | North crew (Uckermark) | salih.boutadghart@databricks.com | 2026-10-10 17:22:38.541454+00
+(1 row)
+
+EXPLAIN ANALYZE SELECT * FROM vg_serving.turbine_risk_scores WHERE turbine_id = 'F03-T07';
+                                                                                         QUERY PLAN                                                                                         
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Index Scan using "__db_tmp_34e31b70-aa12-485c-9862-7a52be6c1e78_pkey" on partition_16753 turbine_risk_scores  (cost=0.14..8.16 rows=1 width=363) (actual time=0.008..0.009 rows=1 loops=1)
+   Index Cond: (turbine_id = 'F03-T07'::text)
+ Planning Time: 0.189 ms
+ Execution Time: 0.029 ms
+(4 rows)
+

@@ -1,0 +1,56 @@
+[
+  {
+    "dataset": "serverless_stable_7zqte5_catalog.wind_reliability.silver_failure_events",
+    "expectation": "known_component",
+    "failed_records": "0",
+    "passed_records": "44"
+  },
+  {
+    "dataset": "serverless_stable_7zqte5_catalog.wind_reliability.silver_maintenance_logs",
+    "expectation": "has_text",
+    "failed_records": "0",
+    "passed_records": "519"
+  },
+  {
+    "dataset": "serverless_stable_7zqte5_catalog.wind_reliability.silver_scada",
+    "expectation": "known_status",
+    "failed_records": "0",
+    "passed_records": "3317760"
+  },
+  {
+    "dataset": "serverless_stable_7zqte5_catalog.wind_reliability.silver_scada",
+    "expectation": "oil_temp_sensor_ok",
+    "failed_records": "1743",
+    "passed_records": "3316017"
+  },
+  {
+    "dataset": "serverless_stable_7zqte5_catalog.wind_reliability.silver_scada",
+    "expectation": "power_present",
+    "failed_records": "5017",
+    "passed_records": "3312743"
+  },
+  {
+    "dataset": "serverless_stable_7zqte5_catalog.wind_reliability.silver_scada",
+    "expectation": "valid_timestamp",
+    "failed_records": "0",
+    "passed_records": "3317760"
+  },
+  {
+    "dataset": "serverless_stable_7zqte5_catalog.wind_reliability.silver_scada",
+    "expectation": "valid_turbine",
+    "failed_records": "0",
+    "passed_records": "3317760"
+  },
+  {
+    "dataset": "serverless_stable_7zqte5_catalog.wind_reliability.silver_scada",
+    "expectation": "wind_speed_physical",
+    "failed_records": "957",
+    "passed_records": "3316803"
+  },
+  {
+    "dataset": "serverless_stable_7zqte5_catalog.wind_reliability.silver_turbines",
+    "expectation": "pk_present",
+    "failed_records": "0",
+    "passed_records": "240"
+  }
+]

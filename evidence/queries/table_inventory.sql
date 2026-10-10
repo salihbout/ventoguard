@@ -1,0 +1,9 @@
+-- Every table in the governed schema with its type and row count
+SELECT 'bronze_scada' t, count(*) n FROM serverless_stable_7zqte5_catalog.wind_reliability.bronze_scada UNION ALL SELECT 'silver_scada', count(*) FROM serverless_stable_7zqte5_catalog.wind_reliability.silver_scada
+UNION ALL SELECT 'bronze_maintenance_logs', count(*) FROM serverless_stable_7zqte5_catalog.wind_reliability.bronze_maintenance_logs UNION ALL SELECT 'silver_maintenance_logs', count(*) FROM serverless_stable_7zqte5_catalog.wind_reliability.silver_maintenance_logs
+UNION ALL SELECT 'silver_turbines', count(*) FROM serverless_stable_7zqte5_catalog.wind_reliability.silver_turbines UNION ALL SELECT 'silver_failure_events', count(*) FROM serverless_stable_7zqte5_catalog.wind_reliability.silver_failure_events
+UNION ALL SELECT 'silver_market_prices', count(*) FROM serverless_stable_7zqte5_catalog.wind_reliability.silver_market_prices UNION ALL SELECT 'gold_turbine_daily', count(*) FROM serverless_stable_7zqte5_catalog.wind_reliability.gold_turbine_daily
+UNION ALL SELECT 'gold_farm_daily', count(*) FROM serverless_stable_7zqte5_catalog.wind_reliability.gold_farm_daily UNION ALL SELECT 'gold_failure_history', count(*) FROM serverless_stable_7zqte5_catalog.wind_reliability.gold_failure_history
+UNION ALL SELECT 'turbine_health_features', count(*) FROM serverless_stable_7zqte5_catalog.wind_reliability.turbine_health_features UNION ALL SELECT 'turbine_risk_history', count(*) FROM serverless_stable_7zqte5_catalog.wind_reliability.turbine_risk_history
+UNION ALL SELECT 'turbine_risk_scores', count(*) FROM serverless_stable_7zqte5_catalog.wind_reliability.turbine_risk_scores UNION ALL SELECT 'maintenance_log_insights', count(*) FROM serverless_stable_7zqte5_catalog.wind_reliability.maintenance_log_insights
+UNION ALL SELECT 'turbine_ai_briefs', count(*) FROM serverless_stable_7zqte5_catalog.wind_reliability.turbine_ai_briefs

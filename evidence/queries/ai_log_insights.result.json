@@ -1,0 +1,167 @@
+[
+  {
+    "ai_component": "gearbox",
+    "ai_failure_precursor": "true",
+    "ai_severity": "4",
+    "ai_summary_en": "High gearbox oil temperature and metallic noise indicate potential bearing wear or gear damage.",
+    "created_ts": "2026-10-04T18:36:32.000Z",
+    "log_id": "WO-00508",
+    "note_text": "Customer remote alarm: gearbox oil temperature high warnings during full load. On site noticed faint metallic whine from intermediate stage. Oil sample sent to lab.",
+    "technician_name": "L.***",
+    "turbine_id": "F03-T07"
+  },
+  {
+    "ai_component": "gearbox",
+    "ai_failure_precursor": "true",
+    "ai_severity": "3",
+    "ai_summary_en": "Oil analysis shows elevated iron content and particles. Noise under full load detected.",
+    "created_ts": "2026-10-03T09:51:45.000Z",
+    "log_id": "WO-00509",
+    "note_text": "Ölprobe Getriebe: erhöhter Eisengehalt (Fe 74 ppm) und Partikel auf Magnetstopfen. Leichte Geräusche bei Volllast. Empfehle Endoskopie.",
+    "technician_name": "A.***",
+    "turbine_id": "F03-T07"
+  },
+  {
+    "ai_component": "gearbox",
+    "ai_failure_precursor": "true",
+    "ai_severity": "4",
+    "ai_summary_en": "High gearbox oil temperature with metallic whine indicates potential bearing wear or gear damage.",
+    "created_ts": "2026-10-02T09:09:51.000Z",
+    "log_id": "WO-00507",
+    "note_text": "Customer remote alarm: gearbox oil temperature high warnings during full load. On site noticed faint metallic whine from intermediate stage. Oil sample sent to lab.",
+    "technician_name": "J.***",
+    "turbine_id": "F03-T09"
+  },
+  {
+    "ai_component": "generator_bearing",
+    "ai_failure_precursor": "true",
+    "ai_severity": "2",
+    "ai_summary_en": "Generator bearing temperature warnings at high load with audible noise. Greased, monitoring required.",
+    "created_ts": "2026-09-09T23:45:49.000Z",
+    "log_id": "WO-00492",
+    "note_text": "Generator DE bearing temperature alarms (warning level) at high load. Slight noise audible near generator. Greasing performed, observe.",
+    "technician_name": "P.***",
+    "turbine_id": "F03-T12"
+  },
+  {
+    "ai_component": "pitch_hydraulics",
+    "ai_failure_precursor": "true",
+    "ai_severity": "3",
+    "ai_summary_en": "Fluctuating pitch hydraulic pressure with leak at axis 3. Seals ordered.",
+    "created_ts": "2026-08-31T03:57:21.000Z",
+    "log_id": "WO-00502",
+    "note_text": "Hydraulikdruck Pitch schwankend, Leckage an Achse 3 festgestellt. Dichtungen bestellt.",
+    "technician_name": "A.***",
+    "turbine_id": "F01-T25"
+  },
+  {
+    "ai_component": "pitch_hydraulics",
+    "ai_failure_precursor": "true",
+    "ai_severity": "3",
+    "ai_summary_en": "Pitch hydraulic pressure drop during gusts with oil leak at cylinder axis 2. Oil topped up.",
+    "created_ts": "2026-08-30T18:21:09.000Z",
+    "log_id": "WO-00501",
+    "note_text": "Pitch hydraulic pressure drops during gusts, small oil leak at axis 2 cylinder. Topped up hydraulic oil.",
+    "technician_name": "K.***",
+    "turbine_id": "F01-T25"
+  },
+  {
+    "ai_component": "gearbox",
+    "ai_failure_precursor": "true",
+    "ai_severity": "4",
+    "ai_summary_en": "High gearbox oil temperature with metallic whine from intermediate stage. Oil analysis pending.",
+    "created_ts": "2026-08-15T02:13:33.000Z",
+    "log_id": "WO-00474",
+    "note_text": "Customer remote alarm: gearbox oil temperature high warnings during full load. On site noticed faint metallic whine from intermediate stage. Oil sample sent to lab.",
+    "technician_name": "S.***",
+    "turbine_id": "F01-T21"
+  },
+  {
+    "ai_component": "generator_bearing",
+    "ai_failure_precursor": "true",
+    "ai_severity": "2",
+    "ai_summary_en": "Generator bearing temperature alarms at high load with audible noise. Greased, monitoring required.",
+    "created_ts": "2026-08-03T19:16:17.000Z",
+    "log_id": "WO-00494",
+    "note_text": "Generator DE bearing temperature alarms (warning level) at high load. Slight noise audible near generator. Greasing performed, observe.",
+    "technician_name": "J.***",
+    "turbine_id": "F04-T04"
+  },
+  {
+    "ai_component": "gearbox",
+    "ai_failure_precursor": "true",
+    "ai_severity": "4",
+    "ai_summary_en": "Micropitting on HSS pinion teeth with rising vibration. Plan gearbox replacement soon.",
+    "created_ts": "2026-08-03T08:55:06.000Z",
+    "log_id": "WO-00457",
+    "note_text": "Endoscopy of HSS stage shows micropitting on pinion teeth. Vibration trending up on CMS. Recommend planning gearbox exchange, crane availability to be checked.",
+    "technician_name": "J.***",
+    "turbine_id": "F01-T06"
+  },
+  {
+    "ai_component": "gearbox",
+    "ai_failure_precursor": "true",
+    "ai_severity": "3",
+    "ai_summary_en": "Elevated iron content and particles in oil sample. Recommend endoscopy inspection.",
+    "created_ts": "2026-07-28T23:17:41.000Z",
+    "log_id": "WO-00467",
+    "note_text": "Ölprobe Getriebe: erhöhter Eisengehalt (Fe 74 ppm) und Partikel auf Magnetstopfen. Leichte Geräusche bei Volllast. Empfehle Endoskopie.",
+    "technician_name": "A.***",
+    "turbine_id": "F03-T21"
+  },
+  {
+    "ai_component": "gearbox",
+    "ai_failure_precursor": "true",
+    "ai_severity": "4",
+    "ai_summary_en": "High gearbox oil temperature with metallic whine detected. Oil analysis pending.",
+    "created_ts": "2026-07-28T06:03:23.000Z",
+    "log_id": "WO-00463",
+    "note_text": "Customer remote alarm: gearbox oil temperature high warnings during full load. On site noticed faint metallic whine from intermediate stage. Oil sample sent to lab.",
+    "technician_name": "A.***",
+    "turbine_id": "F03-T04"
+  },
+  {
+    "ai_component": "gearbox",
+    "ai_failure_precursor": "true",
+    "ai_severity": "4",
+    "ai_summary_en": "Gearbox high oil temperature with metallic whine from intermediate stage. Oil analysis pending.",
+    "created_ts": "2026-07-27T04:57:56.000Z",
+    "log_id": "WO-00466",
+    "note_text": "Customer remote alarm: gearbox oil temperature high warnings during full load. On site noticed faint metallic whine from intermediate stage. Oil sample sent to lab.",
+    "technician_name": "K.***",
+    "turbine_id": "F03-T21"
+  },
+  {
+    "ai_component": "gearbox",
+    "ai_failure_precursor": "true",
+    "ai_severity": "3",
+    "ai_summary_en": "Elevated iron content in gearbox oil and magnetic plug particles detected. Recommend endoscopy inspection.",
+    "created_ts": "2026-07-24T20:30:01.000Z",
+    "log_id": "WO-00464",
+    "note_text": "Ölprobe Getriebe: erhöhter Eisengehalt (Fe 74 ppm) und Partikel auf Magnetstopfen. Leichte Geräusche bei Volllast. Empfehle Endoskopie.",
+    "technician_name": "P.***",
+    "turbine_id": "F03-T04"
+  },
+  {
+    "ai_component": "gearbox",
+    "ai_failure_precursor": "true",
+    "ai_severity": "3",
+    "ai_summary_en": "Elevated iron content in gearbox oil with particles on magnetic plug. Noise at full load.",
+    "created_ts": "2026-07-13T11:53:28.000Z",
+    "log_id": "WO-00470",
+    "note_text": "Ölprobe Getriebe: erhöhter Eisengehalt (Fe 74 ppm) und Partikel auf Magnetstopfen. Leichte Geräusche bei Volllast. Empfehle Endoskopie.",
+    "technician_name": "M.***",
+    "turbine_id": "F03-T13"
+  },
+  {
+    "ai_component": "gearbox",
+    "ai_failure_precursor": "true",
+    "ai_severity": "4",
+    "ai_summary_en": "Micropitting on HSS pinion teeth with rising vibration. Plan gearbox replacement soon.",
+    "created_ts": "2026-07-08T11:22:12.000Z",
+    "log_id": "WO-00471",
+    "note_text": "Endoscopy of HSS stage shows micropitting on pinion teeth. Vibration trending up on CMS. Recommend planning gearbox exchange, crane availability to be checked.",
+    "technician_name": "P.***",
+    "turbine_id": "F03-T13"
+  }
+]

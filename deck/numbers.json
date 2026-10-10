@@ -1,0 +1,133 @@
+{
+  "net_annual_benefit_eur": 4188999.0,
+  "unplanned_cost_annualised_eur": 11325980.0,
+  "avoidable_100": 5844621.0,
+  "avoidable_75": 4383466.0,
+  "false_alarm_cost": 194467.0,
+  "availability_uplift_pp": 1.52,
+  "downtime_days_avoided": 664,
+  "failures_observed": 22,
+  "observed_days": 192,
+  "median_lead_days": 13.0,
+  "bt_caught": 8,
+  "bt_total": 8,
+  "auc": 0.9994,
+  "pr_auc": 0.9361,
+  "precision": 0.8142,
+  "false_alarm_weeks": 13,
+  "avail_hunsrueck": 95.02,
+  "avail_fleet": 97.59,
+  "by_component": [
+    {
+      "component": "gearbox",
+      "failures": 8,
+      "avg_downtime_days": 36.4,
+      "total_eur": 3423975.0
+    },
+    {
+      "component": "main_bearing",
+      "failures": 5,
+      "avg_downtime_days": 43.6,
+      "total_eur": 1886143.0
+    },
+    {
+      "component": "generator_bearing",
+      "failures": 5,
+      "avg_downtime_days": 11.4,
+      "total_eur": 520832.0
+    },
+    {
+      "component": "pitch_hydraulics",
+      "failures": 4,
+      "avg_downtime_days": 3.1,
+      "total_eur": 126826.0
+    }
+  ],
+  "n_critical": 3,
+  "n_high": 1,
+  "brief_turbine": "F03-T07",
+  "brief_headline": "F03-T07 Gearbox Bearing Failure Imminent Within Days",
+  "brief_diagnosis": "Gearbox bearing temperature is elevated +6.09°C above fleet average and vibration increased +1.58mm/s, consistent with technician observations of metallic noise and oil analysis showing elevated iron content and particles on 2026-10-03 and 2026-10-04. Power curve ratio has degraded -0.05 vs fleet over 7 days, indicating mechanical deterioration.",
+  "brief_business_case": "Planned intervention avoids EUR 206,523 in additional damage costs versus unplanned failure (EUR 385,000 corrective vs EUR 205,000 planned repair).",
+  "backtest": [
+    {
+      "turbine_id": "F01-T06",
+      "component": "gearbox",
+      "failure_date": "2026-08-08",
+      "lead": 7
+    },
+    {
+      "turbine_id": "F03-T04",
+      "component": "gearbox",
+      "failure_date": "2026-08-06",
+      "lead": 5
+    },
+    {
+      "turbine_id": "F03-T28",
+      "component": "gearbox",
+      "failure_date": "2026-08-15",
+      "lead": 14
+    },
+    {
+      "turbine_id": "F01-T21",
+      "component": "gearbox",
+      "failure_date": "2026-08-28",
+      "lead": 14
+    },
+    {
+      "turbine_id": "F01-T27",
+      "component": "main_bearing",
+      "failure_date": "2026-09-15",
+      "lead": 14
+    },
+    {
+      "turbine_id": "F03-T12",
+      "component": "generator_bearing",
+      "failure_date": "2026-09-21",
+      "lead": 13
+    },
+    {
+      "turbine_id": "F04-T04",
+      "component": "generator_bearing",
+      "failure_date": "2026-08-13",
+      "lead": 12
+    },
+    {
+      "turbine_id": "F01-T25",
+      "component": "pitch_hydraulics",
+      "failure_date": "2026-09-04",
+      "lead": 13
+    }
+  ],
+  "live_check": [
+    {
+      "turbine_id": "F03-T09",
+      "component": "gearbox",
+      "days_until": 4,
+      "tier": "CRITICAL",
+      "prob": 0.9912
+    },
+    {
+      "turbine_id": "F03-T07",
+      "component": "gearbox",
+      "days_until": 10,
+      "tier": "CRITICAL",
+      "prob": 0.9953
+    },
+    {
+      "turbine_id": "F01-T20",
+      "component": "gearbox",
+      "days_until": 14,
+      "tier": "CRITICAL",
+      "prob": 0.9578
+    },
+    {
+      "turbine_id": "F04-T16",
+      "component": "main_bearing",
+      "days_until": 19,
+      "tier": "HIGH",
+      "prob": 0.5529
+    }
+  ],
+  "dq_dropped": 7717
+}

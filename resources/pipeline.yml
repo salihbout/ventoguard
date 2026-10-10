@@ -1,0 +1,15 @@
+resources:
+  pipelines:
+    ventoguard_medallion:
+      name: ventoguard-medallion
+      catalog: ${var.catalog}
+      schema: ${var.schema}
+      serverless: true
+      channel: CURRENT
+      photon: true
+      continuous: false
+      libraries:
+        - glob:
+            include: ../src/pipeline/**
+      configuration:
+        landing_root: /Volumes/${var.catalog}/${var.schema}/raw_landing
