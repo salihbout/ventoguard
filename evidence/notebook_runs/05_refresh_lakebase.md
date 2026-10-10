@@ -1,4 +1,4 @@
-# e6906ef4-424d-45df-a9b8-77295f766e0b: executed notebook (task run 495394399834865)
+# 8a767973-1661-4605-9856-098f0eee3c78: executed notebook (task run 418382374912116)
 
 > Exported from the Databricks job run with `databricks jobs export-run`; cell sources and their outputs exactly as executed on serverless compute.
 
@@ -12,13 +12,13 @@ waits for it to finish.
 
 | UC source | Lakebase (Postgres) table | Used by app for |
 |---|---|---|
-| `turbine_risk_scores` | `vg_serving.turbine_risk_scores` | fleet risk board, map |
-| `turbine_ai_briefs` | `vg_serving.turbine_ai_briefs` | AI maintenance brief |
-| `gold_turbine_daily` | `vg_serving.gold_turbine_daily` | 30-day health trend charts |
+| `turbine_risk_scores` | `ventoguard_serving.turbine_risk_scores` | fleet risk board, map |
+| `turbine_ai_briefs` | `ventoguard_serving.turbine_ai_briefs` | AI maintenance brief |
+| `gold_turbine_daily` | `ventoguard_serving.gold_turbine_daily` | 30-day health trend charts |
 
 ### Cell 2
 ```python
-%pip install -q "databricks-sdk>=0.81.0" "psycopg[binary]>=3.2"
+%pip install -q "databricks-sdk>=0.81.0" "pg8000>=1.31"
 %restart_python
 ```
 **Output:**
@@ -29,7 +29,7 @@ waits for it to finish.
 ### Cell 3
 ```python
 dbutils.widgets.text("catalog", "serverless_stable_7zqte5_catalog")
-dbutils.widgets.text("serving_schema", "vg_serving")
+dbutils.widgets.text("serving_schema", "ventoguard_serving")
 dbutils.widgets.text("app_name", "ventoguard")
 dbutils.widgets.text("lakebase_endpoint", "projects/ventoguard/branches/production/endpoints/primary")
 LB_CATALOG = dbutils.widgets.get("catalog")
@@ -50,9 +50,9 @@ for t in SYNCED:
 ```
 **Output:**
 ```text
-turbine_risk_scores: pipeline 8c850d7c-ab02-4aac-853a-41dbe856e66e update 2b606027-4ded-4c36-bb0b-e6b191c3a519 started
-turbine_ai_briefs: pipeline eb2d817b-5180-43d2-84f6-191e7776d72a update d7b95fcf-8b22-45ff-872f-ad2349f7d992 started
-gold_turbine_daily: pipeline 38570c4e-29c9-4255-aa5b-b04c3a3c82b9 update 2734d1a5-5b0a-4fe0-b2ca-02a89ff7a3d0 started
+turbine_risk_scores: pipeline ad4d2067-fc8a-4c36-8048-df2a2e36cd14 update fa224ac7-a502-4de6-9c17-6d31dbe8ca68 started
+turbine_ai_briefs: pipeline c92ad48a-fb1e-4c0e-8e83-1569bd79cbe2 update 5f61c296-5578-4c0f-ad7a-e6bfc61e374c started
+gold_turbine_daily: pipeline bd6d3837-f7db-4a63-ba1d-6c9082b95fe4 update b4e45071-50fa-40ba-a093-e9bc57919ad8 started
 ```
 
 ### Cell 4
@@ -83,47 +83,53 @@ for t in SYNCED:
 ```
 **Output:**
 ```text
-turbine_risk_scores -> SyncedTableState.SYNCED_TABLE_ONLINE_NO_PENDING_UPDATE | last sync: SyncedTablePosition(delta_table_sync_info=DeltaTableSyncInfo(delta_commit_time=seconds: 1791652404
-, delta_commit_version=8), sync_end_time=seconds: 1791652891
-nanos: 97515000
-, sync_start_time=seconds: 1791652880
-nanos: 283835000
+turbine_risk_scores -> SyncedTableState.SYNCED_TABLE_ONLINE_NO_PENDING_UPDATE | last sync: SyncedTablePosition(delta_table_sync_info=DeltaTableSyncInfo(delta_commit_time=seconds: 1791659283
+, delta_commit_version=8), sync_end_time=seconds: 1791659716
+nanos: 733061000
+, sync_start_time=seconds: 1791659707
+nanos: 322854000
 )
-turbine_ai_briefs -> SyncedTableState.SYNCED_TABLE_ONLINE_NO_PENDING_UPDATE | last sync: SyncedTablePosition(delta_table_sync_info=DeltaTableSyncInfo(delta_commit_time=seconds: 1791652838
-, delta_commit_version=5), sync_end_time=seconds: 1791652889
-nanos: 524256000
-, sync_start_time=seconds: 1791652879
-nanos: 700759000
+turbine_ai_briefs -> SyncedTableState.SYNCED_TABLE_ONLINE_NO_PENDING_UPDATE | last sync: SyncedTablePosition(delta_table_sync_info=DeltaTableSyncInfo(delta_commit_time=seconds: 1791659668
+, delta_commit_version=5), sync_end_time=seconds: 1791659719
+nanos: 416499000
+, sync_start_time=seconds: 1791659709
+nanos: 58189000
 )
-gold_turbine_daily -> SyncedTableState.SYNCED_TABLE_ONLINE_NO_PENDING_UPDATE | last sync: SyncedTablePosition(delta_table_sync_info=DeltaTableSyncInfo(delta_commit_time=, delta_commit_version=6), sync_end_time=seconds: 1791652889
-nanos: 39659000
-, sync_start_time=seconds: 1791652878
-nanos: 793773000
+gold_turbine_daily -> SyncedTableState.SYNCED_TABLE_ONLINE_NO_PENDING_UPDATE | last sync: SyncedTablePosition(delta_table_sync_info=DeltaTableSyncInfo(delta_commit_time=, delta_commit_version=6), sync_end_time=seconds: 1791659718
+nanos: 771669000
+, sync_start_time=seconds: 1791659708
+nanos: 294583000
 )
 ```
 
 Snapshot syncs can recreate the Postgres tables, so the app role's read grants are re-applied after every sync.
+The pure-Python `pg8000` driver is used here: `psycopg[binary]`'s bundled libpq intermittently aborted the serverless Python process on import (SIGABRT).
 
 ### Cell 7
 ```python
-import psycopg
+import ssl
+import pg8000.native
 APP_SP = w.apps.get(dbutils.widgets.get("app_name")).service_principal_client_id
 EP = dbutils.widgets.get("lakebase_endpoint")
 host = w.postgres.get_endpoint(name=EP).status.hosts.host
 token = w.postgres.generate_database_credential(endpoint=EP).token
 me = w.current_user.me().user_name
-with psycopg.connect(host=host, dbname="databricks_postgres", user=me, password=token, sslmode="require", autocommit=True) as conn:
-    conn.execute(f'GRANT USAGE ON SCHEMA {SERVING} TO "{APP_SP}"')
-    conn.execute(f'GRANT SELECT ON ALL TABLES IN SCHEMA {SERVING} TO "{APP_SP}"')
+conn = pg8000.native.Connection(user=me, host=host, database="databricks_postgres", port=5432, password=token,
+                                ssl_context=ssl.create_default_context())
+try:
+    conn.run(f'GRANT USAGE ON SCHEMA {SERVING} TO "{APP_SP}"')
+    conn.run(f'GRANT SELECT ON ALL TABLES IN SCHEMA {SERVING} TO "{APP_SP}"')
     for t in SYNCED:
-        n = conn.execute(f"SELECT count(*) FROM {SERVING}.{t}").fetchone()[0]
+        n = conn.run(f"SELECT count(*) FROM {SERVING}.{t}")[0][0]
         print(f"Lakebase {SERVING}.{t}: {n} rows")
-    print(conn.execute(f"SELECT turbine_id, risk_tier, failure_prob_14d FROM {SERVING}.turbine_risk_scores ORDER BY failure_prob_14d DESC LIMIT 5").fetchall())
+    print(conn.run(f"SELECT turbine_id, risk_tier, failure_prob_14d FROM {SERVING}.turbine_risk_scores ORDER BY failure_prob_14d DESC LIMIT 5"))
+finally:
+    conn.close()
 ```
 **Output:**
 ```text
-Lakebase vg_serving.turbine_risk_scores: 120 rows
-Lakebase vg_serving.turbine_ai_briefs: 7 rows
-Lakebase vg_serving.gold_turbine_daily: 23040 rows
-[('F03-T07', 'CRITICAL', 0.9953), ('F03-T09', 'CRITICAL', 0.9912), ('F01-T20', 'CRITICAL', 0.9578), ('F04-T16', 'HIGH', 0.5529), ('F01-T06', 'MEDIUM', 0.2516)]
+Lakebase ventoguard_serving.turbine_risk_scores: 120 rows
+Lakebase ventoguard_serving.turbine_ai_briefs: 7 rows
+Lakebase ventoguard_serving.gold_turbine_daily: 23040 rows
+[['F03-T07', 'CRITICAL', 0.9953], ['F03-T09', 'CRITICAL', 0.9912], ['F01-T20', 'CRITICAL', 0.9578], ['F04-T16', 'HIGH', 0.5529], ['F01-T06', 'MEDIUM', 0.2516]]
 ```

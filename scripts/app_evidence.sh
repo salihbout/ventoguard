@@ -15,7 +15,7 @@ call() {  # method path [json-body]
 { echo "# Deployed Databricks App: API execution evidence"; echo
   echo "App \`ventoguard\` at $U, captured $(date -u '+%Y-%m-%d %H:%M UTC')."
   echo "React front end (\`app_ui/\`, built into \`app/static\`) and FastAPI back end (\`app/backend\`). Every response below comes from the"
-  echo "deployed app: reads from Lakebase synced tables (\`vg_serving\`), writes to the app-owned OLTP schema (\`vg_ops\`), and Genie via the Conversation API."
+  echo "deployed app: reads from Lakebase synced tables (\`ventoguard_serving\`), writes to the app-owned OLTP schema (\`vg_ops\`), and Genie via the Conversation API."
   echo; echo '```json'; databricks apps get ventoguard --profile $P -o json | jq '{name, url, app_status, compute_status, active_deployment: {deployment_id: .active_deployment.deployment_id, status: .active_deployment.status, create_time: .active_deployment.create_time}, resources: [.resources[] | {name} + (del(.name))]}'; echo '```'; echo; } > "$OUT"
 call GET /api/health
 call GET /api/kpis

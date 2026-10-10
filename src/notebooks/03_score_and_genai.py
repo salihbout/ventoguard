@@ -19,12 +19,16 @@
 # COMMAND ----------
 
 dbutils.widgets.text("catalog", "serverless_stable_7zqte5_catalog")
-dbutils.widgets.text("schema", "wind_reliability")
+dbutils.widgets.text("bronze_schema", "ventoguard_bronze")
+dbutils.widgets.text("silver_schema", "ventoguard_silver")
+dbutils.widgets.text("gold_schema", "ventoguard_gold")
 dbutils.widgets.text("llm_endpoint", "databricks-claude-sonnet-4-5")
 dbutils.widgets.text("llm_endpoint_fast", "databricks-claude-haiku-4-5")
-CATALOG, SCHEMA = dbutils.widgets.get("catalog"), dbutils.widgets.get("schema")
+CATALOG = dbutils.widgets.get("catalog")
+BRONZE_SCHEMA, SILVER_SCHEMA, SCHEMA = (dbutils.widgets.get(k) for k in ("bronze_schema", "silver_schema", "gold_schema"))
+SILVER = f"{CATALOG}.{SILVER_SCHEMA}"
 LLM, LLM_FAST = dbutils.widgets.get("llm_endpoint"), dbutils.widgets.get("llm_endpoint_fast")
-FQ = f"{CATALOG}.{SCHEMA}"
+FQ = f"{CATALOG}.{SCHEMA}"  # gold schema: features, model, scores and AI outputs are written here
 MODEL_NAME = f"{FQ}.turbine_failure_risk"
 spark.sql(f"USE CATALOG {CATALOG}"); spark.sql(f"USE SCHEMA {SCHEMA}")
 
@@ -109,7 +113,7 @@ cur["risk_tier"] = pd.cut(cur.failure_prob_14d, [-1, 0.10, 0.30, 0.60, 1.01], la
 cur.loc[cur.technical_availability < 0.5, "risk_tier"] = "DOWN"
 cur["recommended_window"] = cur.risk_tier.map({"CRITICAL": "Act within 72 h", "HIGH": "Plan within 7 days", "MEDIUM": "Inspect at next visit", "LOW": "Routine", "DOWN": "In repair"})
 
-turb = spark.table(f"{FQ}.silver_turbines").select("turbine_id", "farm_name", "model", "latitude", "longitude", "turbine_age_years", "gearbox_supplier").toPandas()
+turb = spark.table(f"{SILVER}.silver_turbines").select("turbine_id", "farm_name", "model", "latitude", "longitude", "turbine_age_years", "gearbox_supplier").toPandas()
 out = cur.merge(turb, on="turbine_id", suffixes=("", "_t"))
 cols = ["turbine_id", "farm_id", "farm_name", "model", "latitude", "longitude", "turbine_age_years", "gearbox_supplier",
         "reading_date", "failure_prob_14d", "risk_tier", "recommended_window", "likely_component", "anomaly_zscore", "top_signals",
@@ -139,7 +143,7 @@ display(spark.sql(f"""SELECT turbine_id, farm_name, risk_tier, failure_prob_14d,
 
 # COMMAND ----------
 
-gt = pd.read_csv(f"/Volumes/{CATALOG}/{SCHEMA}/raw_landing/_ground_truth/future_failures.csv", parse_dates=["degradation_start_ts", "failure_ts"])
+gt = pd.read_csv(f"/Volumes/{CATALOG}/{BRONZE_SCHEMA}/raw_landing/_ground_truth/future_failures.csv", parse_dates=["degradation_start_ts", "failure_ts"])
 gt["degrading_at_cutoff"] = gt.degradation_start_ts < pd.Timestamp(latest_date) + pd.Timedelta(days=1)
 chk = gt.merge(out[["turbine_id", "risk_tier", "failure_prob_14d", "likely_component"]], on="turbine_id", how="left")
 chk["days_until_failure"] = (chk.failure_ts - pd.Timestamp(latest_date)).dt.days
@@ -160,7 +164,7 @@ COMMENT 'Technician notes enriched by an LLM (ai_query): component, severity 1-5
 AS
 WITH src AS (
   SELECT log_id, turbine_id, created_ts, category, technician_name, note_text
-  FROM {FQ}.silver_maintenance_logs
+  FROM {SILVER}.silver_maintenance_logs
 ),
 llm AS (
   SELECT *, ai_query(

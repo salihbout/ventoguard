@@ -7,8 +7,14 @@ resources:
       parameters:
         - name: catalog
           default: ${var.catalog}
-        - name: schema
-          default: ${var.schema}
+        - name: bronze_schema
+          default: ${var.bronze_schema}
+        - name: silver_schema
+          default: ${var.silver_schema}
+        - name: gold_schema
+          default: ${var.gold_schema}
+        - name: serving_schema
+          default: ${var.serving_schema}
       tasks:
         - task_key: generate_raw_data
           notebook_task:

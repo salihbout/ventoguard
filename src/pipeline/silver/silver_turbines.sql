@@ -1,4 +1,4 @@
-CREATE OR REFRESH MATERIALIZED VIEW silver_turbines (
+CREATE OR REFRESH MATERIALIZED VIEW ${catalog}.${silver_schema}.silver_turbines (
   CONSTRAINT pk_present EXPECT (turbine_id IS NOT NULL) ON VIOLATION FAIL UPDATE
 )
 COMMENT 'Turbine asset register: farm, location, model, rated power, gearbox supplier, age.'

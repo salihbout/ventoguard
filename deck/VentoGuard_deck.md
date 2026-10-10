@@ -36,7 +36,7 @@ Prepared for: COO (executive sponsor) · Head of Asset Management (domain owner)
 
 ## Monday 07:00: what the reliability lead sees
 1. Risk board (Lakebase): 3 CRITICAL, 1 HIGH turbines, each with likely component and € at stake
-2. AI maintenance brief for F03-T07: "F03-T07 Gearbox Bearing Failure Imminent Within Days". Gearbox bearing temperature is elevated +6.09°C above fleet average and vibration increased +1.58mm/s, consistent with technician observations of metallic noise and oil analysis showing elevated iron content and particles on 2026-10-03 and 2026-10-04. Power curve ratio has degraded -0.05 vs fleet over 7 days, indicating mechanical deterioration. Business case: Planned intervention avoids EUR 206,523 in additional damage costs versus unplanned failure (EUR 385,000 corrective vs EUR 205,000 planned repair).
+2. AI maintenance brief for F03-T07: "F03-T07 Gearbox Imminent Failure: 99.5% Probability Within 14 Days". Gearbox intermediate stage shows critical degradation with vibration elevated +1.58mm/s, bearing temperature +6.09°C above fleet average, and power curve ratio reduced by -0.05. Technician reports confirm metallic whine, high oil temperature, and elevated iron content with particles in oil. Business case: Planned intervention avoids EUR 206,523 in additional costs versus unplanned failure (EUR 385,000 corrective vs EUR 205,000 planned repair).
 3. One click → work order written to Lakebase
 4. Asset manager asks Genie in plain language and sees the SQL behind the answer
 
@@ -95,7 +95,7 @@ Caveat: synthetic data; expect lower precision on real fleet data, so the value 
 ---
 
 ## How it works: one governed platform
-Lakeflow (Auto Loader + declarative pipeline, expectations) → Unity Catalog (tags, GDPR mask, lineage, grants) → ML + GenAI (MLflow model in UC with champion gate; ai_query + Claude for notes and briefs) → Lakebase (synced tables + transactional work orders) → Databricks App (React + FastAPI) + Genie space.
+Lakeflow (Auto Loader + declarative pipeline, expectations) → Unity Catalog (bronze / silver / gold / serving schemas; tags, GDPR mask, lineage, grants) → ML + GenAI (MLflow model in UC with champion gate; ai_query + Claude for notes and briefs) → Lakebase (synced tables + transactional work orders) → Databricks App (React + FastAPI) + Genie space.
 Orchestrated by one Lakeflow Job, deployed via Declarative Automation Bundle, scheduled daily 05:00 CET.
 
 ---

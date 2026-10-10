@@ -1,4 +1,4 @@
-CREATE OR REFRESH MATERIALIZED VIEW gold_farm_daily
+CREATE OR REFRESH MATERIALIZED VIEW ${catalog}.${gold_schema}.gold_farm_daily
 COMMENT 'Daily wind-farm KPIs for the asset-management dashboard and Genie: energy, availability, lost production and lost revenue.'
 TBLPROPERTIES ('quality' = 'gold')
 AS SELECT
@@ -11,5 +11,5 @@ AS SELECT
   round(sum(revenue_eur), 0) AS revenue_eur,
   round(avg(technical_availability), 4) AS technical_availability,
   sum(CASE WHEN had_fault THEN 1 ELSE 0 END) AS turbines_with_fault
-FROM gold_turbine_daily
+FROM ${catalog}.${gold_schema}.gold_turbine_daily
 GROUP BY farm_id, farm_name, reading_date;

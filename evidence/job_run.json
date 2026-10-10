@@ -1,58 +1,75 @@
 {
-  "run_id": 805326719502111,
-  "job_id": 1081515418325428,
-  "run_page_url": "https://fevm-serverless-stable-7zqte5.cloud.databricks.com/?o=7474660468503815#job/1081515418325428/run/805326719502111",
-  "start_time": "2026-10-10T17:07:22Z",
-  "end_time": "2026-10-10T17:22:12Z",
+  "run_id": 103975912547790,
+  "job_id": 840197049618132,
+  "run_name": "[demo salih_boutadghart] ventoguard-end-to-end",
+  "run_page_url": "https://fevm-serverless-stable-7zqte5.cloud.databricks.com/?o=7474660468503815#job/840197049618132/run/103975912547790",
+  "start_time": "2026-10-10T19:01:55Z",
+  "end_time": "2026-10-10T19:16:00Z",
   "result": "SUCCESS",
+  "parameters": [
+    {
+      "default": "serverless_stable_7zqte5_catalog",
+      "name": "catalog"
+    },
+    {
+      "default": "ventoguard_bronze",
+      "name": "bronze_schema"
+    },
+    {
+      "default": "ventoguard_silver",
+      "name": "silver_schema"
+    },
+    {
+      "default": "ventoguard_gold",
+      "name": "gold_schema"
+    },
+    {
+      "default": "ventoguard_serving",
+      "name": "serving_schema"
+    }
+  ],
   "tasks": [
     {
-      "task_key": "score_and_genai_briefs",
-      "run_id": 75994340528623,
-      "attempt_number": 0,
-      "result": "SUCCESS",
-      "start": "2026-10-10T17:11:51Z",
-      "duration_min": 8.8
-    },
-    {
-      "task_key": "generate_raw_data",
-      "run_id": 802053186807278,
-      "attempt_number": 0,
-      "result": "SUCCESS",
-      "start": "2026-10-10T17:07:22Z",
-      "duration_min": 1
-    },
-    {
-      "task_key": "lakeflow_medallion",
-      "run_id": 195621167147845,
-      "attempt_number": 0,
-      "result": "SUCCESS",
-      "start": "2026-10-10T17:08:28Z",
-      "duration_min": 1.2
-    },
-    {
       "task_key": "uc_governance",
-      "run_id": 429474403016476,
+      "run_id": 200421997264907,
       "attempt_number": 0,
       "result": "SUCCESS",
-      "start": "2026-10-10T17:20:42Z",
-      "duration_min": 1
-    },
-    {
-      "task_key": "train_failure_model",
-      "run_id": 23432760593289,
-      "attempt_number": 0,
-      "result": "SUCCESS",
-      "start": "2026-10-10T17:09:41Z",
-      "duration_min": 2.1
+      "duration_min": 0.7
     },
     {
       "task_key": "refresh_lakebase",
-      "run_id": 495394399834865,
+      "run_id": 418382374912116,
       "attempt_number": 0,
       "result": "SUCCESS",
-      "start": "2026-10-10T17:20:42Z",
       "duration_min": 1.4
+    },
+    {
+      "task_key": "generate_raw_data",
+      "run_id": 245051612196663,
+      "attempt_number": 0,
+      "result": "SUCCESS",
+      "duration_min": 1.1
+    },
+    {
+      "task_key": "lakeflow_medallion",
+      "run_id": 723189380720960,
+      "attempt_number": 0,
+      "result": "SUCCESS",
+      "duration_min": 1.2
+    },
+    {
+      "task_key": "score_and_genai_briefs",
+      "run_id": 996396618687098,
+      "attempt_number": 0,
+      "result": "SUCCESS",
+      "duration_min": 7.9
+    },
+    {
+      "task_key": "train_failure_model",
+      "run_id": 499285937789208,
+      "attempt_number": 0,
+      "result": "SUCCESS",
+      "duration_min": 2.2
     }
   ]
 }

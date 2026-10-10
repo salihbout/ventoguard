@@ -1,8 +1,8 @@
 # Deployed Databricks App: API execution evidence
 
-App `ventoguard` at https://ventoguard-7474660468503815.aws.databricksapps.com, captured 2026-10-10 17:22 UTC.
+App `ventoguard` at https://ventoguard-7474660468503815.aws.databricksapps.com, captured 2026-10-10 20:29 UTC.
 React front end (`app_ui/`, built into `app/static`) and FastAPI back end (`app/backend`). Every response below comes from the
-deployed app: reads from Lakebase synced tables (`vg_serving`), writes to the app-owned OLTP schema (`vg_ops`), and Genie via the Conversation API.
+deployed app: reads from Lakebase synced tables (`ventoguard_serving`), writes to the app-owned OLTP schema (`vg_ops`), and Genie via the Conversation API.
 
 ```json
 {
@@ -17,12 +17,12 @@ deployed app: reads from Lakebase synced tables (`vg_serving`), writes to the ap
     "state": "ACTIVE"
   },
   "active_deployment": {
-    "deployment_id": "01f1c4cef17a1f85b166b2ace9dad15b",
+    "deployment_id": "01f1c4d9aaca170098053e677a2a8041",
     "status": {
       "message": "App started successfully",
       "state": "SUCCEEDED"
     },
-    "create_time": "2026-10-10T17:20:51Z"
+    "create_time": "2026-10-10T18:37:37Z"
   },
   "resources": [
     {
@@ -38,7 +38,7 @@ deployed app: reads from Lakebase synced tables (`vg_serving`), writes to the ap
       "genie_space": {
         "name": "VentoGuard Reliability",
         "permission": "CAN_RUN",
-        "space_id": "01f1c4c082b419f88ccebeab3614bc27"
+        "space_id": "01f1c4d953cb132e838ecd828813a354"
       }
     },
     {
@@ -71,9 +71,9 @@ deployed app: reads from Lakebase synced tables (`vg_serving`), writes to the ap
   "avoidable_if_acted_eur": 805598.33015625,
   "risk_weighted_eur": 849349.0,
   "availability_30d": 0.9774074166666666,
-  "lost_revenue_30d_eur": 170789.72000000018,
-  "lost_energy_30d_mwh": 2270.6590000000024,
-  "open_work_orders": 0
+  "lost_revenue_30d_eur": 170789.71999999988,
+  "lost_energy_30d_mwh": 2270.659000000002,
+  "open_work_orders": 1
 }
 ```
 
@@ -211,7 +211,7 @@ deployed app: reads from Lakebase synced tables (`vg_serving`), writes to the ap
     "avoidable_cost_if_caught_eur": 224811.12968749998,
     "expected_avoidable_cost_eur": 215327.0,
     "model_version": 3,
-    "scored_at": "2026-10-10T17:13:21.014383+00:00"
+    "scored_at": "2026-10-10T19:08:00.063735+00:00"
   },
   "brief": {
     "turbine_id": "F01-T20",
@@ -222,13 +222,13 @@ deployed app: reads from Lakebase synced tables (`vg_serving`), writes to the ap
     "expected_avoidable_cost_eur": 215327.0,
     "score_date": "2026-10-09",
     "headline": "F01-T20 Gearbox Critical: 95.8% Failure Risk Within 14 Days",
-    "diagnosis": "Gearbox shows elevated vibration (+0.60 mm/s above fleet average) and bearing temperature (+2.44°C above fleet average) over the past 7 days, indicating imminent bearing or gear mesh failure. The 14-day failure probability model rates this turbine CRITICAL at 95.8% with gearbox as the most likely failing component.",
-    "recommended_action": "Stop turbine immediately and lock out ; Mobilize gearbox replacement crew and crane within 48 hours ; Execute planned gearbox swap before catastrophic failure",
-    "urgency_days": 2,
-    "crew_and_parts": "Require heavy-lift crew, mobile crane, and replacement Hansa Drives gearbox unit with 5-day mobilization lead time.",
-    "business_case": "Planned intervention avoids EUR 224,811 in additional damage costs versus waiting for unplanned failure (EUR 385,000 corrective vs EUR 205,000 planned repair).",
+    "diagnosis": "Gearbox shows elevated vibration (+0.60mm/s above fleet average) and bearing temperature (+2.44°C above fleet) over the past 7 days, indicating imminent bearing or gear mesh failure. The 14-day failure probability model rates this turbine CRITICAL at 95.8% despite iron content at 18 ppm on 2026-09-01.",
+    "recommended_action": "Schedule immediate gearbox replacement within 3 days ; Procure Hansa Drives gearbox or exchange unit ; Coordinate crane and specialist gearbox crew",
+    "urgency_days": 3,
+    "crew_and_parts": "Require specialist gearbox technicians, mobile crane, and replacement VG-3.6 gearbox (Hansa Drives compatible).",
+    "business_case": "Planned intervention avoids EUR 224,811 in additional costs compared to unplanned failure (EUR 385,000 corrective vs EUR 205,000 planned plus EUR 1,446 daily revenue loss).",
     "llm_endpoint": "databricks-claude-sonnet-4-5",
-    "generated_at": "2026-10-10T17:18:46.938907+00:00",
+    "generated_at": "2026-10-10T19:14:03.317019+00:00",
     "ai_error": null
   },
   "trend": [
@@ -246,7 +246,7 @@ deployed app: reads from Lakebase synced tables (`vg_serving`), writes to the ap
 ### `POST /api/work-orders` (transactional write to Lakebase `vg_ops.work_orders`)
 ```json
 {
-  "wo_id": 1,
+  "wo_id": 2,
   "turbine_id": "F01-T20",
   "component": "gearbox",
   "priority": "P1",
@@ -257,16 +257,16 @@ deployed app: reads from Lakebase synced tables (`vg_serving`), writes to the ap
   "failure_prob_14d": 0.9578,
   "expected_avoidable_eur": 215327,
   "created_by": "salih.boutadghart@databricks.com",
-  "created_at": "2026-10-10T17:22:38.541454+00:00",
-  "updated_at": "2026-10-10T17:22:38.541454+00:00"
+  "created_at": "2026-10-10T20:29:06.194624+00:00",
+  "updated_at": "2026-10-10T20:29:06.194624+00:00"
 }
 ```
 
-### `PATCH /api/work-orders/1`
+### `PATCH /api/work-orders/2`
 Request body: `{"status":"SCHEDULED"}`
 ```json
 {
-  "wo_id": 1,
+  "wo_id": 2,
   "turbine_id": "F01-T20",
   "component": "gearbox",
   "priority": "P1",
@@ -277,8 +277,8 @@ Request body: `{"status":"SCHEDULED"}`
   "failure_prob_14d": 0.9578,
   "expected_avoidable_eur": 215327,
   "created_by": "salih.boutadghart@databricks.com",
-  "created_at": "2026-10-10T17:22:38.541454+00:00",
-  "updated_at": "2026-10-10T17:22:39.076726+00:00"
+  "created_at": "2026-10-10T20:29:06.194624+00:00",
+  "updated_at": "2026-10-10T20:29:06.710491+00:00"
 }
 ```
 
@@ -301,6 +301,23 @@ Request body: `{"status":"SCHEDULED"}`
     "updated_at": "2026-10-10T17:22:39.076726+00:00",
     "farm_name": "Uckermark Nord",
     "risk_tier": "CRITICAL"
+  },
+  {
+    "wo_id": 2,
+    "turbine_id": "F01-T20",
+    "component": "gearbox",
+    "priority": "P1",
+    "status": "SCHEDULED",
+    "planned_date": "2026-10-12",
+    "crew": "North crew (Uckermark)",
+    "notes": "Planned gearbox swap; crane booked for low-wind window",
+    "failure_prob_14d": 0.9578,
+    "expected_avoidable_eur": 215327,
+    "created_by": "salih.boutadghart@databricks.com",
+    "created_at": "2026-10-10T20:29:06.194624+00:00",
+    "updated_at": "2026-10-10T20:29:06.710491+00:00",
+    "farm_name": "Uckermark Nord",
+    "risk_tier": "CRITICAL"
   }
 ]
 ```
@@ -309,11 +326,11 @@ Request body: `{"status":"SCHEDULED"}`
 Request body: `{"question":"Which turbines are currently at risk of failure and what is the avoidable cost?"}`
 ```json
 {
-  "conversation_id": "01f1c4cf3217102a840e23344d04d72c",
-  "message_id": "01f1c4cf322f1ea6bd00a3473b314210",
+  "conversation_id": "01f1c4e93e5f1f8699bbbbab217e260e",
+  "message_id": "01f1c4e93e75129cb60ffc02d1f5e417",
   "status": "COMPLETED",
-  "text": "You want to see a list of turbines that are currently at high or critical risk of failure, including details such as the farm name, risk level, failure probability as a percentage, the component likely to fail, the recommended maintenance window, and the estimated avoidable cost if the failure is prevented.\n\nThere are **4 turbines** currently at risk of failure (**3 CRITICAL**, **1 HIGH**), with avoidable cost if caught ranging from **EUR 166,517** to **EUR 224,811**. Examples include:\n- **F01-T20** at **Uckermark Nord** — **CRITICAL**, **95.8%** failure probability, likely **gearbox**, avoidable cost **EUR 224,811**\n- **F03-T09** at **Hunsrueck Hoehe** — **CRITICAL**, **99.1%** failure probability, likely **gearbox**, avoidable cost **EUR 207,747**\n- **F03-T07** at **Hunsrueck Hoehe** — **CRITICAL**, **99.5%** failure probability, likely **gearbox**, avoidable cost **EUR 206,523**\n- **F04-T16** at **Eifel West** — **HIGH**, **55.3%** failure probability, likely **main bearing**, avoidable cost **EUR 166,517**\n\nThe current risk list is dominated by **gearbox-related** issues, which account for **3 of the 4** at-risk turbines.",
-  "sql": "SELECT `turbine_id`, `farm_name`, `risk_tier`, ROUND(`failure_prob_14d` * 100, 1) AS `failure_prob_pct`, `likely_component`, `recommended_window`, ROUND(`avoidable_cost_if_caught_eur`) AS `avoidable_cost_if_caught_eur` FROM `serverless_stable_7zqte5_catalog`.`wind_reliability`.`turbine_risk_scores` WHERE `risk_tier` IN ('CRITICAL', 'HIGH') ORDER BY `failure_prob_14d` DESC",
+  "text": "You want to see a list of turbines that are currently at high or critical risk of failure, including details about their risk level, failure probability as a percentage, the component likely to fail, the recommended maintenance window, and the avoidable cost if the failure is prevented.\n\nThere are **4 turbines** currently at risk of failure (**3 CRITICAL**, **1 HIGH**). Examples include:\n- **F03-T07** (Hunsrueck Hoehe) — **CRITICAL**, **99.5%** failure risk, likely **gearbox**, avoidable cost if caught **€206,523**; expected avoidable cost **€205,562**\n- **F03-T09** (Hunsrueck Hoehe) — **CRITICAL**, **99.1%** failure risk, likely **gearbox**, avoidable cost if caught **€207,747**; expected avoidable cost **€205,914**\n- **F01-T20** (Uckermark Nord) — **CRITICAL**, **95.8%** failure risk, likely **gearbox**, avoidable cost if caught **€224,811**; expected avoidable cost **€215,327**\n- **F04-T16** (Eifel West) — **HIGH**, **55.3%** failure risk, likely **main_bearing**, avoidable cost if caught **€166,517**; expected avoidable cost **€92,062**\nThe highest avoidable cost if prevented is **F01-T20** at **€224,811**, and the three most urgent cases are all **gearbox-related CRITICAL** risks with action recommended **within 72 h**.",
+  "sql": "SELECT `turbine_id`, `farm_name`, `risk_tier`, ROUND(`failure_prob_14d` * 100, 1) AS `failure_prob_pct`, `likely_component`, `recommended_window`, ROUND(`avoidable_cost_if_caught_eur`) AS `avoidable_cost_if_caught_eur`, ROUND(`expected_avoidable_cost_eur`) AS `expected_avoidable_cost_eur` FROM `serverless_stable_7zqte5_catalog`.`ventoguard_gold`.`turbine_risk_scores` WHERE `risk_tier` IN ('CRITICAL', 'HIGH') ORDER BY `failure_prob_14d` DESC",
   "columns": [
     "turbine_id",
     "farm_name",
@@ -321,7 +338,8 @@ Request body: `{"question":"Which turbines are currently at risk of failure and 
     "failure_prob_pct",
     "likely_component",
     "recommended_window",
-    "avoidable_cost_if_caught_eur"
+    "avoidable_cost_if_caught_eur",
+    "expected_avoidable_cost_eur"
   ],
   "rows": [
     [
@@ -331,7 +349,8 @@ Request body: `{"question":"Which turbines are currently at risk of failure and 
       "99.5",
       "gearbox",
       "Act within 72 h",
-      "206523.0"
+      "206523.0",
+      "205562.0"
     ],
     [
       "F03-T09",
@@ -340,7 +359,8 @@ Request body: `{"question":"Which turbines are currently at risk of failure and 
       "99.1",
       "gearbox",
       "Act within 72 h",
-      "207747.0"
+      "207747.0",
+      "205914.0"
     ],
     [
       "F01-T20",
@@ -349,7 +369,8 @@ Request body: `{"question":"Which turbines are currently at risk of failure and 
       "95.8",
       "gearbox",
       "Act within 72 h",
-      "224811.0"
+      "224811.0",
+      "215327.0"
     ],
     [
       "F04-T16",
@@ -358,7 +379,8 @@ Request body: `{"question":"Which turbines are currently at risk of failure and 
       "55.3",
       "main_bearing",
       "Plan within 7 days",
-      "166517.0"
+      "166517.0",
+      "92062.0"
     ]
   ],
   "row_count": 4

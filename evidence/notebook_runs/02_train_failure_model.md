@@ -1,4 +1,4 @@
-# 8c2295f1-8c38-4f19-ba00-70a800937001: executed notebook (task run 23432760593289)
+# 9dd9d67d-3a58-4877-98d0-edec00357bea: executed notebook (task run 499285937789208)
 
 > Exported from the Databricks job run with `databricks jobs export-run`; cell sources and their outputs exactly as executed on serverless compute.
 
@@ -29,9 +29,13 @@ the swap in a low-wind window. That turns a €350 k+ unplanned event into a pla
 ### Cell 3
 ```python
 dbutils.widgets.text("catalog", "serverless_stable_7zqte5_catalog")
-dbutils.widgets.text("schema", "wind_reliability")
-CATALOG, SCHEMA = dbutils.widgets.get("catalog"), dbutils.widgets.get("schema")
-FQ = f"{CATALOG}.{SCHEMA}"
+dbutils.widgets.text("bronze_schema", "ventoguard_bronze")
+dbutils.widgets.text("silver_schema", "ventoguard_silver")
+dbutils.widgets.text("gold_schema", "ventoguard_gold")
+CATALOG = dbutils.widgets.get("catalog")
+BRONZE_SCHEMA, SILVER_SCHEMA, SCHEMA = (dbutils.widgets.get(k) for k in ("bronze_schema", "silver_schema", "gold_schema"))
+SILVER = f"{CATALOG}.{SILVER_SCHEMA}"
+FQ = f"{CATALOG}.{SCHEMA}"  # gold schema: features, model, scores and AI outputs are written here
 MODEL_NAME = f"{FQ}.turbine_failure_risk"
 HORIZON_DAYS = 14
 TEST_START = "2026-08-01"
@@ -45,7 +49,7 @@ spark.sql(f"USE CATALOG {CATALOG}"); spark.sql(f"USE SCHEMA {SCHEMA}")
 features_sql = f"""
 WITH d AS (
   SELECT g.*, t.turbine_age_years, t.gearbox_supplier, t.rated_power_kw
-  FROM {FQ}.gold_turbine_daily g JOIN {FQ}.silver_turbines t USING (turbine_id)
+  FROM {FQ}.gold_turbine_daily g JOIN {SILVER}.silver_turbines t USING (turbine_id)
 ),
 fleet AS (  -- fleet reference: same model, same day, healthy-running turbines only
   SELECT model, reading_date,
@@ -112,11 +116,11 @@ print(spark.table(f"{FQ}.turbine_health_features").count(), "feature rows")
 ```python
 labeled = spark.sql(f"""
 SELECT f.*,
-  CASE WHEN EXISTS (SELECT 1 FROM {FQ}.silver_failure_events e
+  CASE WHEN EXISTS (SELECT 1 FROM {SILVER}.silver_failure_events e
                     WHERE e.turbine_id = f.turbine_id
                       AND to_date(e.failure_ts) >  f.reading_date
                       AND to_date(e.failure_ts) <= date_add(f.reading_date, {HORIZON_DAYS})) THEN 1 ELSE 0 END AS label,
-  (SELECT min(to_date(e.failure_ts)) FROM {FQ}.silver_failure_events e
+  (SELECT min(to_date(e.failure_ts)) FROM {SILVER}.silver_failure_events e
     WHERE e.turbine_id = f.turbine_id AND to_date(e.failure_ts) > f.reading_date) AS next_failure_date
 FROM {FQ}.turbine_health_features f
 WHERE f.technical_availability > 0.5         -- exclude days the turbine is already down
@@ -173,7 +177,7 @@ with mlflow.start_run(run_name="hgb_14d_failure_risk") as run:
     }
 
     # Business-level back-test: of the failures in the test window, how many were flagged in advance, and how early?
-    fails = spark.sql(f"SELECT turbine_id, to_date(failure_ts) AS fdate, component FROM {FQ}.silver_failure_events WHERE failure_ts >= '{TEST_START}'").toPandas()
+    fails = spark.sql(f"SELECT turbine_id, to_date(failure_ts) AS fdate, component FROM {SILVER}.silver_failure_events WHERE failure_ts >= '{TEST_START}'").toPandas()
     fails["fdate"] = pd.to_datetime(fails["fdate"])
     rows = []
     for _, f in fails.iterrows():
@@ -209,14 +213,14 @@ for k, v in metrics.items():
 **Output:**
 ```text
 [1;38;5;208mIf you are using MLflow Tracing, you can migrate your traces to Unity Catalog for unlimited storage, fine-grained access controls, and queryability from notebooks, SQL, and dashboards. [94mLearn more: https://docs.databricks.com/aws/en/mlflow3/genai/tracing/migrate-traces-to-uc[0m
-/local_disk0/.ephemeral_nfs/envs/pythonEnv-daa75564-566e-453f-9129-da1505ffd9c3/lib/python3.12/site-packages/mlflow/types/utils.py:440: UserWarning: Hint: Inferred schema contains integer column(s). Integer columns in Python cannot represent missing values. If your input data contains missing values at inference time, it will be encoded as floats and will cause a schema enforcement error. The best way to avoid this problem is to infer the model schema based on a realistic data sample (training dataset) that includes missing values. Alternatively, you can declare integer columns as doubles (float64) whenever these columns may have missing values. See `Handling Integers With Missing Values <https://www.mlflow.org/docs/latest/models.html#handling-integers-with-missing-values>`_ for more details.
+/local_disk0/.ephemeral_nfs/envs/pythonEnv-3e0938f9-62ef-4582-b34b-147aafc755c6/lib/python3.12/site-packages/mlflow/types/utils.py:440: UserWarning: Hint: Inferred schema contains integer column(s). Integer columns in Python cannot represent missing values. If your input data contains missing values at inference time, it will be encoded as floats and will cause a schema enforcement error. The best way to avoid this problem is to infer the model schema based on a realistic data sample (training dataset) that includes missing values. Alternatively, you can declare integer columns as doubles (float64) whenever these columns may have missing values. See `Handling Integers With Missing Values <https://www.mlflow.org/docs/latest/models.html#handling-integers-with-missing-values>`_ for more details.
   warnings.warn(
-🔗 View Logged Model at: https://fevm-serverless-stable-7zqte5.cloud.databricks.com/ml/experiments/3695292097056926/models/m-0a1e5716723247c79ae3099ee41ac82e?o=7474660468503815
-Registered model 'serverless_stable_7zqte5_catalog.wind_reliability.turbine_failure_risk' already exists. Creating a new version of this model...
+🔗 View Logged Model at: https://fevm-serverless-stable-7zqte5.cloud.databricks.com/ml/experiments/3695292097056926/models/m-4e43c44a7d6b4b73833371c09d703e2f?o=7474660468503815
+Registered model 'serverless_stable_7zqte5_catalog.ventoguard_gold.turbine_failure_risk' already exists. Creating a new version of this model...
 ```
 **Output:**
 ```text
-🔗 Created version '3' of model 'serverless_stable_7zqte5_catalog.wind_reliability.turbine_failure_risk': https://fevm-serverless-stable-7zqte5.cloud.databricks.com/explore/data/models/serverless_stable_7zqte5_catalog/wind_reliability/turbine_failure_risk/version/3?o=7474660468503815
+🔗 Created version '3' of model 'serverless_stable_7zqte5_catalog.ventoguard_gold.turbine_failure_risk': https://fevm-serverless-stable-7zqte5.cloud.databricks.com/explore/data/models/serverless_stable_7zqte5_catalog/ventoguard_gold/turbine_failure_risk/version/3?o=7474660468503815
 ```
 **Output:**
 ```text
@@ -288,5 +292,5 @@ dbutils.jobs.taskValues.set("model_version", str(version))
 ```
 **Output:**
 ```text
-Registered serverless_stable_7zqte5_catalog.wind_reliability.turbine_failure_risk v3 (run 74955bcb516d46cfab7537eb744c9495); quality gate passed = True; champion -> v3
+Registered serverless_stable_7zqte5_catalog.ventoguard_gold.turbine_failure_risk v3 (run 948c8a191cea459d95ce76b7d25a3af5); quality gate passed = True; champion -> v3
 ```

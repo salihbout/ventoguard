@@ -37,7 +37,7 @@
   "data_sources": {
     "tables": [
       {
-        "identifier": "serverless_stable_7zqte5_catalog.wind_reliability.gold_failure_history",
+        "identifier": "serverless_stable_7zqte5_catalog.ventoguard_gold.gold_failure_history",
         "column_configs": [
           {
             "column_name": "component",
@@ -58,7 +58,7 @@
         ]
       },
       {
-        "identifier": "serverless_stable_7zqte5_catalog.wind_reliability.gold_farm_daily",
+        "identifier": "serverless_stable_7zqte5_catalog.ventoguard_gold.gold_farm_daily",
         "column_configs": [
           {
             "column_name": "farm_name",
@@ -73,7 +73,7 @@
         ]
       },
       {
-        "identifier": "serverless_stable_7zqte5_catalog.wind_reliability.gold_turbine_daily",
+        "identifier": "serverless_stable_7zqte5_catalog.ventoguard_gold.gold_turbine_daily",
         "column_configs": [
           {
             "column_name": "farm_name",
@@ -101,7 +101,7 @@
         ]
       },
       {
-        "identifier": "serverless_stable_7zqte5_catalog.wind_reliability.maintenance_log_insights",
+        "identifier": "serverless_stable_7zqte5_catalog.ventoguard_gold.maintenance_log_insights",
         "column_configs": [
           {
             "column_name": "ai_component",
@@ -122,33 +122,10 @@
         ]
       },
       {
-        "identifier": "serverless_stable_7zqte5_catalog.wind_reliability.silver_turbines",
-        "column_configs": [
-          {
-            "column_name": "farm_name",
-            "synonyms": [
-              "wind park",
-              "site"
-            ],
-            "enable_format_assistance": true,
-            "enable_entity_matching": true
-          },
-          {
-            "column_name": "gearbox_supplier",
-            "synonyms": [
-              "gearbox vendor",
-              "supplier"
-            ],
-            "enable_format_assistance": true,
-            "enable_entity_matching": true
-          }
-        ]
+        "identifier": "serverless_stable_7zqte5_catalog.ventoguard_gold.turbine_risk_history"
       },
       {
-        "identifier": "serverless_stable_7zqte5_catalog.wind_reliability.turbine_risk_history"
-      },
-      {
-        "identifier": "serverless_stable_7zqte5_catalog.wind_reliability.turbine_risk_scores",
+        "identifier": "serverless_stable_7zqte5_catalog.ventoguard_gold.turbine_risk_scores",
         "column_configs": [
           {
             "column_name": "failure_prob_14d",
@@ -170,6 +147,29 @@
             "synonyms": [
               "risk level",
               "priority"
+            ],
+            "enable_format_assistance": true,
+            "enable_entity_matching": true
+          }
+        ]
+      },
+      {
+        "identifier": "serverless_stable_7zqte5_catalog.ventoguard_silver.silver_turbines",
+        "column_configs": [
+          {
+            "column_name": "farm_name",
+            "synonyms": [
+              "wind park",
+              "site"
+            ],
+            "enable_format_assistance": true,
+            "enable_entity_matching": true
+          },
+          {
+            "column_name": "gearbox_supplier",
+            "synonyms": [
+              "gearbox vendor",
+              "supplier"
             ],
             "enable_format_assistance": true,
             "enable_entity_matching": true
@@ -203,7 +203,7 @@
           "How has the failure risk of the riskiest turbine developed over the last 30 days?"
         ],
         "sql": [
-          "SELECT h.reading_date, round(h.failure_prob_14d * 100, 1) AS failure_prob_pct FROM serverless_stable_7zqte5_catalog.wind_reliability.turbine_risk_history h WHERE h.turbine_id = (SELECT turbine_id FROM serverless_stable_7zqte5_catalog.wind_reliability.turbine_risk_scores ORDER BY failure_prob_14d DESC LIMIT 1) AND h.reading_date >= (SELECT max(reading_date) FROM serverless_stable_7zqte5_catalog.wind_reliability.turbine_risk_history) - INTERVAL 30 DAYS ORDER BY h.reading_date"
+          "SELECT h.reading_date, round(h.failure_prob_14d * 100, 1) AS failure_prob_pct FROM serverless_stable_7zqte5_catalog.ventoguard_gold.turbine_risk_history h WHERE h.turbine_id = (SELECT turbine_id FROM serverless_stable_7zqte5_catalog.ventoguard_gold.turbine_risk_scores ORDER BY failure_prob_14d DESC LIMIT 1) AND h.reading_date >= (SELECT max(reading_date) FROM serverless_stable_7zqte5_catalog.ventoguard_gold.turbine_risk_history) - INTERVAL 30 DAYS ORDER BY h.reading_date"
         ]
       },
       {
@@ -212,7 +212,7 @@
           "Which turbines are currently at risk of failure?"
         ],
         "sql": [
-          "SELECT turbine_id, farm_name, risk_tier, round(failure_prob_14d * 100, 1) AS failure_prob_pct, likely_component, recommended_window, round(avoidable_cost_if_caught_eur) AS avoidable_cost_if_caught_eur FROM serverless_stable_7zqte5_catalog.wind_reliability.turbine_risk_scores WHERE risk_tier IN ('CRITICAL', 'HIGH') ORDER BY failure_prob_14d DESC"
+          "SELECT turbine_id, farm_name, risk_tier, round(failure_prob_14d * 100, 1) AS failure_prob_pct, likely_component, recommended_window, round(avoidable_cost_if_caught_eur) AS avoidable_cost_if_caught_eur FROM serverless_stable_7zqte5_catalog.ventoguard_gold.turbine_risk_scores WHERE risk_tier IN ('CRITICAL', 'HIGH') ORDER BY failure_prob_14d DESC"
         ]
       },
       {
@@ -221,7 +221,7 @@
           "What was technical availability per farm by month?"
         ],
         "sql": [
-          "SELECT farm_name, date_trunc('MONTH', reading_date) AS month, round(avg(technical_availability) * 100, 2) AS technical_availability_pct FROM serverless_stable_7zqte5_catalog.wind_reliability.gold_farm_daily GROUP BY ALL ORDER BY month, farm_name"
+          "SELECT farm_name, date_trunc('MONTH', reading_date) AS month, round(avg(technical_availability) * 100, 2) AS technical_availability_pct FROM serverless_stable_7zqte5_catalog.ventoguard_gold.gold_farm_daily GROUP BY ALL ORDER BY month, farm_name"
         ]
       },
       {
@@ -230,7 +230,7 @@
           "Do older gearboxes or a specific supplier fail more often?"
         ],
         "sql": [
-          "SELECT t.gearbox_supplier, t.farm_name, count(DISTINCT t.turbine_id) AS turbines, count(f.failure_id) AS gearbox_failures, round(count(f.failure_id) / count(DISTINCT t.turbine_id) * 100, 1) AS failures_per_100_turbines, round(avg(t.turbine_age_years), 1) AS avg_age_years FROM serverless_stable_7zqte5_catalog.wind_reliability.silver_turbines t LEFT JOIN serverless_stable_7zqte5_catalog.wind_reliability.gold_failure_history f ON f.turbine_id = t.turbine_id AND f.component = 'gearbox' GROUP BY ALL ORDER BY failures_per_100_turbines DESC"
+          "SELECT t.gearbox_supplier, t.farm_name, count(DISTINCT t.turbine_id) AS turbines, count(f.failure_id) AS gearbox_failures, round(count(f.failure_id) / count(DISTINCT t.turbine_id) * 100, 1) AS failures_per_100_turbines, round(avg(t.turbine_age_years), 1) AS avg_age_years FROM serverless_stable_7zqte5_catalog.ventoguard_silver.silver_turbines t LEFT JOIN serverless_stable_7zqte5_catalog.ventoguard_gold.gold_failure_history f ON f.turbine_id = t.turbine_id AND f.component = 'gearbox' GROUP BY ALL ORDER BY failures_per_100_turbines DESC"
         ]
       },
       {
@@ -239,7 +239,7 @@
           "What is the total cost of failures by component?"
         ],
         "sql": [
-          "SELECT component, count(*) AS failures, round(avg(downtime_hours)/24, 1) AS avg_downtime_days, round(sum(total_event_cost_eur)) AS total_event_cost_eur FROM serverless_stable_7zqte5_catalog.wind_reliability.gold_failure_history GROUP BY component ORDER BY total_event_cost_eur DESC"
+          "SELECT component, count(*) AS failures, round(avg(downtime_hours)/24, 1) AS avg_downtime_days, round(sum(total_event_cost_eur)) AS total_event_cost_eur FROM serverless_stable_7zqte5_catalog.ventoguard_gold.gold_failure_history GROUP BY component ORDER BY total_event_cost_eur DESC"
         ]
       },
       {
@@ -248,7 +248,7 @@
           "Which wind farm lost the most revenue to unplanned failures?"
         ],
         "sql": [
-          "SELECT farm_name, count(*) AS failures, round(sum(lost_revenue_eur)) AS lost_revenue_eur, round(sum(repair_cost_eur)) AS repair_cost_eur, round(sum(total_event_cost_eur)) AS total_event_cost_eur FROM serverless_stable_7zqte5_catalog.wind_reliability.gold_failure_history GROUP BY farm_name ORDER BY total_event_cost_eur DESC"
+          "SELECT farm_name, count(*) AS failures, round(sum(lost_revenue_eur)) AS lost_revenue_eur, round(sum(repair_cost_eur)) AS repair_cost_eur, round(sum(total_event_cost_eur)) AS total_event_cost_eur FROM serverless_stable_7zqte5_catalog.ventoguard_gold.gold_failure_history GROUP BY farm_name ORDER BY total_event_cost_eur DESC"
         ]
       }
     ],
@@ -256,11 +256,11 @@
       {
         "id": "5127f4b3091759c6ba5359ae178fa240",
         "left": {
-          "identifier": "serverless_stable_7zqte5_catalog.wind_reliability.turbine_risk_scores",
+          "identifier": "serverless_stable_7zqte5_catalog.ventoguard_gold.turbine_risk_scores",
           "alias": "turbine_risk_scores"
         },
         "right": {
-          "identifier": "serverless_stable_7zqte5_catalog.wind_reliability.silver_turbines",
+          "identifier": "serverless_stable_7zqte5_catalog.ventoguard_silver.silver_turbines",
           "alias": "silver_turbines"
         },
         "sql": [
@@ -281,7 +281,7 @@
           {
             "format": "SQL",
             "content": [
-              "SELECT count(*) AS turbines FROM serverless_stable_7zqte5_catalog.wind_reliability.turbine_risk_scores WHERE risk_tier IN ('CRITICAL', 'HIGH')"
+              "SELECT count(*) AS turbines FROM serverless_stable_7zqte5_catalog.ventoguard_gold.turbine_risk_scores WHERE risk_tier IN ('CRITICAL', 'HIGH')"
             ]
           }
         ]
@@ -295,7 +295,7 @@
           {
             "format": "SQL",
             "content": [
-              "SELECT round(sum(lost_revenue_eur)) FROM serverless_stable_7zqte5_catalog.wind_reliability.gold_farm_daily WHERE reading_date BETWEEN '2026-09-01' AND '2026-09-30'"
+              "SELECT round(sum(lost_revenue_eur)) FROM serverless_stable_7zqte5_catalog.ventoguard_gold.gold_farm_daily WHERE reading_date BETWEEN '2026-09-01' AND '2026-09-30'"
             ]
           }
         ]
@@ -309,7 +309,7 @@
           {
             "format": "SQL",
             "content": [
-              "SELECT round(sum(total_event_cost_eur)) FROM serverless_stable_7zqte5_catalog.wind_reliability.gold_failure_history WHERE component = 'gearbox'"
+              "SELECT round(sum(total_event_cost_eur)) FROM serverless_stable_7zqte5_catalog.ventoguard_gold.gold_failure_history WHERE component = 'gearbox'"
             ]
           }
         ]

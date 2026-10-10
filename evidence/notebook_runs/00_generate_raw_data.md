@@ -1,4 +1,4 @@
-# 806aac25-999f-45ef-90c4-8139b8d81224: executed notebook (task run 802053186807278)
+# 6c937805-8af2-483b-989f-e25608dae9f2: executed notebook (task run 245051612196663)
 
 > Exported from the Databricks job run with `databricks jobs export-run`; cell sources and their outputs exactly as executed on serverless compute.
 
@@ -27,22 +27,24 @@ app flags today.
 ### Cell 2
 ```python
 dbutils.widgets.text("catalog", "serverless_stable_7zqte5_catalog")
-dbutils.widgets.text("schema", "wind_reliability")
+dbutils.widgets.text("bronze_schema", "ventoguard_bronze")
 dbutils.widgets.text("start_date", "2026-04-01")
 dbutils.widgets.text("end_date", "2026-10-09")
 dbutils.widgets.dropdown("reset", "false", ["true", "false"])
 
 CATALOG = dbutils.widgets.get("catalog")
-SCHEMA = dbutils.widgets.get("schema")
+SCHEMA = dbutils.widgets.get("bronze_schema")
 START = dbutils.widgets.get("start_date")
 END = dbutils.widgets.get("end_date")
 RESET = dbutils.widgets.get("reset") == "true"
 ROOT = f"/Volumes/{CATALOG}/{SCHEMA}/raw_landing"
+spark.sql(f"CREATE SCHEMA IF NOT EXISTS {CATALOG}.{SCHEMA} COMMENT 'VentoGuard bronze: raw landing + Auto Loader ingests'")
+spark.sql(f"CREATE VOLUME IF NOT EXISTS {CATALOG}.{SCHEMA}.raw_landing COMMENT 'Raw landing zone: SCADA, maintenance logs, master data, market prices'")
 print(ROOT, START, END, "reset =", RESET)
 ```
 **Output:**
 ```text
-/Volumes/serverless_stable_7zqte5_catalog/wind_reliability/raw_landing 2026-04-01 2026-10-09 reset = False
+/Volumes/serverless_stable_7zqte5_catalog/ventoguard_bronze/raw_landing 2026-04-01 2026-10-09 reset = False
 ```
 
 ### Cell 3

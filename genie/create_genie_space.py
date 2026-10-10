@@ -9,7 +9,13 @@ import sys
 import uuid
 from pathlib import Path
 
-FQ = "serverless_stable_7zqte5_catalog.wind_reliability"
+CATALOG = "serverless_stable_7zqte5_catalog"
+SILVER = f"{CATALOG}.ventoguard_silver"
+GOLD = f"{CATALOG}.ventoguard_gold"
+
+
+def fq(table: str) -> str:
+    return f"{SILVER if table.startswith('silver_') else GOLD}.{table}"
 
 
 def nid(seed: str) -> str:
@@ -44,24 +50,24 @@ INSTRUCTIONS = [
 EXAMPLES = [
     ("Which wind farm lost the most revenue to unplanned failures?",
      f"SELECT farm_name, count(*) AS failures, round(sum(lost_revenue_eur)) AS lost_revenue_eur, round(sum(repair_cost_eur)) AS repair_cost_eur, "
-     f"round(sum(total_event_cost_eur)) AS total_event_cost_eur FROM {FQ}.gold_failure_history GROUP BY farm_name ORDER BY total_event_cost_eur DESC"),
+     f"round(sum(total_event_cost_eur)) AS total_event_cost_eur FROM {GOLD}.gold_failure_history GROUP BY farm_name ORDER BY total_event_cost_eur DESC"),
     ("What is the total cost of failures by component?",
      f"SELECT component, count(*) AS failures, round(avg(downtime_hours)/24, 1) AS avg_downtime_days, round(sum(total_event_cost_eur)) AS total_event_cost_eur "
-     f"FROM {FQ}.gold_failure_history GROUP BY component ORDER BY total_event_cost_eur DESC"),
+     f"FROM {GOLD}.gold_failure_history GROUP BY component ORDER BY total_event_cost_eur DESC"),
     ("What was technical availability per farm by month?",
      f"SELECT farm_name, date_trunc('MONTH', reading_date) AS month, round(avg(technical_availability) * 100, 2) AS technical_availability_pct "
-     f"FROM {FQ}.gold_farm_daily GROUP BY ALL ORDER BY month, farm_name"),
+     f"FROM {GOLD}.gold_farm_daily GROUP BY ALL ORDER BY month, farm_name"),
     ("Which turbines are currently at risk of failure?",
      f"SELECT turbine_id, farm_name, risk_tier, round(failure_prob_14d * 100, 1) AS failure_prob_pct, likely_component, recommended_window, "
-     f"round(avoidable_cost_if_caught_eur) AS avoidable_cost_if_caught_eur FROM {FQ}.turbine_risk_scores WHERE risk_tier IN ('CRITICAL', 'HIGH') ORDER BY failure_prob_14d DESC"),
+     f"round(avoidable_cost_if_caught_eur) AS avoidable_cost_if_caught_eur FROM {GOLD}.turbine_risk_scores WHERE risk_tier IN ('CRITICAL', 'HIGH') ORDER BY failure_prob_14d DESC"),
     ("How has the failure risk of the riskiest turbine developed over the last 30 days?",
-     f"SELECT h.reading_date, round(h.failure_prob_14d * 100, 1) AS failure_prob_pct FROM {FQ}.turbine_risk_history h "
-     f"WHERE h.turbine_id = (SELECT turbine_id FROM {FQ}.turbine_risk_scores ORDER BY failure_prob_14d DESC LIMIT 1) "
-     f"AND h.reading_date >= (SELECT max(reading_date) FROM {FQ}.turbine_risk_history) - INTERVAL 30 DAYS ORDER BY h.reading_date"),
+     f"SELECT h.reading_date, round(h.failure_prob_14d * 100, 1) AS failure_prob_pct FROM {GOLD}.turbine_risk_history h "
+     f"WHERE h.turbine_id = (SELECT turbine_id FROM {GOLD}.turbine_risk_scores ORDER BY failure_prob_14d DESC LIMIT 1) "
+     f"AND h.reading_date >= (SELECT max(reading_date) FROM {GOLD}.turbine_risk_history) - INTERVAL 30 DAYS ORDER BY h.reading_date"),
     ("Do older gearboxes or a specific supplier fail more often?",
      f"SELECT t.gearbox_supplier, t.farm_name, count(DISTINCT t.turbine_id) AS turbines, count(f.failure_id) AS gearbox_failures, "
      f"round(count(f.failure_id) / count(DISTINCT t.turbine_id) * 100, 1) AS failures_per_100_turbines, round(avg(t.turbine_age_years), 1) AS avg_age_years "
-     f"FROM {FQ}.silver_turbines t LEFT JOIN {FQ}.gold_failure_history f ON f.turbine_id = t.turbine_id AND f.component = 'gearbox' "
+     f"FROM {SILVER}.silver_turbines t LEFT JOIN {GOLD}.gold_failure_history f ON f.turbine_id = t.turbine_id AND f.component = 'gearbox' "
      f"GROUP BY ALL ORDER BY failures_per_100_turbines DESC"),
 ]
 
@@ -75,18 +81,18 @@ SAMPLE_QUESTIONS = [
 
 BENCHMARKS = [
     ("How many turbines are currently HIGH or CRITICAL risk?",
-     f"SELECT count(*) AS turbines FROM {FQ}.turbine_risk_scores WHERE risk_tier IN ('CRITICAL', 'HIGH')"),
+     f"SELECT count(*) AS turbines FROM {GOLD}.turbine_risk_scores WHERE risk_tier IN ('CRITICAL', 'HIGH')"),
     ("What is the total cost of all gearbox failures?",
-     f"SELECT round(sum(total_event_cost_eur)) FROM {FQ}.gold_failure_history WHERE component = 'gearbox'"),
+     f"SELECT round(sum(total_event_cost_eur)) FROM {GOLD}.gold_failure_history WHERE component = 'gearbox'"),
     ("What was the fleet's total lost revenue in September 2026?",
-     f"SELECT round(sum(lost_revenue_eur)) FROM {FQ}.gold_farm_daily WHERE reading_date BETWEEN '2026-09-01' AND '2026-09-30'"),
+     f"SELECT round(sum(lost_revenue_eur)) FROM {GOLD}.gold_farm_daily WHERE reading_date BETWEEN '2026-09-01' AND '2026-09-30'"),
 ]
 
 
 def build() -> dict:
     tables = []
     for t, cols in sorted(TABLES.items()):
-        entry = {"identifier": f"{FQ}.{t}"}
+        entry = {"identifier": fq(t)}
         if cols:
             entry["column_configs"] = sorted([
                 {"column_name": c, "synonyms": syn, **({"enable_format_assistance": True, "enable_entity_matching": True} if cat else {})}
@@ -95,14 +101,14 @@ def build() -> dict:
     return {
         "version": 2,
         "config": {"sample_questions": sorted([{"id": nid("sq" + q), "question": [q]} for q in SAMPLE_QUESTIONS], key=lambda x: x["id"])},
-        "data_sources": {"tables": tables},
+        "data_sources": {"tables": sorted(tables, key=lambda t: t["identifier"])},
         "instructions": {
             "text_instructions": [{"id": nid("instructions"), "content": [s + "\n" for s in INSTRUCTIONS]}],
             "example_question_sqls": sorted([{"id": nid("ex" + q), "question": [q], "sql": [s]} for q, s in EXAMPLES], key=lambda x: x["id"]),
             "join_specs": [{
                 "id": nid("join_risk_turbines"),
-                "left": {"identifier": f"{FQ}.turbine_risk_scores", "alias": "turbine_risk_scores"},
-                "right": {"identifier": f"{FQ}.silver_turbines", "alias": "silver_turbines"},
+                "left": {"identifier": fq("turbine_risk_scores"), "alias": "turbine_risk_scores"},
+                "right": {"identifier": fq("silver_turbines"), "alias": "silver_turbines"},
                 "sql": ["`turbine_risk_scores`.`turbine_id` = `silver_turbines`.`turbine_id`", "--rt=FROM_RELATIONSHIP_TYPE_ONE_TO_ONE--"]}],
         },
         "benchmarks": {"questions": sorted([{"id": nid("bm" + q), "question": [q], "answer": [{"format": "SQL", "content": [s]}]} for q, s in BENCHMARKS],

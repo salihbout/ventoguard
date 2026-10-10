@@ -1,4 +1,4 @@
-# a892cca0-015e-4b12-9cfc-74572aeb9371: executed notebook (task run 75994340528623)
+# 82946628-5fd2-4efc-af6e-1f5ae707c565: executed notebook (task run 996396618687098)
 
 > Exported from the Databricks job run with `databricks jobs export-run`; cell sources and their outputs exactly as executed on serverless compute.
 
@@ -27,12 +27,16 @@
 ### Cell 3
 ```python
 dbutils.widgets.text("catalog", "serverless_stable_7zqte5_catalog")
-dbutils.widgets.text("schema", "wind_reliability")
+dbutils.widgets.text("bronze_schema", "ventoguard_bronze")
+dbutils.widgets.text("silver_schema", "ventoguard_silver")
+dbutils.widgets.text("gold_schema", "ventoguard_gold")
 dbutils.widgets.text("llm_endpoint", "databricks-claude-sonnet-4-5")
 dbutils.widgets.text("llm_endpoint_fast", "databricks-claude-haiku-4-5")
-CATALOG, SCHEMA = dbutils.widgets.get("catalog"), dbutils.widgets.get("schema")
+CATALOG = dbutils.widgets.get("catalog")
+BRONZE_SCHEMA, SILVER_SCHEMA, SCHEMA = (dbutils.widgets.get(k) for k in ("bronze_schema", "silver_schema", "gold_schema"))
+SILVER = f"{CATALOG}.{SILVER_SCHEMA}"
 LLM, LLM_FAST = dbutils.widgets.get("llm_endpoint"), dbutils.widgets.get("llm_endpoint_fast")
-FQ = f"{CATALOG}.{SCHEMA}"
+FQ = f"{CATALOG}.{SCHEMA}"  # gold schema: features, model, scores and AI outputs are written here
 MODEL_NAME = f"{FQ}.turbine_failure_risk"
 spark.sql(f"USE CATALOG {CATALOG}"); spark.sql(f"USE SCHEMA {SCHEMA}")
 ```
@@ -66,7 +70,7 @@ spark.sql(f"COMMENT ON TABLE {FQ}.turbine_risk_history IS 'Daily 14-day failure 
 ```
 **Output:**
 ```text
-Scoring with serverless_stable_7zqte5_catalog.wind_reliability.turbine_failure_risk v3 (@champion), 23 features
+Scoring with serverless_stable_7zqte5_catalog.ventoguard_gold.turbine_failure_risk v3 (@champion), 23 features
 ```
 
 ## 2 · Latest-day risk with component attribution and € value at stake
@@ -119,7 +123,7 @@ cur["risk_tier"] = pd.cut(cur.failure_prob_14d, [-1, 0.10, 0.30, 0.60, 1.01], la
 cur.loc[cur.technical_availability < 0.5, "risk_tier"] = "DOWN"
 cur["recommended_window"] = cur.risk_tier.map({"CRITICAL": "Act within 72 h", "HIGH": "Plan within 7 days", "MEDIUM": "Inspect at next visit", "LOW": "Routine", "DOWN": "In repair"})
 
-turb = spark.table(f"{FQ}.silver_turbines").select("turbine_id", "farm_name", "model", "latitude", "longitude", "turbine_age_years", "gearbox_supplier").toPandas()
+turb = spark.table(f"{SILVER}.silver_turbines").select("turbine_id", "farm_name", "model", "latitude", "longitude", "turbine_age_years", "gearbox_supplier").toPandas()
 out = cur.merge(turb, on="turbine_id", suffixes=("", "_t"))
 cols = ["turbine_id", "farm_id", "farm_name", "model", "latitude", "longitude", "turbine_age_years", "gearbox_supplier",
         "reading_date", "failure_prob_14d", "risk_tier", "recommended_window", "likely_component", "anomaly_zscore", "top_signals",
@@ -165,7 +169,7 @@ Did today's risk board catch the ones that were already degrading?
 
 ### Cell 10
 ```python
-gt = pd.read_csv(f"/Volumes/{CATALOG}/{SCHEMA}/raw_landing/_ground_truth/future_failures.csv", parse_dates=["degradation_start_ts", "failure_ts"])
+gt = pd.read_csv(f"/Volumes/{CATALOG}/{BRONZE_SCHEMA}/raw_landing/_ground_truth/future_failures.csv", parse_dates=["degradation_start_ts", "failure_ts"])
 gt["degrading_at_cutoff"] = gt.degradation_start_ts < pd.Timestamp(latest_date) + pd.Timedelta(days=1)
 chk = gt.merge(out[["turbine_id", "risk_tier", "failure_prob_14d", "likely_component"]], on="turbine_id", how="left")
 chk["days_until_failure"] = (chk.failure_ts - pd.Timestamp(latest_date)).dt.days
@@ -200,7 +204,7 @@ COMMENT 'Technician notes enriched by an LLM (ai_query): component, severity 1-5
 AS
 WITH src AS (
   SELECT log_id, turbine_id, created_ts, category, technician_name, note_text
-  FROM {FQ}.silver_maintenance_logs
+  FROM {SILVER}.silver_maintenance_logs
 ),
 llm AS (
   SELECT *, ai_query(
@@ -228,7 +232,7 @@ display(spark.sql(f"""SELECT ai_component, count(*) notes, round(avg(ai_severity
 |---|---|---|---|---|
 | none | 191 | 1.0 | 0 | 0 |
 | gearbox | 101 | 1.76 | 14 | 0 |
-| pitch_hydraulics | 74 | 1.16 | 4 | 0 |
+| pitch_hydraulics | 74 | 1.14 | 4 | 0 |
 | blades | 65 | 1.0 | 0 | 0 |
 | tower_safety | 63 | 1.0 | 0 | 0 |
 | generator_bearing | 15 | 2.0 | 8 | 0 |
@@ -242,16 +246,16 @@ display(spark.sql(f"SELECT log_id, turbine_id, note_text, ai_component, ai_sever
 
 | log_id | turbine_id | note_text | ai_component | ai_severity | ai_failure_precursor | ai_summary_en |
 |---|---|---|---|---|---|---|
-| WO-00508 | F03-T07 | Customer remote alarm: gearbox oil temperature high warnings during full load. On site noticed faint metallic whine from intermediate stage. Oil sample sent to lab. | gearbox | 4 | True | High gearbox oil temperature and metallic noise indicate potential bearing wear or gear damage. |
-| WO-00509 | F03-T07 | Ölprobe Getriebe: erhöhter Eisengehalt (Fe 74 ppm) und Partikel auf Magnetstopfen. Leichte Geräusche bei Volllast. Empfehle Endoskopie. | gearbox | 3 | True | Oil analysis shows elevated iron content and particles. Noise under full load detected. |
-| WO-00507 | F03-T09 | Customer remote alarm: gearbox oil temperature high warnings during full load. On site noticed faint metallic whine from intermediate stage. Oil sample sent to lab. | gearbox | 4 | True | High gearbox oil temperature with metallic whine indicates potential bearing wear or gear damage. |
-| WO-00478 | F01-T27 | Hauptlagerschaden bestätigt. Anlage außer Betrieb, Kran und Rotordemontage erforderlich. | main_bearing | 5 | False | Main bearing damage confirmed. Turbine offline, crane and rotor removal required. |
+| WO-00508 | F03-T07 | Customer remote alarm: gearbox oil temperature high warnings during full load. On site noticed faint metallic whine from intermediate stage. Oil sample sent to lab. | gearbox | 4 | True | High gearbox oil temperature with metallic whine from intermediate stage. Oil analysis pending. |
+| WO-00509 | F03-T07 | Ölprobe Getriebe: erhöhter Eisengehalt (Fe 74 ppm) und Partikel auf Magnetstopfen. Leichte Geräusche bei Volllast. Empfehle Endoskopie. | gearbox | 3 | True | Elevated iron content and particles in oil. Recommend endoscopy inspection before failure. |
+| WO-00507 | F03-T09 | Customer remote alarm: gearbox oil temperature high warnings during full load. On site noticed faint metallic whine from intermediate stage. Oil sample sent to lab. | gearbox | 4 | True | Gearbox high oil temperature with metallic whine from intermediate stage. Oil analysis pending. |
+| WO-00478 | F01-T27 | Hauptlagerschaden bestätigt. Anlage außer Betrieb, Kran und Rotordemontage erforderlich. | main_bearing | 5 | False | Main bearing damage confirmed. Turbine shutdown, crane and rotor disassembly required. |
 | WO-00502 | F01-T25 | Hydraulikdruck Pitch schwankend, Leckage an Achse 3 festgestellt. Dichtungen bestellt. | pitch_hydraulics | 3 | True | Fluctuating pitch hydraulic pressure with leak at axis 3. Seals ordered. |
-| WO-00501 | F01-T25 | Pitch hydraulic pressure drops during gusts, small oil leak at axis 2 cylinder. Topped up hydraulic oil. | pitch_hydraulics | 3 | True | Pitch hydraulic pressure drop during gusts with oil leak at cylinder axis 2. Oil topped up. |
-| WO-00475 | F01-T21 | Gearbox failure confirmed (HSS bearing seizure). Turbine stopped. Crane mobilisation requested, exchange gearbox ordered. Expected downtime 5-6 weeks. | gearbox | 5 | False | HSS bearing seizure confirmed. Gearbox failure. Crane mobilisation and exchange ordered. 5-6 weeks downtime. |
-| WO-00473 | F03-T28 | Gearbox failure confirmed (HSS bearing seizure). Turbine stopped. Crane mobilisation requested, exchange gearbox ordered. Expected downtime 5-6 weeks. | gearbox | 5 | False | HSS bearing seizure confirmed. Gearbox failed. Crane and replacement ordered. 5-6 weeks downtime. |
-| WO-00474 | F01-T21 | Customer remote alarm: gearbox oil temperature high warnings during full load. On site noticed faint metallic whine from intermediate stage. Oil sample sent to lab. | gearbox | 4 | True | High gearbox oil temperature with metallic whine from intermediate stage. Oil analysis pending. |
-| WO-00458 | F01-T06 | Gearbox failure confirmed (HSS bearing seizure). Turbine stopped. Crane mobilisation requested, exchange gearbox ordered. Expected downtime 5-6 weeks. | gearbox | 5 | False | HSS bearing seizure confirmed. Gearbox failed. Crane and replacement ordered. 5-6 weeks downtime. |
+| WO-00501 | F01-T25 | Pitch hydraulic pressure drops during gusts, small oil leak at axis 2 cylinder. Topped up hydraulic oil. | pitch_hydraulics | 3 | True | Pitch hydraulic pressure drops during gusts with small oil leak at axis 2 cylinder. Oil topped up. |
+| WO-00475 | F01-T21 | Gearbox failure confirmed (HSS bearing seizure). Turbine stopped. Crane mobilisation requested, exchange gearbox ordered. Expected downtime 5-6 weeks. | gearbox | 5 | False | HSS bearing seizure confirmed. Gearbox failed. Exchange ordered, 5-6 weeks downtime. |
+| WO-00473 | F03-T28 | Gearbox failure confirmed (HSS bearing seizure). Turbine stopped. Crane mobilisation requested, exchange gearbox ordered. Expected downtime 5-6 weeks. | gearbox | 5 | False | Gearbox HSS bearing seizure confirmed. Turbine stopped. Gearbox exchange ordered, 5-6 weeks downtime. |
+| WO-00474 | F01-T21 | Customer remote alarm: gearbox oil temperature high warnings during full load. On site noticed faint metallic whine from intermediate stage. Oil sample sent to lab. | gearbox | 4 | True | Gearbox high oil temperature with metallic whine. Oil analysis pending. Potential bearing wear. |
+| WO-00458 | F01-T06 | Gearbox failure confirmed (HSS bearing seizure). Turbine stopped. Crane mobilisation requested, exchange gearbox ordered. Expected downtime 5-6 weeks. | gearbox | 5 | False | Gearbox HSS bearing seized. Turbine stopped. Gearbox exchange ordered, 5-6 weeks downtime. |
 
 ## 4 · GenAI maintenance briefs for at-risk turbines (Claude via `ai_query`)
 
@@ -309,13 +313,13 @@ display(spark.sql(f"SELECT turbine_id, risk_tier, failure_prob_14d, headline, di
 
 | turbine_id | risk_tier | failure_prob_14d | headline | diagnosis | recommended_action | urgency_days | business_case | ai_error |
 |---|---|---|---|---|---|---|---|---|
-| F03-T07 | CRITICAL | 0.9953 | F03-T07 Gearbox Bearing Failure Imminent Within Days | Gearbox bearing temperature is elevated +6.09°C above fleet average and vibration increased +1.58mm/s, consistent with technician observations of metallic noise and oil analysis showing elevated iron content and particles on 2026-10-03 and 2026-10-04. Power curve ratio has degraded -0.05 vs fleet over 7 days, indicating mechanical deterioration. | Stop turbine immediately to prevent catastrophic gearbox failure ; Schedule planned gearbox replacement with Hansa Drives parts ; Conduct borescope inspection and final oil sample before removal | 2 | Planned intervention avoids EUR 206,523 in additional damage costs versus unplanned failure (EUR 385,000 corrective vs EUR 205,000 planned repair). | null |
-| F03-T09 | CRITICAL | 0.9912 | F03-T09 Gearbox Bearing Failure Imminent Within Two Weeks | Gearbox vibration elevated +1.95 mm/s above fleet average, bearing temperature +7.51°C above fleet, and power-curve ratio degraded by -0.06 over the past 7 days. Technician observed high oil temperature with metallic whine on 2026-10-02, confirming bearing wear or gear damage. | Stop turbine immediately to prevent catastrophic gearbox failure ; Schedule planned gearbox replacement with Hansa Drives-compatible unit ; Arrange heavy-lift crane and certified gearbox technician crew | 2 | Planned intervention avoids EUR 207,747 in additional costs versus unplanned failure (EUR 385,000 corrective vs EUR 205,000 planned repair). | null |
-| F01-T20 | CRITICAL | 0.9578 | F01-T20 Gearbox Critical: 95.8% Failure Risk Within 14 Days | Gearbox shows elevated vibration (+0.60 mm/s above fleet average) and bearing temperature (+2.44°C above fleet average) over the past 7 days, indicating imminent bearing or gear mesh failure. The 14-day failure probability model rates this turbine CRITICAL at 95.8% with gearbox as the most likely failing component. | Stop turbine immediately and lock out ; Mobilize gearbox replacement crew and crane within 48 hours ; Execute planned gearbox swap before catastrophic failure | 2 | Planned intervention avoids EUR 224,811 in additional damage costs versus waiting for unplanned failure (EUR 385,000 corrective vs EUR 205,000 planned repair). | null |
+| F03-T07 | CRITICAL | 0.9953 | F03-T07 Gearbox Imminent Failure: 99.5% Probability Within 14 Days | Gearbox intermediate stage shows critical degradation with vibration elevated +1.58mm/s, bearing temperature +6.09°C above fleet average, and power curve ratio reduced by -0.05. Technician reports confirm metallic whine, high oil temperature, and elevated iron content with particles in oil. | Stop turbine immediately to prevent catastrophic failure ; Perform endoscopy inspection of gearbox intermediate stage ; Schedule planned gearbox replacement with Hansa Drives unit | 1 | Planned intervention avoids EUR 206,523 in additional costs versus unplanned failure (EUR 385,000 corrective vs EUR 205,000 planned repair). | null |
+| F03-T09 | CRITICAL | 0.9912 | F03-T09 gearbox imminent failure: 99.1% probability within 14 days | Gearbox intermediate stage shows critical degradation with vibration elevated +1.95 mm/s, bearing temperature +7.51°C above fleet average, and power curve ratio reduced by 0.06 over the past 7 days. Technician reported metallic whine and high oil temperature on 2026-10-02, confirming advanced bearing distress. | Stop turbine immediately to prevent catastrophic failure ; Mobilize Hansa Drives-certified crew for planned gearbox replacement ; Expedite oil analysis to confirm contamination level | 2 | Planned intervention within 2 days avoids EUR 207,747 in additional damage costs versus waiting for unplanned catastrophic failure. | null |
+| F01-T20 | CRITICAL | 0.9578 | F01-T20 Gearbox Critical: 95.8% Failure Risk Within 14 Days | Gearbox shows elevated vibration (+0.60mm/s above fleet average) and bearing temperature (+2.44°C above fleet) over the past 7 days, indicating imminent bearing or gear mesh failure. The 14-day failure probability model rates this turbine CRITICAL at 95.8% despite iron content at 18 ppm on 2026-09-01. | Schedule immediate gearbox replacement within 3 days ; Procure Hansa Drives gearbox or exchange unit ; Coordinate crane and specialist gearbox crew | 3 | Planned intervention avoids EUR 224,811 in additional costs compared to unplanned failure (EUR 385,000 corrective vs EUR 205,000 planned plus EUR 1,446 daily revenue loss). | null |
 | F04-T16 | HIGH | 0.5529 | F04-T16 Main Bearing Failure Predicted Within 14 Days | The predictive model indicates 55.3% failure probability for the main bearing within 14 days. Main bearing temperature is elevated +0.35°C versus fleet average over the past 7 days, while power curve and pitch pressure remain normal. | Schedule immediate main bearing inspection and vibration analysis ; Prepare main bearing replacement parts and specialized crew ; Execute planned bearing swap within 7 days to avoid unplanned failure | 7 | Planned intervention avoids EUR 166,517 in additional costs versus waiting for unplanned failure (EUR 310,000 corrective vs EUR 175,000 planned plus lost revenue). | null |
-| F01-T06 | MEDIUM | 0.2516 | F01-T06 Generator Bearing Elevated Temperature, 25% Failure Risk | Generator bearing temperature is +0.26°C above fleet average over 7 days, with gearbox bearing and oil temperatures also elevated (+0.30°C and +0.19°C respectively). Model predicts 25.2% failure probability within 14 days, identifying generator bearing as most likely failure component. | Schedule borescope inspection of generator bearing within 5 days ; Arrange planned generator bearing replacement with Hansa Drives gearbox compatibility check ; Monitor bearing temperature daily until intervention | 7 | Planned intervention avoids EUR 67,006 in additional costs versus unplanned failure (EUR 92,000 corrective vs EUR 38,000 planned, plus EUR 1,445 daily revenue loss). | null |
-| F03-T14 | MEDIUM | 0.1439 | F03-T14 Pitch Hydraulic Pressure Drop Indicates Medium Failure Risk | Pitch hydraulic pressure has decreased by 0.12 bar relative to fleet average over the past 7 days, while power curve and gearbox vibration remain normal. The 14-day failure probability model flags pitch hydraulics as the most likely failure component at 14.4% risk. | Schedule pitch hydraulic system inspection within 10 days ; Prepare pitch hydraulic pump and accumulator replacement parts ; Plan controlled turbine shutdown for preventive intervention | 10 | Planned intervention avoids EUR 19,075 in additional costs compared to unplanned failure (EUR 26,000 corrective vs EUR 9,000 planned repair). | null |
-| F02-T07 | MEDIUM | 0.1032 | F02-T07 Pitch Hydraulics Degradation Detected, 10% Failure Risk | Pitch hydraulic pressure has dropped 0.17 bar below fleet average over the past 7 days, indicating potential accumulator or seal degradation in the pitch system. Despite recent verification of accumulator pre-charge in August, the pressure deviation suggests progressive deterioration requiring intervention. | Schedule borescope inspection of pitch hydraulic cylinders and seals ; Verify accumulator pre-charge pressure and nitrogen loss rate on all axes ; Prepare pitch hydraulic component replacement if leak confirmed | 10 | Planned intervention avoids EUR 23,610 in additional costs compared to unplanned failure (EUR 26,000 corrective vs EUR 9,000 planned repair). | null |
+| F01-T06 | MEDIUM | 0.2516 | F01-T06 Generator Bearing Elevated Temperature, 25% Failure Risk | Generator bearing temperature is +0.26°C above fleet average over 7 days, with gearbox bearing and oil temperatures also elevated (+0.30°C and +0.19°C respectively). Model predicts 25.2% failure probability within 14 days, identifying generator bearing as most likely failure component. | Schedule borescope inspection of generator bearing within 5 days ; Arrange planned generator bearing replacement with Hansa Drives gearbox compatibility check ; Monitor bearing temperature daily until intervention | 7 | Planned intervention avoids EUR 67,006 in additional costs versus unplanned failure (EUR 92,000 corrective vs EUR 38,000 planned repair, plus EUR 1,445 daily revenue loss). | null |
+| F03-T14 | MEDIUM | 0.1439 | F03-T14 Pitch Hydraulic Pressure Drop Indicates Medium Failure Risk | Pitch hydraulic pressure has decreased by 0.12 bar relative to fleet average over the past 7 days. The 14-day failure probability model flags pitch hydraulics as the most likely failure component at 14.4% risk. | Schedule pitch hydraulic system inspection within 10 days ; Replace or refill hydraulic fluid and check for leaks ; Monitor pressure daily until intervention completed | 10 | Planned intervention avoids EUR 19,075 in additional costs compared to unplanned failure (EUR 26,000 corrective vs EUR 9,000 planned repair). | null |
+| F02-T07 | MEDIUM | 0.1032 | F02-T07 Pitch Hydraulics Degradation Detected, 10% Failure Risk | Pitch hydraulic pressure has dropped 0.17 bar below fleet average over the past 7 days, indicating potential accumulator or seal degradation. The 14-day failure probability model flags pitch hydraulics at 10.3% risk despite recent inspection clearance. | Schedule pitch hydraulic system inspection within 5 days ; Verify accumulator pre-charge and identify pressure loss source ; Prepare pitch component replacement if seals or valves show wear | 5 | Planned intervention avoids EUR 23,610 in unplanned failure costs (EUR 26,000 corrective vs EUR 9,000 planned) plus EUR 2,644 daily revenue loss. | null |
 
 ### Cell 16
 ```python

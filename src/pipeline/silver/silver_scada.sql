@@ -1,5 +1,5 @@
 -- Silver: typed, validated telemetry. Sensor faults and impossible readings are dropped and counted by expectations.
-CREATE OR REFRESH STREAMING TABLE silver_scada (
+CREATE OR REFRESH STREAMING TABLE ${catalog}.${silver_schema}.silver_scada (
   CONSTRAINT valid_turbine EXPECT (turbine_id IS NOT NULL) ON VIOLATION DROP ROW,
   CONSTRAINT valid_timestamp EXPECT (reading_ts IS NOT NULL) ON VIOLATION DROP ROW,
   CONSTRAINT power_present EXPECT (power_kw IS NOT NULL) ON VIOLATION DROP ROW,

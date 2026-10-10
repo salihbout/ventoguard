@@ -30,15 +30,28 @@ dispatcher-ready brief and turns each alert into a planned work order.
 | Let asset managers answer their own questions | **Genie space** | NL → SQL over governed gold/serving tables, with instructions, examples and benchmarks |
 | Put it in front of the reliability team | **Databricks App** (React + FastAPI) | Risk map, AI brief, work orders and Genie chat in one workflow |
 
-## End-to-end journey (all stages integrated in one governed schema)
+## Unity Catalog layout
+
+Everything sits in the workspace's default ("main") catalog `serverless_stable_7zqte5_catalog`, with one schema per layer:
+
+| Schema | Contents | Read by |
+|---|---|---|
+| `ventoguard_bronze` | Volume `raw_landing` (raw JSON/CSV) + 5 Auto Loader streaming tables `bronze_*` | data engineering |
+| `ventoguard_silver` | 5 validated tables `silver_*` (Lakeflow expectations) | data engineering, data science |
+| `ventoguard_gold` | `gold_turbine_daily`, `gold_farm_daily`, `gold_failure_history`, `turbine_health_features`, model `turbine_failure_risk`, `turbine_risk_scores` / `_history`, `maintenance_log_insights`, `turbine_ai_briefs`, mask function | analysts, Genie, the app |
+| `ventoguard_serving` | Lakebase synced tables (UC side). Postgres schema of the same name | the app's service principal |
+
+The bundle target is `demo` (`databricks bundle deploy -t demo --profile demo`). One pipeline publishes bronze to its default schema, and silver/gold to theirs via fully-qualified names.
+
+## End-to-end journey (all stages integrated, governed in one catalog)
 
 ```
  Raw landing (UC Volume)           Lakeflow Spark Declarative Pipeline            ML + GenAI                         Serving
  ───────────────────────           ───────────────────────────────────            ──────────                         ───────
  scada/*.json  (3.3 M rows) ─┐     bronze_* (Auto Loader, STREAM read_files)       turbine_health_features           Lakebase Postgres (synced tables)
- maintenance_logs/*.json     ├──►  silver_* (expectations: drop 999°C, −1 m/s…) ──► turbine_failure_risk @champion ─► vg_serving.turbine_risk_scores
- turbines.csv                │     gold_turbine_daily / gold_farm_daily /           turbine_risk_scores / history     vg_serving.turbine_ai_briefs
- failure_events.csv          │     gold_failure_history (lost MWh & €)              ai_query → maintenance_log_       vg_serving.gold_turbine_daily
+ maintenance_logs/*.json     ├──►  silver_* (expectations: drop 999°C, −1 m/s…) ──► turbine_failure_risk @champion ─► ventoguard_serving.turbine_risk_scores
+ turbines.csv                │     gold_turbine_daily / gold_farm_daily /           turbine_risk_scores / history     ventoguard_serving.turbine_ai_briefs
+ failure_events.csv          │     gold_failure_history (lost MWh & €)              ai_query → maintenance_log_       ventoguard_serving.gold_turbine_daily
  market_prices.csv          ─┘                                                       insights, turbine_ai_briefs      vg_ops.work_orders (app writes, OLTP)
                                    └────────────── Unity Catalog: tags · GDPR column mask · lineage · grants · model registry ──────────────┘
                                                                                                     Genie space ◄── Databricks App "ventoguard" ──► Lakebase
@@ -47,11 +60,11 @@ dispatcher-ready brief and turns each alert into a planned work order.
 | Stage | What was built | Where |
 |---|---|---|
 | **Lakeflow** (ingest) | Serverless declarative pipeline `ventoguard-medallion`: 5 Auto Loader bronze streaming tables, 5 silver tables with data-quality expectations, 3 gold materialized views. Orchestrated by Lakeflow Job `ventoguard-end-to-end` (6 tasks, daily 05:00 CET schedule). | [`src/pipeline/`](src/pipeline), [`resources/`](resources), [`databricks.yml`](databricks.yml) |
-| **Unity Catalog** (govern) | Single schema `serverless_stable_7zqte5_catalog.wind_reliability`; layer, certification and AI tags; `class.name` PII classification; `mask_person_name` column mask (GDPR) on technician names; tags follow the account's governed tag policies; grants for the app SP; lineage and expectation results read back from system tables / event log. | [`src/notebooks/04_uc_governance.py`](src/notebooks/04_uc_governance.py) |
-| **Lakebase** (operational serving) | Lakebase Autoscaling project `ventoguard` (PG 17). 3 synced tables (UC → Postgres `vg_serving`), refreshed by the job; app-owned transactional table `vg_ops.work_orders`. | [`src/notebooks/05_refresh_lakebase.py`](src/notebooks/05_refresh_lakebase.py), [`scripts/setup_serving.sh`](scripts/setup_serving.sh) |
+| **Unity Catalog** (govern) | Layer schemas `ventoguard_bronze` / `_silver` / `_gold` / `_serving` in the default catalog; layer, certification and AI tags; `class.name` PII classification; `mask_person_name` column mask (GDPR) on technician names; tags follow the account's governed tag policies; grants for the app SP; lineage and expectation results read back from system tables / event log. | [`src/notebooks/04_uc_governance.py`](src/notebooks/04_uc_governance.py) |
+| **Lakebase** (operational serving) | Lakebase Autoscaling project `ventoguard` (PG 17). 3 synced tables (UC `ventoguard_gold` → Postgres `ventoguard_serving`), refreshed by the job; app-owned transactional table `vg_ops.work_orders`. | [`src/notebooks/05_refresh_lakebase.py`](src/notebooks/05_refresh_lakebase.py), [`scripts/setup_serving.sh`](scripts/setup_serving.sh) |
 | **ML** | Fleet-relative health features → `HistGradientBoostingClassifier` (14-day horizon, time-split back-test), tracked in MLflow, registered in UC as `turbine_failure_risk` with a quality gate on the `@champion` alias; batch scoring + € cost model. | [`02_train_failure_model.py`](src/notebooks/02_train_failure_model.py), [`03_score_and_genai.py`](src/notebooks/03_score_and_genai.py) |
 | **GenAI** | `ai_query` (Claude Haiku) extracts component / severity / precursor / English summary from 519 German+English technician notes; `ai_query` (Claude Sonnet) writes grounded maintenance briefs for at-risk turbines. | [`03_score_and_genai.py`](src/notebooks/03_score_and_genai.py) |
-| **Genie Agent** | Genie space *VentoGuard Reliability* (`01f1c4c082b419f88ccebeab3614bc27`) over 7 governed tables, with instructions, 6 example SQLs (all validated), join spec and 3 benchmarks; embedded in the app through the Conversation API. | [`genie/`](genie) |
+| **Genie Agent** | Genie space *VentoGuard Reliability* (`01f1c4d953cb132e838ecd828813a354`) over 7 governed tables, with instructions, 6 example SQLs (all validated), join spec and 3 benchmarks; embedded in the app through the Conversation API. | [`genie/`](genie) |
 | **Databricks App** | App `ventoguard`. **React** front end (Vite + TypeScript + Du Bois `@databricks/design-system`, Databricks brand tokens) and **FastAPI** back end. Four screens: *Fleet risk* (KPI strip, farm map, risk board), *Turbine* (AI brief, 45-day drivetrain trends, plan-the-repair form), *Work orders* (editable status, written to Lakebase), *Ask the fleet* (Genie chat that shows its SQL and result table). | [`app_ui/`](app_ui) (React source) → built into [`app/static`](app/static); [`app/backend/`](app/backend) (FastAPI) |
 
 ## Execution evidence (text, committed)
@@ -59,7 +72,7 @@ dispatcher-ready brief and turns each alert into a planned work order.
 | File | What it shows |
 |---|---|
 | [`evidence/notebook_runs/`](evidence/notebook_runs) | Every job notebook **with its cell outputs**, exported from the actual job run (`scripts/export_run_evidence.py` decodes `jobs export-run`) |
-| [`evidence/job_run.json`](evidence/job_run.json) | Final Lakeflow Job run: **all 6 tasks SUCCESS on the first attempt**, with durations |
+| [`evidence/job_run.json`](evidence/job_run.json) | Final Lakeflow Job run (bundle target `demo`, layer-schema parameters): **all 6 tasks SUCCESS on the first attempt**, with durations |
 | [`evidence/queries/pipeline_expectations.sql`](evidence/queries/pipeline_expectations.sql) → [result](evidence/queries/pipeline_expectations.result.txt) | Lakeflow expectation pass/fail counts from the pipeline event log (7,717 bad SCADA rows dropped) |
 | [`evidence/queries/`](evidence/queries) | Verification SQL + results: table inventory, value case, failure costs, risk board, AI outputs |
 | [`evidence/lakebase.txt`](evidence/lakebase.txt) | `psql` session against Lakebase: synced tables, risk board query, work orders written by the app |
@@ -69,10 +82,10 @@ dispatcher-ready brief and turns each alert into a planned work order.
 ## Reproduce
 
 ```bash
-databricks bundle deploy --profile <profile>
-databricks bundle run ventoguard_end_to_end --profile <profile>   # first run: the refresh_lakebase task needs step 2
+databricks bundle deploy -t demo --profile demo                    # creates job + pipeline; schemas are created by the setup below / generator
+databricks bundle run ventoguard_end_to_end -t demo --profile demo   # first run: the refresh_lakebase task needs step 2
 ./scripts/setup_serving.sh <profile> <warehouse_id>               # Lakebase synced tables, Genie space, React build, app deploy, grants
-databricks bundle run ventoguard_end_to_end --profile <profile>   # full run incl. Lakebase refresh
+databricks bundle run ventoguard_end_to_end -t demo --profile demo   # full run incl. Lakebase refresh
 
 # evidence
 python scripts/export_run_evidence.py <profile> evidence/notebook_runs <name>=<task_run_id> ...

@@ -3,9 +3,17 @@ bundle:
 
 variables:
   catalog:
+    description: Workspace default ("main") catalog
     default: serverless_stable_7zqte5_catalog
-  schema:
-    default: wind_reliability
+  bronze_schema:
+    default: ventoguard_bronze
+  silver_schema:
+    default: ventoguard_silver
+  gold_schema:
+    default: ventoguard_gold
+  serving_schema:
+    description: Lakebase synced tables (UC side), refreshed by the job
+    default: ventoguard_serving
   llm_endpoint:
     default: databricks-claude-sonnet-4-5
   llm_endpoint_fast:
@@ -15,13 +23,11 @@ include:
   - resources/*.yml
 
 targets:
-  dev:
+  demo:
     mode: development
     default: true
     workspace:
       host: https://fevm-serverless-stable-7zqte5.cloud.databricks.com
-  prod:
-    mode: production
-    workspace:
-      host: https://fevm-serverless-stable-7zqte5.cloud.databricks.com
-      root_path: /Workspace/Users/${workspace.current_user.userName}/.bundle/${bundle.name}/prod
+      root_path: /Workspace/Users/${workspace.current_user.userName}/.bundle/${bundle.name}/demo
+    presets:
+      name_prefix: "[demo ${workspace.current_user.short_name}] "

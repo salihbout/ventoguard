@@ -21,9 +21,13 @@
 # COMMAND ----------
 
 dbutils.widgets.text("catalog", "serverless_stable_7zqte5_catalog")
-dbutils.widgets.text("schema", "wind_reliability")
-CATALOG, SCHEMA = dbutils.widgets.get("catalog"), dbutils.widgets.get("schema")
-FQ = f"{CATALOG}.{SCHEMA}"
+dbutils.widgets.text("bronze_schema", "ventoguard_bronze")
+dbutils.widgets.text("silver_schema", "ventoguard_silver")
+dbutils.widgets.text("gold_schema", "ventoguard_gold")
+CATALOG = dbutils.widgets.get("catalog")
+BRONZE_SCHEMA, SILVER_SCHEMA, SCHEMA = (dbutils.widgets.get(k) for k in ("bronze_schema", "silver_schema", "gold_schema"))
+SILVER = f"{CATALOG}.{SILVER_SCHEMA}"
+FQ = f"{CATALOG}.{SCHEMA}"  # gold schema: features, model, scores and AI outputs are written here
 MODEL_NAME = f"{FQ}.turbine_failure_risk"
 HORIZON_DAYS = 14
 TEST_START = "2026-08-01"
@@ -38,7 +42,7 @@ spark.sql(f"USE CATALOG {CATALOG}"); spark.sql(f"USE SCHEMA {SCHEMA}")
 features_sql = f"""
 WITH d AS (
   SELECT g.*, t.turbine_age_years, t.gearbox_supplier, t.rated_power_kw
-  FROM {FQ}.gold_turbine_daily g JOIN {FQ}.silver_turbines t USING (turbine_id)
+  FROM {FQ}.gold_turbine_daily g JOIN {SILVER}.silver_turbines t USING (turbine_id)
 ),
 fleet AS (  -- fleet reference: same model, same day, healthy-running turbines only
   SELECT model, reading_date,
@@ -102,11 +106,11 @@ print(spark.table(f"{FQ}.turbine_health_features").count(), "feature rows")
 
 labeled = spark.sql(f"""
 SELECT f.*,
-  CASE WHEN EXISTS (SELECT 1 FROM {FQ}.silver_failure_events e
+  CASE WHEN EXISTS (SELECT 1 FROM {SILVER}.silver_failure_events e
                     WHERE e.turbine_id = f.turbine_id
                       AND to_date(e.failure_ts) >  f.reading_date
                       AND to_date(e.failure_ts) <= date_add(f.reading_date, {HORIZON_DAYS})) THEN 1 ELSE 0 END AS label,
-  (SELECT min(to_date(e.failure_ts)) FROM {FQ}.silver_failure_events e
+  (SELECT min(to_date(e.failure_ts)) FROM {SILVER}.silver_failure_events e
     WHERE e.turbine_id = f.turbine_id AND to_date(e.failure_ts) > f.reading_date) AS next_failure_date
 FROM {FQ}.turbine_health_features f
 WHERE f.technical_availability > 0.5         -- exclude days the turbine is already down
@@ -158,7 +162,7 @@ with mlflow.start_run(run_name="hgb_14d_failure_risk") as run:
     }
 
     # Business-level back-test: of the failures in the test window, how many were flagged in advance, and how early?
-    fails = spark.sql(f"SELECT turbine_id, to_date(failure_ts) AS fdate, component FROM {FQ}.silver_failure_events WHERE failure_ts >= '{TEST_START}'").toPandas()
+    fails = spark.sql(f"SELECT turbine_id, to_date(failure_ts) AS fdate, component FROM {SILVER}.silver_failure_events WHERE failure_ts >= '{TEST_START}'").toPandas()
     fails["fdate"] = pd.to_datetime(fails["fdate"])
     rows = []
     for _, f in fails.iterrows():

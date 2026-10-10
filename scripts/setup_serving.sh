@@ -5,19 +5,20 @@
 #   ./scripts/setup_serving.sh <profile> <warehouse_id>
 set -euo pipefail
 P=${1:?profile}; WH=${2:?warehouse_id}
-C=serverless_stable_7zqte5_catalog; S=wind_reliability; SERVING=vg_serving
+C=serverless_stable_7zqte5_catalog; SERVING=ventoguard_serving
+BRONZE=ventoguard_bronze; SILVER=ventoguard_silver; GOLD=ventoguard_gold
 PROJECT=ventoguard; BRANCH=projects/$PROJECT/branches/production; EP=$BRANCH/endpoints/primary
 
 # 1. Lakebase Autoscaling project (production branch + primary endpoint are auto-created)
 databricks postgres get-project projects/$PROJECT --profile $P >/dev/null 2>&1 || \
   databricks postgres create-project $PROJECT --json '{"spec": {"display_name": "VentoGuard Wind Reliability", "pg_version": 17}}' --profile $P
 
-# 2. Synced tables: UC Delta -> Lakebase Postgres (schema vg_serving). Snapshot mode; refreshed by job task 05.
+# 2. Synced tables: UC Delta -> Lakebase Postgres (schema ventoguard_serving). Snapshot mode; refreshed by job task 05.
 databricks experimental aitools tools query "CREATE SCHEMA IF NOT EXISTS $C.$SERVING" --profile $P
 sync() {  # <table> <pk-json-array>
   databricks postgres get-synced-table synced_tables/$C.$SERVING.$1 --profile $P >/dev/null 2>&1 && return
   databricks postgres create-synced-table $C.$SERVING.$1 --no-wait --profile $P --json "{\"spec\": {
-    \"source_table_full_name\": \"$C.$S.$1\", \"primary_key_columns\": $2, \"scheduling_policy\": \"SNAPSHOT\",
+    \"source_table_full_name\": \"$C.$GOLD.$1\", \"primary_key_columns\": $2, \"scheduling_policy\": \"SNAPSHOT\",
     \"branch\": \"$BRANCH\", \"postgres_database\": \"databricks_postgres\", \"create_database_objects_if_missing\": true,
     \"new_pipeline_spec\": {\"storage_catalog\": \"$C\", \"storage_schema\": \"$SERVING\"}}}"
 }
@@ -38,8 +39,11 @@ databricks apps create-update ventoguard --profile $P --json "{\"update_mask\": 
 SP=$(databricks apps get ventoguard --profile $P -o json | python3 -c 'import json,sys; print(json.load(sys.stdin)["service_principal_client_id"])')
 
 # 5. Unity Catalog grants for the app service principal (Genie runs as the app)
+# least privilege: the app (and Genie, which runs as the app) reads gold + the one silver dimension Genie needs, never bronze
 for s in "GRANT USE CATALOG ON CATALOG $C TO \`$SP\`" \
-         "GRANT USE SCHEMA, SELECT ON SCHEMA $C.$S TO \`$SP\`" \
+         "GRANT USE SCHEMA, SELECT ON SCHEMA $C.$GOLD TO \`$SP\`" \
+         "GRANT USE SCHEMA ON SCHEMA $C.$SILVER TO \`$SP\`" \
+         "GRANT SELECT ON TABLE $C.$SILVER.silver_turbines TO \`$SP\`" \
          "GRANT USE SCHEMA, SELECT ON SCHEMA $C.$SERVING TO \`$SP\`"; do
   databricks experimental aitools tools query "$s" --profile $P
 done

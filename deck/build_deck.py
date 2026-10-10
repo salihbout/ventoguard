@@ -170,7 +170,7 @@ slide("How it works: one governed platform, from raw SCADA to the dispatcher's s
       """<div class="flow">
         <div class="st"><b>Lakeflow</b><span>Auto Loader ingests SCADA (3.3 M rows), CMMS notes, asset register and prices from a UC Volume. Declarative pipeline bronze → silver → gold with data-quality expectations.</span></div>
         <div class="ar">→</div>
-        <div class="st"><b>Unity Catalog</b><span>One schema for files, tables, features, model, AI outputs. Tags, GDPR column mask, lineage, grants.</span></div>
+        <div class="st"><b>Unity Catalog</b><span>One catalog, layer schemas ventoguard_bronze / _silver / _gold / _serving. Tags, GDPR column mask, lineage, least-privilege grants.</span></div>
         <div class="ar">→</div>
         <div class="st"><b>ML + GenAI</b><span>Fleet-relative features → gradient-boosted 14-day failure model (MLflow, UC registry, @champion gate). ai_query + Claude: note extraction and maintenance briefs.</span></div>
         <div class="ar">→</div>
@@ -180,7 +180,7 @@ slide("How it works: one governed platform, from raw SCADA to the dispatcher's s
       </div>
       <p class="note" style="margin-top:28px">Orchestrated as one Lakeflow Job (generate → pipeline → train → score + GenAI → govern → sync Lakebase), deployed as a Declarative Automation Bundle. Daily schedule at 05:00 CET.</p>""",
       """## How it works: one governed platform
-Lakeflow (Auto Loader + declarative pipeline, expectations) → Unity Catalog (tags, GDPR mask, lineage, grants) → ML + GenAI (MLflow model in UC with champion gate; ai_query + Claude for notes and briefs) → Lakebase (synced tables + transactional work orders) → Databricks App (React + FastAPI) + Genie space.
+Lakeflow (Auto Loader + declarative pipeline, expectations) → Unity Catalog (bronze / silver / gold / serving schemas; tags, GDPR mask, lineage, grants) → ML + GenAI (MLflow model in UC with champion gate; ai_query + Claude for notes and briefs) → Lakebase (synced tables + transactional work orders) → Databricks App (React + FastAPI) + Genie space.
 Orchestrated by one Lakeflow Job, deployed via Declarative Automation Bundle, scheduled daily 05:00 CET.""")
 
 # 9 ─ Governance & trust

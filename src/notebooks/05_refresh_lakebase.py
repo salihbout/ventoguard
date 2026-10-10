@@ -9,19 +9,19 @@
 # MAGIC
 # MAGIC | UC source | Lakebase (Postgres) table | Used by app for |
 # MAGIC |---|---|---|
-# MAGIC | `turbine_risk_scores` | `vg_serving.turbine_risk_scores` | fleet risk board, map |
-# MAGIC | `turbine_ai_briefs` | `vg_serving.turbine_ai_briefs` | AI maintenance brief |
-# MAGIC | `gold_turbine_daily` | `vg_serving.gold_turbine_daily` | 30-day health trend charts |
+# MAGIC | `turbine_risk_scores` | `ventoguard_serving.turbine_risk_scores` | fleet risk board, map |
+# MAGIC | `turbine_ai_briefs` | `ventoguard_serving.turbine_ai_briefs` | AI maintenance brief |
+# MAGIC | `gold_turbine_daily` | `ventoguard_serving.gold_turbine_daily` | 30-day health trend charts |
 
 # COMMAND ----------
 
-# MAGIC %pip install -q "databricks-sdk>=0.81.0" "psycopg[binary]>=3.2"
+# MAGIC %pip install -q "databricks-sdk>=0.81.0" "pg8000>=1.31"
 # MAGIC %restart_python
 
 # COMMAND ----------
 
 dbutils.widgets.text("catalog", "serverless_stable_7zqte5_catalog")
-dbutils.widgets.text("serving_schema", "vg_serving")
+dbutils.widgets.text("serving_schema", "ventoguard_serving")
 dbutils.widgets.text("app_name", "ventoguard")
 dbutils.widgets.text("lakebase_endpoint", "projects/ventoguard/branches/production/endpoints/primary")
 LB_CATALOG = dbutils.widgets.get("catalog")
@@ -62,19 +62,25 @@ for t in SYNCED:
 # COMMAND ----------
 
 # MAGIC %md Snapshot syncs can recreate the Postgres tables, so the app role's read grants are re-applied after every sync.
+# MAGIC The pure-Python `pg8000` driver is used here: `psycopg[binary]`'s bundled libpq intermittently aborted the serverless Python process on import (SIGABRT).
 
 # COMMAND ----------
 
-import psycopg
+import ssl
+import pg8000.native
 APP_SP = w.apps.get(dbutils.widgets.get("app_name")).service_principal_client_id
 EP = dbutils.widgets.get("lakebase_endpoint")
 host = w.postgres.get_endpoint(name=EP).status.hosts.host
 token = w.postgres.generate_database_credential(endpoint=EP).token
 me = w.current_user.me().user_name
-with psycopg.connect(host=host, dbname="databricks_postgres", user=me, password=token, sslmode="require", autocommit=True) as conn:
-    conn.execute(f'GRANT USAGE ON SCHEMA {SERVING} TO "{APP_SP}"')
-    conn.execute(f'GRANT SELECT ON ALL TABLES IN SCHEMA {SERVING} TO "{APP_SP}"')
+conn = pg8000.native.Connection(user=me, host=host, database="databricks_postgres", port=5432, password=token,
+                                ssl_context=ssl.create_default_context())
+try:
+    conn.run(f'GRANT USAGE ON SCHEMA {SERVING} TO "{APP_SP}"')
+    conn.run(f'GRANT SELECT ON ALL TABLES IN SCHEMA {SERVING} TO "{APP_SP}"')
     for t in SYNCED:
-        n = conn.execute(f"SELECT count(*) FROM {SERVING}.{t}").fetchone()[0]
+        n = conn.run(f"SELECT count(*) FROM {SERVING}.{t}")[0][0]
         print(f"Lakebase {SERVING}.{t}: {n} rows")
-    print(conn.execute(f"SELECT turbine_id, risk_tier, failure_prob_14d FROM {SERVING}.turbine_risk_scores ORDER BY failure_prob_14d DESC LIMIT 5").fetchall())
+    print(conn.run(f"SELECT turbine_id, risk_tier, failure_prob_14d FROM {SERVING}.turbine_risk_scores ORDER BY failure_prob_14d DESC LIMIT 5"))
+finally:
+    conn.close()

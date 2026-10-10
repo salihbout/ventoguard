@@ -1,4 +1,4 @@
-CREATE OR REFRESH MATERIALIZED VIEW silver_failure_events (
+CREATE OR REFRESH MATERIALIZED VIEW ${catalog}.${silver_schema}.silver_failure_events (
   CONSTRAINT known_component EXPECT (component IN ('gearbox', 'main_bearing', 'generator_bearing', 'pitch_hydraulics'))
 )
 COMMENT 'Confirmed component failures with downtime and corrective repair cost (EUR).'

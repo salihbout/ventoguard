@@ -8,17 +8,17 @@ WITH cost AS (
 ),
 rev AS (
   SELECT turbine_id, avg(revenue_eur + lost_revenue_eur) AS revenue_per_day_eur
-  FROM serverless_stable_7zqte5_catalog.wind_reliability.gold_turbine_daily GROUP BY turbine_id
+  FROM serverless_stable_7zqte5_catalog.ventoguard_gold.gold_turbine_daily GROUP BY turbine_id
 ),
 per_event AS (
   SELECT f.component, f.total_event_cost_eur,
          c.planned_cost_eur + c.planned_downtime_days * r.revenue_per_day_eur AS planned_event_cost_eur,
          f.downtime_hours / 24 - c.planned_downtime_days AS downtime_days_avoided
-  FROM serverless_stable_7zqte5_catalog.wind_reliability.gold_failure_history f
+  FROM serverless_stable_7zqte5_catalog.ventoguard_gold.gold_failure_history f
   JOIN cost c USING (component) JOIN rev r USING (turbine_id)
 ),
 period AS (
-  SELECT datediff(max(reading_date), min(reading_date)) + 1 AS days FROM serverless_stable_7zqte5_catalog.wind_reliability.gold_farm_daily
+  SELECT datediff(max(reading_date), min(reading_date)) + 1 AS days FROM serverless_stable_7zqte5_catalog.ventoguard_gold.gold_farm_daily
 )
 SELECT
   count(*)                                                        AS failures_observed,

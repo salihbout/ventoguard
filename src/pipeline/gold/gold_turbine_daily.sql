@@ -1,6 +1,6 @@
 -- Gold: one row per turbine per day. Health signals, energy, availability and lost production (MWh and EUR).
 -- Expected power uses the design power curve at the measured wind speed, so fault/derate losses are visible.
-CREATE OR REFRESH MATERIALIZED VIEW gold_turbine_daily
+CREATE OR REFRESH MATERIALIZED VIEW ${catalog}.${gold_schema}.gold_turbine_daily
 COMMENT 'Daily turbine KPIs: energy, technical availability, lost production (MWh & EUR) and drivetrain health signals. Grain: turbine_id x reading_date.'
 CLUSTER BY (turbine_id, reading_date)
 TBLPROPERTIES ('quality' = 'gold')
@@ -12,9 +12,9 @@ WITH s AS (
          WHEN s.wind_speed_ms >= 12.5 THEN 1.0
          ELSE (pow(s.wind_speed_ms, 3) - 27) / (pow(12.5, 3) - 27) END * t.rated_power_kw AS expected_power_kw,
     p.price_eur_mwh
-  FROM silver_scada s
-  JOIN silver_turbines t USING (turbine_id)
-  LEFT JOIN silver_market_prices p ON date_trunc('HOUR', s.reading_ts) = p.hour_start_utc
+  FROM ${catalog}.${silver_schema}.silver_scada s
+  JOIN ${catalog}.${silver_schema}.silver_turbines t USING (turbine_id)
+  LEFT JOIN ${catalog}.${silver_schema}.silver_market_prices p ON date_trunc('HOUR', s.reading_ts) = p.hour_start_utc
 )
 SELECT
   turbine_id, farm_id, farm_name, model, reading_date,

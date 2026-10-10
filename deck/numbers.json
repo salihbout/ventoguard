@@ -46,9 +46,9 @@
   "n_critical": 3,
   "n_high": 1,
   "brief_turbine": "F03-T07",
-  "brief_headline": "F03-T07 Gearbox Bearing Failure Imminent Within Days",
-  "brief_diagnosis": "Gearbox bearing temperature is elevated +6.09°C above fleet average and vibration increased +1.58mm/s, consistent with technician observations of metallic noise and oil analysis showing elevated iron content and particles on 2026-10-03 and 2026-10-04. Power curve ratio has degraded -0.05 vs fleet over 7 days, indicating mechanical deterioration.",
-  "brief_business_case": "Planned intervention avoids EUR 206,523 in additional damage costs versus unplanned failure (EUR 385,000 corrective vs EUR 205,000 planned repair).",
+  "brief_headline": "F03-T07 Gearbox Imminent Failure: 99.5% Probability Within 14 Days",
+  "brief_diagnosis": "Gearbox intermediate stage shows critical degradation with vibration elevated +1.58mm/s, bearing temperature +6.09°C above fleet average, and power curve ratio reduced by -0.05. Technician reports confirm metallic whine, high oil temperature, and elevated iron content with particles in oil.",
+  "brief_business_case": "Planned intervention avoids EUR 206,523 in additional costs versus unplanned failure (EUR 385,000 corrective vs EUR 205,000 planned repair).",
   "backtest": [
     {
       "turbine_id": "F01-T06",

@@ -3,7 +3,8 @@ resources:
     ventoguard_medallion:
       name: ventoguard-medallion
       catalog: ${var.catalog}
-      schema: ${var.schema}
+      # default publishing schema = bronze; silver/gold datasets use fully-qualified names from the configuration below
+      schema: ${var.bronze_schema}
       serverless: true
       channel: CURRENT
       photon: true
@@ -12,4 +13,7 @@ resources:
         - glob:
             include: ../src/pipeline/**
       configuration:
-        landing_root: /Volumes/${var.catalog}/${var.schema}/raw_landing
+        catalog: ${var.catalog}
+        silver_schema: ${var.silver_schema}
+        gold_schema: ${var.gold_schema}
+        landing_root: /Volumes/${var.catalog}/${var.bronze_schema}/raw_landing

@@ -24,17 +24,24 @@
 # COMMAND ----------
 
 dbutils.widgets.text("catalog", "serverless_stable_7zqte5_catalog")
-dbutils.widgets.text("schema", "wind_reliability")
+dbutils.widgets.text("bronze_schema", "ventoguard_bronze")
+dbutils.widgets.text("silver_schema", "ventoguard_silver")
+dbutils.widgets.text("gold_schema", "ventoguard_gold")
 dbutils.widgets.text("start_date", "2026-04-01")
 dbutils.widgets.text("end_date", "2026-10-09")
 dbutils.widgets.dropdown("reset", "false", ["true", "false"])
 
 CATALOG = dbutils.widgets.get("catalog")
-SCHEMA = dbutils.widgets.get("schema")
+SCHEMA = dbutils.widgets.get("bronze_schema")
 START = dbutils.widgets.get("start_date")
 END = dbutils.widgets.get("end_date")
 RESET = dbutils.widgets.get("reset") == "true"
 ROOT = f"/Volumes/{CATALOG}/{SCHEMA}/raw_landing"
+spark.sql(f"CREATE SCHEMA IF NOT EXISTS {CATALOG}.{SCHEMA} COMMENT 'VentoGuard bronze: raw landing + Auto Loader ingests'")
+# the pipeline publishes silver/gold into their own schemas, so make sure they exist on a fresh workspace
+for layer in ("silver", "gold"):
+    spark.sql(f"CREATE SCHEMA IF NOT EXISTS {CATALOG}.{dbutils.widgets.get(layer + '_schema')} COMMENT 'VentoGuard {layer} layer'")
+spark.sql(f"CREATE VOLUME IF NOT EXISTS {CATALOG}.{SCHEMA}.raw_landing COMMENT 'Raw landing zone: SCADA, maintenance logs, master data, market prices'")
 print(ROOT, START, END, "reset =", RESET)
 
 # COMMAND ----------
