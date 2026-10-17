@@ -1,6 +1,6 @@
 # VentoGuard: status and handoff
 
-_Last updated 2026-10-15. Workspace `fevm-serverless-stable-7zqte5`, CLI profile `demo`._
+_Last updated 2026-10-17. Workspace `fevm-serverless-stable-7zqte5`, CLI profile `demo`._
 
 ## Done
 - **Build complete and running.** All six stages: Lakeflow → Unity Catalog → ML + GenAI → Lakebase → Genie → Databricks App.
@@ -11,15 +11,14 @@ _Last updated 2026-10-15. Workspace `fevm-serverless-stable-7zqte5`, CLI profile
 - **App** `ventoguard`: https://ventoguard-7474660468503815.aws.databricksapps.com. React + Du Bois source in `app_ui/`, built into `app/static`; FastAPI in `app/backend`.
   The UI was browser-tested locally; the deployed app was verified through its API (see `evidence/app.md`).
 - **Evidence** (all text) in `evidence/`. **Deck** in `deck/VentoGuard_deck.pdf` and `.md`; its numbers come from `deck/extract_numbers.py`.
-- Git: committed locally on `main`, **not pushed**.
+- Git: pushed to private EMU repo https://github.com/salih-boutadghart_data/ventoguard (`main`).
 
 ## Pending
-1. **Push to GitHub**, so the validator can read the repo. Either a public repo (e.g. `salihbout` account) or a private repo on the EMU account with GitHub connected in the submission form.
-2. **Submit the form**: repo link, deck PDF, optional conversation ID.
-3. **Decide on the legacy v1 deployment** (unused, not deleted). It consists of the `wind_reliability` schema, the `vg_serving` synced tables,
+1. **Submit the form**: repo link https://github.com/salih-boutadghart_data/ventoguard (private, so connect GitHub in the form), deck PDF, optional conversation ID.
+2. **Legacy v1 deployment is kept on purpose** (decided 2026-10-17). It consists of the `wind_reliability` schema, the `vg_serving` synced tables,
    the old bundle target `dev` job/pipeline (job `1081515418325428`, pipeline `6c84e3c6-18a3-4951-a75d-32be1e8d21f2`) and Genie space `01f1c4c082b419f88ccebeab3614bc27`.
    Removing the pipeline also drops its tables.
-4. **Optional:** browser-test the deployed app (it needs an Okta push approval), and run the design audit (`databricks-impeccable:audit`) on `app_ui/`.
+3. **Optional:** browser-test the deployed app (it needs an Okta push approval), and run the design audit (`databricks-impeccable:audit`) on `app_ui/`.
 
 ## Resume / re-run
 ```bash
