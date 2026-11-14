@@ -114,6 +114,7 @@ Tip: a mock role-play with Claude playing the COO and the architect is a cheap e
 
 - [ ] App loads and the Okta push is approved, *before* the session
 - [ ] The risk board shows 3 CRITICAL / 1 HIGH. Data is frozen at the last scoring run (score date 2026-10-09) because the job schedule is paused on purpose
-- [ ] Remove old test work orders, or explain them as "from last week"
+- [ ] App is RUNNING (`databricks apps get ventoguard --profile demo`). It can be auto-stopped, so restart it as described in STATUS.md
+- [x] Old test work orders cleaned (2026-11-14): one F01-T20 P1 order remains, so present it as "already scheduled last week"
 - [ ] Genie answers the first suggested question (warm the SQL warehouse 5 min before)
 - [ ] Deck PDF open on slide 1, with this playbook on a second screen
