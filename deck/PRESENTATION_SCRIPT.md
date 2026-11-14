@@ -19,6 +19,7 @@
 - Ask Genie the first suggested question once, so the SQL warehouse is warm.
 - Open the deck on slide 1, full screen. Keep this script on a second screen.
 - In the app, set "View as" to Operations, so the demo starts on the risk board.
+- Open Work orders: only one order should be there, F01-T20 (P1, scheduled). If you created test orders while rehearsing, delete them, so the F03-T07 order you create live is the only one for that turbine.
 
 ## Slide 1 · Title (0:00–1:00)
 
@@ -120,7 +121,7 @@
 
 *Click "Plan the repair", choose P1 (within 72 hours), then "Create work order". Open the Work orders page.*
 
-**"One click, and the work order exists. The value protected by open orders goes up."**
+**"One click, and the work order exists. It sits next to the F01-T20 gearbox swap your team already scheduled last week, and the value protected by open orders goes up."**
 
 *Land:* **"The crane, the spare and the crew are now booked into a low-wind window. That's the five-week outage avoided."**
 
@@ -138,7 +139,15 @@
 
 *Tell:* **"And this is what you see, as COO, on the same Monday."**
 
-*Show:* €4.19 M value per year (€2.73 M even at a 50 % catch rate), €11.33 M unplanned-cost run rate, availability against the 97 % target, €806 k at stake now. Then the key insights and the "Decisions this week" panel.
+*Show:* €4.19 M value per year (€2.73 M even at a 50 % catch rate), €11.33 M unplanned-cost run rate, 97.7 % availability against the 97 % target, and €806 k at stake now.
+
+*Then the key insights. Read the first two out loud:* "Hunsrück Höhe runs 2.0 pp below the 97 % availability target" (the pilot farm) and "2 at-risk turbines have no work order yet".
+
+**"Before I created that order, this said three. The order I just booked already shows up here, and the value protected went from €215 k to €421 k."**
+
+*Point to "Decisions this week": about €374 k is still avoidable on the two turbines without an order.*
+
+**"And this is the one decision that's still open for you this week."**
 
 *Land:* **"You don't need to open a single turbine. You see the money, the risk, and the one decision that needs you."**
 
