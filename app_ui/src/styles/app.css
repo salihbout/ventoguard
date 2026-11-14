@@ -68,7 +68,7 @@ body {
 /* ---------- grids ---------- */
 .split { display: grid; gap: var(--db-space-lg); grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); align-items: start; }
 .split-even { display: grid; gap: var(--db-space-lg); grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); }
-@media (max-width: 1100px) { .split { grid-template-columns: 1fr; } }
+@media (max-width: 1100px) { .split, .split.fleet { grid-template-columns: 1fr; } }
 
 /* ---------- risk badge: tinted fill + text, never a stripe ---------- */
 .tier { display: inline-flex; align-items: center; gap: 6px; padding: 2px 10px; border-radius: var(--db-radius-full);
@@ -104,9 +104,39 @@ body {
 .prob-fill.CRITICAL { background: var(--db-accent); }
 
 /* ---------- map ---------- */
-.map svg { width: 100%; height: auto; display: block; }
-.map .farm-label { font-size: 13px; font-weight: 500; fill: var(--db-text-primary); }
-.map .farm-sub { font-size: 12px; fill: var(--db-text-secondary); }
+/* ---------- customer brand ---------- */
+.aerion { display: inline-flex; align-items: center; gap: 10px; color: var(--db-navy-900); flex: none; }
+.aerion-text b { display: block; font-size: 17px; letter-spacing: .18em; line-height: 1; }
+.aerion-text small { display: block; font-size: 9.5px; letter-spacing: .3em; text-transform: uppercase; color: var(--db-text-secondary); margin-top: 3px; }
+.brand-divider { width: 1px; height: 28px; background: var(--db-border); margin: 0 calc(var(--db-space-sm) * -1); }
+
+/* ---------- fleet map (Leaflet) ---------- */
+.map-frame { display: grid; gap: var(--db-space-sm); }
+.map-toolbar { display: flex; flex-wrap: wrap; gap: var(--db-space-xs); align-items: center; }
+.map-canvas-wrap { position: relative; }
+.map-expand { position: absolute; top: 10px; right: 10px; z-index: 900; min-height: 36px; padding: 0 14px; border-radius: var(--db-radius-md);
+  border: 1px solid var(--db-border); background: var(--db-surface); color: var(--db-text-primary); font: 500 var(--db-text-small) var(--db-font-primary);
+  cursor: pointer; box-shadow: 0 2px 8px rgba(11, 32, 38, .12); }
+.map-expand:hover { background: var(--db-oat-light); }
+.map-expand:focus-visible { outline: 2px solid var(--db-info); outline-offset: 2px; }
+.map-canvas .leaflet-tile-pane { filter: grayscale(1) contrast(.85) brightness(1.06); }
+.split.fleet { grid-template-columns: minmax(0, 1fr); }
+.chip-count { display: inline-grid; place-items: center; min-width: 18px; height: 18px; padding: 0 5px; margin-left: 6px; border-radius: 9px; color: #fff; font-size: 11px; font-weight: 700; }
+.map-canvas { height: 520px; width: 100%; border-radius: var(--db-radius-md); border: 1px solid var(--db-border); background: var(--db-oat-medium); font-family: var(--db-font-primary); }
+.map.expanded .map-frame { position: fixed; inset: 32px; z-index: 1001; background: var(--db-surface); border-radius: var(--db-radius-card); padding: var(--db-space-lg); grid-template-rows: auto 1fr auto; box-shadow: 0 24px 64px rgba(11, 32, 38, .28); }
+.map.expanded .map-canvas-wrap { min-height: 0; height: 100%; }
+.map.expanded .map-canvas { height: 100%; }
+.map-backdrop { position: fixed; inset: 0; background: rgba(11, 32, 38, .45); z-index: 1000; }
+.leaflet-interactive.pulse { animation: vg-pulse 1.6s ease-out infinite; transform-origin: center; transform-box: fill-box; }
+@keyframes vg-pulse { 0%, 100% { stroke-opacity: 1; stroke-width: 2px; } 50% { stroke-opacity: .35; stroke-width: 7px; } }
+@media (prefers-reduced-motion: reduce) { .leaflet-interactive.pulse { animation: none; } }
+.leaflet-tooltip.turbine-tip { font-family: var(--db-font-primary); color: var(--db-text-primary); border: 1px solid var(--db-border); border-radius: 10px; padding: 12px 14px; box-shadow: 0 8px 24px rgba(11, 32, 38, .16); min-width: 230px; }
+.turbine-tip .tip-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; font-size: 15px; }
+.turbine-tip .tip-tier { color: #fff; font-size: 11px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; padding: 2px 8px; border-radius: 10px; }
+.turbine-tip .tip-farm { font-size: 12px; color: var(--db-text-secondary); margin: 2px 0 8px; }
+.turbine-tip dl { display: grid; grid-template-columns: auto auto; gap: 3px 14px; margin: 0; font-size: 13px; }
+.turbine-tip dt { color: var(--db-text-secondary); } .turbine-tip dd { margin: 0; font-weight: 600; text-align: right; text-transform: none; }
+.turbine-tip .tip-cta { margin-top: 8px; font-size: 12px; font-weight: 600; color: var(--db-teal); }
 .legend { display: flex; flex-wrap: wrap; gap: var(--db-space-md); margin-top: var(--db-space-sm); font-size: var(--db-text-small); color: var(--db-text-secondary); }
 .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: middle; }
 

@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { NavLink, Route, Routes } from "react-router-dom";
+import { AerionLogo } from "./components/AerionLogo";
 import { api } from "./lib/api";
 import { AskPage } from "./pages/AskPage";
 import { FleetPage } from "./pages/FleetPage";
@@ -11,6 +12,8 @@ export function App() {
   return (
     <>
       <header className="shell-header">
+        <AerionLogo />
+        <span className="brand-divider" aria-hidden="true" />
         <a className="wordmark" href="/">VentoGuard<span>Drivetrain reliability</span></a>
         <nav className="nav" aria-label="Main">
           <NavLink to="/" end>Fleet risk</NavLink>

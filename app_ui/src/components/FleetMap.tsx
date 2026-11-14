@@ -1,70 +1,121 @@
+import "leaflet/dist/leaflet.css";
+import { latLngBounds, type LatLngBoundsExpression } from "leaflet";
+import { useEffect, useMemo, useState } from "react";
+import { CircleMarker, MapContainer, TileLayer, Tooltip, useMap } from "react-leaflet";
 import { useNavigate } from "react-router-dom";
 import type { RiskRow, Tier } from "../lib/api";
-import { farmLabel } from "../lib/format";
-
-// Equirectangular projection of Germany's bounding box; turbines are drawn at their real coordinates.
-const BOUNDS = { lonMin: 5.6, lonMax: 15.2, latMin: 47.2, latMax: 55.1 };
-const W = 520, H = 600;
-const x = (lon: number) => ((lon - BOUNDS.lonMin) / (BOUNDS.lonMax - BOUNDS.lonMin)) * W;
-const y = (lat: number) => ((BOUNDS.latMax - lat) / (BOUNDS.latMax - BOUNDS.latMin)) * H;
+import { component, eur, farmLabel, pct } from "../lib/format";
 
 export const TIER_FILL: Record<Tier, string> = {
   CRITICAL: "#FF3621", HIGH: "#FBB300", MEDIUM: "#618794", LOW: "#00A972", DOWN: "#A0AEC0",
 };
+const TIER_LABEL: Record<Tier, string> = { CRITICAL: "Critical", HIGH: "High", MEDIUM: "Medium", LOW: "Low", DOWN: "In repair" };
 const ORDER: Tier[] = ["LOW", "DOWN", "MEDIUM", "HIGH", "CRITICAL"]; // draw risky turbines last (on top)
+const RADIUS: Record<Tier, number> = { CRITICAL: 9, HIGH: 8, MEDIUM: 6, LOW: 5, DOWN: 5 };
 
-// Simplified outline of Germany (lon, lat) for orientation only.
-const OUTLINE: [number, number][] = [
-  [6.1, 50.8], [5.9, 51.8], [6.8, 52.1], [7.0, 53.3], [8.0, 53.6], [8.7, 53.9], [9.0, 54.8], [10.0, 54.8], [11.0, 54.0],
-  [12.4, 54.4], [13.7, 54.5], [14.3, 53.9], [14.2, 53.0], [14.7, 52.1], [15.0, 51.1], [14.3, 50.9], [12.5, 50.3],
-  [13.8, 48.8], [13.0, 47.6], [10.4, 47.4], [9.6, 47.6], [7.6, 47.6], [7.5, 48.6], [8.2, 49.0], [6.4, 49.5], [6.1, 50.8],
-];
+interface FarmSummary { name: string; n: number; critical: number; high: number; bounds: LatLngBoundsExpression }
+
+/** Keeps the Leaflet view in sync with React state: fit to a farm or the fleet, and resize when the panel expands. */
+function ViewController({ target, expanded }: { target: LatLngBoundsExpression; expanded: boolean }) {
+  const map = useMap();
+  useEffect(() => {
+    const t = setTimeout(() => {
+      map.invalidateSize();
+      map.flyToBounds(target, { padding: [36, 36], duration: 0.8, maxZoom: 13 });
+    }, 60);
+    return () => clearTimeout(t);
+  }, [map, target, expanded]);
+  return null;
+}
 
 export function FleetMap({ rows }: { rows: RiskRow[] }) {
   const nav = useNavigate();
-  const farms = Object.values(
-    rows.reduce<Record<string, { name: string; lat: number; lon: number; n: number; atRisk: number }>>((acc, r) => {
-      const f = (acc[r.farm_id] ??= { name: r.farm_name, lat: 0, lon: 0, n: 0, atRisk: 0 });
-      f.lat += r.latitude; f.lon += r.longitude; f.n += 1;
-      if (r.risk_tier === "CRITICAL" || r.risk_tier === "HIGH") f.atRisk += 1;
-      return acc;
-    }, {}),
-  ).map((f) => ({ ...f, lat: f.lat / f.n, lon: f.lon / f.n }));
-  const sorted = [...rows].sort((a, b) => ORDER.indexOf(a.risk_tier) - ORDER.indexOf(b.risk_tier));
+  const [expanded, setExpanded] = useState(false);
+  const [focus, setFocus] = useState<string>("fleet");
+
+  const fleetBounds = useMemo(() => latLngBounds(rows.map((r) => [r.latitude, r.longitude] as [number, number])), [rows]);
+  const farms = useMemo<FarmSummary[]>(() => {
+    const by = new Map<string, RiskRow[]>();
+    rows.forEach((r) => by.set(r.farm_name, [...(by.get(r.farm_name) ?? []), r]));
+    return [...by.entries()].sort(([a], [b]) => a.localeCompare(b)).map(([name, rs]) => ({
+      name, n: rs.length,
+      critical: rs.filter((r) => r.risk_tier === "CRITICAL").length,
+      high: rs.filter((r) => r.risk_tier === "HIGH").length,
+      bounds: latLngBounds(rs.map((r) => [r.latitude, r.longitude] as [number, number])),
+    }));
+  }, [rows]);
+  const target = focus === "fleet" ? fleetBounds : farms.find((f) => f.name === focus)?.bounds ?? fleetBounds;
+  const sorted = useMemo(() => [...rows].sort((a, b) => ORDER.indexOf(a.risk_tier) - ORDER.indexOf(b.risk_tier)), [rows]);
+
+  useEffect(() => {
+    if (!expanded) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setExpanded(false);
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [expanded]);
 
   return (
-    <figure className="map" style={{ margin: 0 }}>
-      <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label="Map of the four wind farms with turbines coloured by risk tier">
-        <path d={"M" + OUTLINE.map(([lo, la]) => `${x(lo).toFixed(1)},${y(la).toFixed(1)}`).join(" L") + " Z"}
-              fill="#EEEDE9" stroke="#C4CCD6" strokeWidth={1} />
-        {sorted.map((r) => {
-          // spread each farm's turbines on a small grid around the farm centre so every turbine is visible
-          const idx = Number(r.turbine_id.split("-T")[1]) - 1;
-          const cx = x(r.longitude) + ((idx % 6) - 2.5) * 7, cy = y(r.latitude) + (Math.floor(idx / 6) - 2.5) * 7;
-          const risky = r.risk_tier === "CRITICAL" || r.risk_tier === "HIGH";
-          return (
-            <circle key={r.turbine_id} cx={cx} cy={cy} r={risky ? 6 : 3.5} fill={TIER_FILL[r.risk_tier]}
-                    stroke={risky ? "#0B2026" : "none"} strokeWidth={1} style={{ cursor: "pointer" }}
-                    tabIndex={risky ? 0 : -1} onClick={() => nav(`/turbines/${r.turbine_id}`)}
-                    onKeyDown={(e) => e.key === "Enter" && nav(`/turbines/${r.turbine_id}`)}>
-              <title>{`${r.turbine_id} · ${r.risk_tier} · ${(r.failure_prob_14d * 100).toFixed(0)} % · ${r.likely_component.replace(/_/g, " ")}`}</title>
-            </circle>
-          );
-        })}
-        {farms.map((f) => (
-          // eastern farms are labelled to the left so the text stays inside the map
-          <g key={f.name} transform={`translate(${x(f.lon) + (f.lon > 11 ? -30 : 28)},${y(f.lat) - 18})`}
-             textAnchor={f.lon > 11 ? "end" : "start"}>
-            <text className="farm-label">{farmLabel(f.name)}</text>
-            <text className="farm-sub" y={16}>{f.n} turbines · {f.atRisk} at risk</text>
-          </g>
-        ))}
-      </svg>
-      <figcaption className="legend">
-        {(["CRITICAL", "HIGH", "MEDIUM", "LOW", "DOWN"] as Tier[]).map((t) => (
-          <span key={t}><i style={{ background: TIER_FILL[t] }} />{t === "DOWN" ? "In repair" : t[0] + t.slice(1).toLowerCase()}</span>
-        ))}
-      </figcaption>
+    <figure className={`map${expanded ? " expanded" : ""}`} style={{ margin: 0 }}>
+      {expanded && <div className="map-backdrop" onClick={() => setExpanded(false)} aria-hidden="true" />}
+      <div className="map-frame">
+        <div className="map-toolbar" role="group" aria-label="Map view">
+          <button type="button" className="chip" aria-pressed={focus === "fleet"} onClick={() => setFocus("fleet")}>Fleet</button>
+          {farms.map((f) => (
+            <button key={f.name} type="button" className="chip" aria-pressed={focus === f.name} onClick={() => setFocus(f.name)}>
+              {farmLabel(f.name)}
+              {f.critical + f.high > 0 && <span className="chip-count" style={{ background: f.critical ? TIER_FILL.CRITICAL : TIER_FILL.HIGH }}>{f.critical + f.high}</span>}
+            </button>
+          ))}
+        </div>
+
+        <div className="map-canvas-wrap">
+        <button type="button" className="map-expand" onClick={() => setExpanded((v) => !v)} aria-expanded={expanded}
+                aria-label={expanded ? "Close the full-screen map" : "Expand the map"}>
+          {expanded ? "Close ✕" : "Expand ⤢"}
+        </button>
+
+        <MapContainer bounds={fleetBounds} boundsOptions={{ padding: [36, 36] }} scrollWheelZoom={expanded} className="map-canvas"
+                      aria-label="Map of the four wind farms with turbines coloured by risk tier">
+          <TileLayer
+            url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            maxZoom={19}
+          />
+          <ViewController target={target} expanded={expanded} />
+          {sorted.map((r) => {
+            const risky = r.risk_tier === "CRITICAL" || r.risk_tier === "HIGH";
+            return (
+              <CircleMarker key={r.turbine_id} center={[r.latitude, r.longitude]} radius={RADIUS[r.risk_tier]}
+                            pathOptions={{ color: risky ? "#0B2026" : "#FFFFFF", weight: risky ? 2 : 1, fillColor: TIER_FILL[r.risk_tier], fillOpacity: 0.95 }}
+                            className={r.risk_tier === "CRITICAL" ? "pulse" : undefined}
+                            eventHandlers={{ click: () => nav(`/turbines/${r.turbine_id}`) }}>
+                <Tooltip direction="top" offset={[0, -8]} opacity={1} className="turbine-tip">
+                  <div className="tip-head">
+                    <b className="mono">{r.turbine_id}</b>
+                    <span className="tip-tier" style={{ background: TIER_FILL[r.risk_tier] }}>{TIER_LABEL[r.risk_tier]}</span>
+                  </div>
+                  <div className="tip-farm">{farmLabel(r.farm_name)} · {r.model} · {r.turbine_age_years} yrs</div>
+                  <dl>
+                    <dt>Failure risk, 14 days</dt><dd>{pct(r.failure_prob_14d, 1)}</dd>
+                    <dt>Likely component</dt><dd>{component(r.likely_component)}</dd>
+                    <dt>Avoidable if planned</dt><dd>{eur(r.avoidable_cost_if_caught_eur)}</dd>
+                    <dt>Action</dt><dd>{r.recommended_window}</dd>
+                  </dl>
+                  {risky && <div className="tip-cta">Click to open the AI brief →</div>}
+                </Tooltip>
+              </CircleMarker>
+            );
+          })}
+        </MapContainer>
+        </div>
+
+        <figcaption className="legend">
+          {(["CRITICAL", "HIGH", "MEDIUM", "LOW", "DOWN"] as Tier[]).map((t) => (
+            <span key={t}><i style={{ background: TIER_FILL[t] }} />{TIER_LABEL[t]}</span>
+          ))}
+          <span className="muted" style={{ marginLeft: "auto" }}>Hover a turbine for its status · click to open it</span>
+        </figcaption>
+      </div>
     </figure>
   );
 }

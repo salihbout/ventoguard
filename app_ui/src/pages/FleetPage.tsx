@@ -32,7 +32,7 @@ export function FleetPage() {
 
       {kpis.isError ? <ErrorState error={kpis.error} onRetry={() => kpis.refetch()} /> : <KpiStrip k={kpis.data} />}
 
-      <div className="split">
+      <div className="split fleet">
         <section className="panel" aria-labelledby="map-title">
           <h2 className="section-title" id="map-title">Turbines by risk</h2>
           {board.isPending ? <SkeletonBlock height={480} /> : board.isError ? <ErrorState error={board.error} onRetry={() => board.refetch()} /> : <FleetMap rows={board.data} />}
