@@ -4,7 +4,7 @@
 
 _Slide 1_
 
-# Stop paying for surprise gearbox failures
+# Turn surprise failures into planned repairs worth €4.2 M a year
 VentoGuard for **Aerion Windkraft AG** (fictional German onshore wind operator, 4 farms, 120 turbines)
 
 - **€4.2 M** net benefit per year · **+1.5 pp** technical availability · **13 days** early warning
@@ -16,7 +16,7 @@ VentoGuard for **Aerion Windkraft AG** (fictional German onshore wind operator, 
 
 _Slide 2 · The outcome_
 
-## The outcome: turn €11 M of surprises into planned, cheaper repairs
+## The outcome: where the €4.2 M comes from
 - Today: **€11.3 M/yr** lost to unplanned drivetrain failures (22 failures in 192 days, repair + lost revenue)
 - With VentoGuard: **€4.2 M/yr net** (75 % catch rate, false-alarm inspections deducted) and **664 turbine-days** of production back
 - How: failures flagged 13 days ahead, so a five-week outage becomes a one-week planned swap

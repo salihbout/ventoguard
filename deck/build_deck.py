@@ -59,7 +59,7 @@ comp = N["by_component"]
 cmax = max(c["total_eur"] for c in comp)
 
 # 1 ─ Title
-slide("", "Stop paying for surprise gearbox failures",
+slide("", "Turn surprise failures into planned repairs worth €4.2&nbsp;M&nbsp;a&nbsp;year",
       f"""<div class="cobrand">{AERION_LOGO}<img class="dbx" src="{DBX_LOGO}" alt="Databricks" width="190" height="30"></div><div class="a sub" style="--d:1">VentoGuard for <b>{CUSTOMER}</b>: predictive drivetrain reliability for 120 turbines</div>
       <div class="kpis">
         <div class="a" style="--d:2"><b>{cnt(net/1e6, 1, '€', ' M')}</b><span>net benefit per year</span></div>
@@ -67,7 +67,7 @@ slide("", "Stop paying for surprise gearbox failures",
         <div class="a" style="--d:4"><b>{cnt(N['median_lead_days'], 0, '', ' days')}</b><span>early warning</span></div>
       </div>
       <div class="a foot" style="--d:5">For the COO and the Head of Asset Management · {CUSTOMER}</div>""",
-      f"""# Stop paying for surprise gearbox failures
+      f"""# Turn surprise failures into planned repairs worth €4.2 M a year
 VentoGuard for **{CUSTOMER}** (fictional German onshore wind operator, 4 farms, 120 turbines)
 
 - **{m(net)}** net benefit per year · **+{N['availability_uplift_pp']:.1f} pp** technical availability · **{N['median_lead_days']:.0f} days** early warning
@@ -76,7 +76,7 @@ VentoGuard for **{CUSTOMER}** (fictional German onshore wind operator, 4 farms, 
       kind="title")
 
 # 2 ─ Outcome
-slide("The outcome", "Turn €11 M of surprises into planned, cheaper repairs",
+slide("The outcome", "Where the €4.2 M comes from",
       f"""<div class="trio">
         <div class="a card dark" style="--d:1"><b>{cnt(unpl/1e6, 1, '€', ' M')}</b><span>lost each year to unplanned drivetrain failures today</span></div>
         <div class="a arrow" style="--d:2">→</div>
@@ -84,7 +84,7 @@ slide("The outcome", "Turn €11 M of surprises into planned, cheaper repairs",
         <div class="a card" style="--d:4"><b>{cnt(N['downtime_days_avoided'], 0)}</b><span>turbine-days of production back each year</span></div>
       </div>
       <p class="a line" style="--d:5">Failures are flagged <b>{N['median_lead_days']:.0f} days</b> ahead, so a <b>five-week outage</b> becomes a <b>one-week planned swap</b>.</p>""",
-      f"""## The outcome: turn €11 M of surprises into planned, cheaper repairs
+      f"""## The outcome: where the €4.2 M comes from
 - Today: **{m(unpl)}/yr** lost to unplanned drivetrain failures ({N['failures_observed']} failures in {N['observed_days']} days, repair + lost revenue)
 - With VentoGuard: **{m(net)}/yr net** (75 % catch rate, false-alarm inspections deducted) and **{N['downtime_days_avoided']:,} turbine-days** of production back
 - How: failures flagged {N['median_lead_days']:.0f} days ahead, so a five-week outage becomes a one-week planned swap""",
@@ -278,7 +278,7 @@ h1 { font-size: 46px; line-height: 1.1; letter-spacing: -.01em; max-width: 1080p
 .brand { position: absolute; bottom: 26px; left: 80px; font-size: 13px; opacity: .45 }
 .ask { background: var(--navy); color: var(--light) }
 .title { background: var(--light) }
-.title h1 { font-size: 72px; margin: 150px 0 22px; max-width: 1000px }
+.title h1 { font-size: 62px; margin: 140px 0 22px; max-width: 1120px }
 .title .sub { font-size: 24px; opacity: .85 }
 .kpis { display: flex; gap: 72px; margin-top: 64px }
 .kpis b { display: block; font-size: 60px; color: var(--navy); line-height: 1 }
