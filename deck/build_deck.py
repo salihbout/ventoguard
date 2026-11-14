@@ -278,23 +278,26 @@ slide("How the industry fixes it", "From fixing failures to predicting them",
 - Leading operators moved from step 1 to steps 3–4. The data already exists at Aerion; what's missing is one place that connects it.""",
       "Frame this as a journey the industry is already on. Aerion is not behind on data, only on connecting it.")
 
-peers = [("Siemens Gamesa", "99 %", "of drivetrain failures detected, predicted up to 3 years ahead, from 600 TB of AI training data"),
-         ("Vestas", "51,000+", "turbines monitored centrally, with wear predicted and repairs planned into low-wind periods"),
-         ("Enel · Endesa", "15–95 %", "of major-component repair cost saved by ML vibration analysis on 1,400+ turbines"),
-         ("RWE", "−5 %", "corrective maintenance frequency projected from an AI trial on an offshore wind farm")]
-ph2 = "".join(f"<div class='a peer' style='--d:{i+1}'><small>{n}</small><b>{v}</b><span>{d}</span></div>" for i, (n, v, d) in enumerate(peers))
+# Peer names are fictional; each figure is a real public disclosure by the company it stands for (see deck/SOURCES.md).
+peers = [("Borealis Turbines", "Turbine maker", "99 %", "of drivetrain failures detected, predicted up to 3 years ahead, from 600 TB of AI training data"),
+         ("Polaris Wind Systems", "Turbine maker", "51,000+", "turbines monitored centrally, with wear predicted and repairs planned into low-wind periods"),
+         ("Meridian Energía", "Utility", "15–95 %", "of major-component repair cost saved by ML vibration analysis on 1,400+ turbines"),
+         ("Northgate Power", "Utility", "−5 %", "corrective maintenance frequency projected from an AI trial on an offshore wind farm")]
+ph2 = "".join(f"<div class='a peer' style='--d:{i+1}'><small>{n}</small><em>{r}</em><b>{v}</b><span>{d}</span></div>"
+              for i, (n, r, v, d) in enumerate(peers))
 slide("The competition", "Leaders already turn data and AI into availability",
       f"""<div class="peers">{ph2}</div>
       <div class="a edge" style="--d:5"><b>Aerion's edge</b><span>OEM tools see their own turbines. Aerion runs a mixed fleet (Hansa Drives and NordGear gearboxes), so <b>owning one governed view of every turbine</b> is what keeps the margin in-house.</span></div>
-      <p class="a src" style="--d:6">Sources: Siemens Gamesa, <i>Vibration Diagnostics</i> brochure · Vestas, <i>AOM 5000</i> brochure · Endesa press release, 3 Dec 2018 · ORE Catapult press release on RWE's Wind AI trial, 15 Dec 2021</p>""",
+      <p class="a src" style="--d:6">Company names are anonymised. Each figure is that company's own public disclosure (OEM brochures, utility press release 2018, independent test-centre release 2021).</p>""",
       """## The competition: leaders already turn data and AI into availability
-- **Siemens Gamesa:** 99 % drivetrain detection hit rate; component failures predicted up to 3 years in advance; 600 TB of data for its AI (Vibration Diagnostics brochure)
-- **Vestas:** the Performance & Diagnostic Centre monitors 51,000+ turbines; wear is predicted and repairs planned during low-wind periods (AOM 5000 brochure)
-- **Enel / Endesa:** machine-learning vibration analysis on 1,400+ turbines saves 15–95 % of main-component repair cost (Endesa press release, 3 Dec 2018)
-- **RWE:** ORE Catapult analysis of an AI trial on an offshore wind farm: corrective maintenance frequency could fall by 5 % (ORE Catapult, 15 Dec 2021)
-- Also: peer-reviewed research shows SCADA data alone flags gearbox and generator failures months ahead (Vrije Universiteit Brussel, *Wind Energy Science* 10, 2025); Plenitude (Eni) turns wind and solar maintenance reports into queryable data with Databricks Genie and agents (Databricks blog, 8 Jun 2026)
+_Company names are anonymised; each figure is that company's own public disclosure. Sources are listed in deck/SOURCES.md._
+- **Borealis Turbines (turbine maker):** 99 % drivetrain detection hit rate; component failures predicted up to 3 years in advance; 600 TB of data for its AI
+- **Polaris Wind Systems (turbine maker):** central diagnostics centre monitors 51,000+ turbines; wear is predicted and repairs planned during low-wind periods
+- **Meridian Energía (utility):** machine-learning vibration analysis on 1,400+ turbines saves 15–95 % of main-component repair cost (2018)
+- **Northgate Power (utility):** independent analysis of an AI trial on an offshore wind farm: corrective maintenance frequency could fall by 5 % (2021)
+- Also: peer-reviewed research shows SCADA data alone flags gearbox and generator failures months ahead (*Wind Energy Science* 10, 2025)
 - **Aerion's edge:** OEM tools see their own turbines. Aerion runs a mixed fleet (Hansa Drives and NordGear), so owning one governed view of every turbine keeps the margin in-house.""",
-      "This answers 'why now' for the COO: competitors and OEMs are already doing this. Then pivot to the edge: OEMs only see their own turbines.")
+      "This answers 'why now' for the COO: competitors and OEMs are already doing this. Then pivot to the edge: OEMs only see their own turbines. If asked, the names are anonymised but the figures are real public disclosures.")
 
 # Story order: promise (title) → problem → how the industry fixes it → competitors → where the € comes from → demo
 competition = SLIDES.pop()      # defined last
@@ -389,7 +392,8 @@ h1 { font-size: 46px; line-height: 1.1; letter-spacing: -.01em; max-width: 1080p
 .rung.vg { border-color: var(--navy) } .rung.vg i { background: var(--lava) } .rung.vg em { background: var(--navy); color: #fff }
 .peers { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px }
 .peer { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 22px 20px }
-.peer small { display: block; font-size: 13px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px }
+.peer small { display: block; font-size: 13px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--navy) }
+.peer em { display: block; font-style: normal; font-size: 12.5px; color: var(--muted); margin: 2px 0 12px }
 .peer b { display: block; font-size: 44px; line-height: 1; margin-bottom: 12px } .peer span { font-size: 15.5px; color: var(--muted); line-height: 1.4 }
 .edge { margin-top: 28px; background: var(--navy); color: var(--light); border-radius: 14px; padding: 20px 26px; display: grid; grid-template-columns: 160px 1fr; gap: 20px; align-items: center }
 .edge b { font-size: 20px; color: var(--lava) } .edge span { font-size: 18px; line-height: 1.4 } .edge span b { color: var(--light); font-size: inherit }

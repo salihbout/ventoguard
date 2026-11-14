@@ -44,14 +44,15 @@ _Slide 3 · How the industry fixes it_
 _Slide 4 · The competition_
 
 ## The competition: leaders already turn data and AI into availability
-- **Siemens Gamesa:** 99 % drivetrain detection hit rate; component failures predicted up to 3 years in advance; 600 TB of data for its AI (Vibration Diagnostics brochure)
-- **Vestas:** the Performance & Diagnostic Centre monitors 51,000+ turbines; wear is predicted and repairs planned during low-wind periods (AOM 5000 brochure)
-- **Enel / Endesa:** machine-learning vibration analysis on 1,400+ turbines saves 15–95 % of main-component repair cost (Endesa press release, 3 Dec 2018)
-- **RWE:** ORE Catapult analysis of an AI trial on an offshore wind farm: corrective maintenance frequency could fall by 5 % (ORE Catapult, 15 Dec 2021)
-- Also: peer-reviewed research shows SCADA data alone flags gearbox and generator failures months ahead (Vrije Universiteit Brussel, *Wind Energy Science* 10, 2025); Plenitude (Eni) turns wind and solar maintenance reports into queryable data with Databricks Genie and agents (Databricks blog, 8 Jun 2026)
+_Company names are anonymised; each figure is that company's own public disclosure. Sources are listed in deck/SOURCES.md._
+- **Borealis Turbines (turbine maker):** 99 % drivetrain detection hit rate; component failures predicted up to 3 years in advance; 600 TB of data for its AI
+- **Polaris Wind Systems (turbine maker):** central diagnostics centre monitors 51,000+ turbines; wear is predicted and repairs planned during low-wind periods
+- **Meridian Energía (utility):** machine-learning vibration analysis on 1,400+ turbines saves 15–95 % of main-component repair cost (2018)
+- **Northgate Power (utility):** independent analysis of an AI trial on an offshore wind farm: corrective maintenance frequency could fall by 5 % (2021)
+- Also: peer-reviewed research shows SCADA data alone flags gearbox and generator failures months ahead (*Wind Energy Science* 10, 2025)
 - **Aerion's edge:** OEM tools see their own turbines. Aerion runs a mixed fleet (Hansa Drives and NordGear), so owning one governed view of every turbine keeps the margin in-house.
 
-> Speaker notes: This answers 'why now' for the COO: competitors and OEMs are already doing this. Then pivot to the edge: OEMs only see their own turbines.
+> Speaker notes: This answers 'why now' for the COO: competitors and OEMs are already doing this. Then pivot to the edge: OEMs only see their own turbines. If asked, the names are anonymised but the figures are real public disclosures.
 
 ---
 
