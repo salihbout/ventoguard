@@ -95,6 +95,7 @@ One turbine at Hunsrück Höhe shows that the stages are a single data flow, not
 | [`evidence/lakebase.txt`](evidence/lakebase.txt) | `psql` session against Lakebase: synced tables, risk board query, work orders written by the app |
 | [`evidence/genie_conversations.md`](evidence/genie_conversations.md) | Real Genie Conversation API questions → generated SQL → results |
 | [`evidence/app.md`](evidence/app.md) | Deployed app: status, resources, and real responses from every `/api/*` endpoint, including a work-order write and a Genie answer |
+| [`evidence/app_views.md`](evidence/app_views.md) | Role views for the COO and the Head of Asset Management (`/api/views/executive`, `/api/views/assets`): live value case (€4,188,999 net a year, matching the deck), data-driven insights, farm scorecard, reliability by component and supplier, maintenance calendar. Captured by [`scripts/views_evidence.sh`](scripts/views_evidence.sh) from the app back end run against the production Lakebase data |
 
 ## Decisions and trade-offs
 
@@ -169,4 +170,4 @@ cd app && OPS_SCHEMA=vg_ops_dev PGUSER=<you> uvicorn backend.main:app --port 876
 [`deck/VentoGuard_deck.pdf`](deck/VentoGuard_deck.pdf) · text version [`deck/VentoGuard_deck.md`](deck/VentoGuard_deck.md)
 
 Prepared for **Aerion Windkraft AG**, a fictional customer. The presentation is [`deck/VentoGuard_deck.html`](deck/VentoGuard_deck.html): one slide per screen, ← → to navigate, F for full screen, with animated KPIs and charts. It has 16 slides: 13 for the main story (outcome → problem → how the industry fixes it → what competitors already show, with public sources → where the € comes from → tell/show/tell demo → proof → value per stakeholder → architecture → trust → pilot ask) and 3 backup slides for Q&A (cost/risk/time to value, integration, data quality/model/GenAI guard-rails). The `.md` version includes speaker notes.
-The talk track, live-demo click path and Q&A answers for the AI role-play are in [`deck/ROLEPLAY_PLAYBOOK.md`](deck/ROLEPLAY_PLAYBOOK.md).
+The talk track, live-demo click path and Q&A answers for the AI role-play are in [`deck/ROLEPLAY_PLAYBOOK.md`](deck/ROLEPLAY_PLAYBOOK.md). The word-for-word presentation script is in [`deck/PRESENTATION_SCRIPT.md`](deck/PRESENTATION_SCRIPT.md).
