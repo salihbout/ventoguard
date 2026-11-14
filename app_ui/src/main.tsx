@@ -3,6 +3,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
+import { RoleProvider } from "./lib/role";
 import { App } from "./App";
 import "@databricks/design-system/index.css";
 import "@databricks/design-system/fonts/dm-sans.css";
@@ -17,7 +18,9 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
     <DesignSystemProvider>
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
-          <App />
+          <RoleProvider>
+            <App />
+          </RoleProvider>
         </BrowserRouter>
       </QueryClientProvider>
     </DesignSystemProvider>

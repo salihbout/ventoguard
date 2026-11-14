@@ -35,6 +35,37 @@ export interface GenieAnswer {
   columns: string[]; rows: (string | null)[][]; row_count: number;
 }
 
+
+export interface ValueCase {
+  failures_observed: number; observed_days: number; unplanned_cost_annual_eur: number; net_benefit_annual_eur: number;
+  net_benefit_at_50pct_eur: number; false_alarm_cost_annual_eur: number; downtime_days_avoided_annual: number;
+  availability_uplift_pp: number; catch_rate_assumed: number;
+}
+export interface FarmScore {
+  farm_name: string; availability_period: number; availability: number; lost_revenue_eur: number; lost_revenue_period_eur: number;
+  energy_mwh: number; turbines: number; critical: number; high: number;
+  failures?: number; mttr_hours?: number; repair_cost_eur?: number; event_cost_eur?: number;
+}
+export interface Insight { tone: "risk" | "action" | "good" | "insight"; title: string; detail: string; link: string }
+export interface ExecutiveView {
+  as_of: string; target_availability: number; value: ValueCase;
+  now: { critical: number; high: number; avoidable_now_eur: number; risk_weighted_eur: number; at_risk_without_order: number;
+         unprotected_eur: number; open_orders: number; protected_eur: number };
+  fleet_30d: { availability: number; lost_revenue_eur: number; revenue_eur: number; as_of: string };
+  monthly: { month: string; availability: number; lost_revenue_eur: number; days: number }[];
+  components: { component: string; failures: number; cost_eur: number; avg_days_down: number }[];
+  farms: FarmScore[]; insights: Insight[];
+}
+export interface Supplier { supplier: string; turbines: number; avg_age_years: number; gearbox_failures: number; failures_per_10_turbines: number }
+export interface AssetsView {
+  target_availability: number; farms: FarmScore[];
+  components: { component: string; failures: number; mttr_hours: number; cost_per_event_eur: number; crane_share: number }[];
+  suppliers: Supplier[]; ages: { cohort: string; turbines: number; failures: number; failures_per_10_turbines: number }[];
+  calendar: { wo_id: number; turbine_id: string; farm_name: string; component: string; priority: string; status: string;
+              planned_date: string; crew: string; expected_avoidable_eur: number }[];
+  mix: { planned_orders: number; unplanned_failures_90d: number };
+}
+
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const res = await fetch(`/api${path}`, { headers: { "content-type": "application/json" }, ...init });
   if (!res.ok) {
@@ -47,6 +78,8 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 
 export const api = {
   kpis: () => request<Kpis>("/kpis"),
+  executive: () => request<ExecutiveView>("/views/executive"),
+  assets: () => request<AssetsView>("/views/assets"),
   farms: () => request<Farm[]>("/farms"),
   riskBoard: () => request<RiskRow[]>("/risk-board"),
   fleetDaily: (days = 30) => request<FleetDay[]>(`/fleet/daily?days=${days}`),

@@ -8,7 +8,7 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
 from .lakebase import db, init_ops_schema
-from .routers import fleet, genie, turbines, work_orders
+from .routers import fleet, genie, turbines, views, work_orders
 
 log = logging.getLogger("ventoguard")
 STATIC = Path(__file__).resolve().parent.parent / "static"
@@ -24,7 +24,7 @@ async def lifespan(_: FastAPI):
 
 
 app = FastAPI(title="VentoGuard API", lifespan=lifespan)
-for r in (fleet.router, turbines.router, work_orders.router, genie.router):
+for r in (fleet.router, turbines.router, work_orders.router, genie.router, views.router):
     app.include_router(r, prefix="/api")
 
 

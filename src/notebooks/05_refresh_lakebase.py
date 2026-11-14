@@ -26,7 +26,7 @@ dbutils.widgets.text("app_name", "ventoguard")
 dbutils.widgets.text("lakebase_endpoint", "projects/ventoguard/branches/production/endpoints/primary")
 LB_CATALOG = dbutils.widgets.get("catalog")
 SERVING = dbutils.widgets.get("serving_schema")
-SYNCED = ["turbine_risk_scores", "turbine_ai_briefs", "gold_turbine_daily"]
+SYNCED = ["turbine_risk_scores", "turbine_ai_briefs", "gold_turbine_daily", "gold_failure_history"]
 
 import time
 from databricks.sdk import WorkspaceClient

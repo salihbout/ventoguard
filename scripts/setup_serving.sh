@@ -25,6 +25,7 @@ sync() {  # <table> <pk-json-array>
 sync gold_turbine_daily '["turbine_id","reading_date"]'
 sync turbine_risk_scores '["turbine_id"]'
 sync turbine_ai_briefs '["turbine_id"]'
+sync gold_failure_history '["failure_id"]'
 
 # 3. Genie space
 SPACE_ID=$(python3 genie/create_genie_space.py $P $WH | python3 -c 'import json,sys; print(json.load(sys.stdin)["space_id"])')

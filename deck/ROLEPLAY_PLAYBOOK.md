@@ -55,6 +55,13 @@ Before each screen, say one line about what they'll see. After it, say one line 
    - *Show:* click *"Which wind farm lost the most revenue to unplanned failures, and which component caused it?"* and open **Generated SQL**.
    - *Land:* "Your asset manager gets that answer without a BI ticket, and the architect can see exactly which governed table it came from."
 
+5. **"View as → Executive" (the COO's own screen)**
+   - *Tell:* "And this is what you see, as COO, on the same Monday."
+   - *Show:* **€4.19 M** value per year (€2.73 M at 50 %), **€11.33 M** unplanned-cost run rate, availability against the 97 % target, and **€806 k** at stake now. Then the key insights (Hunsrück 2.0 pp below target is the pilot farm; all 8 gearbox failures were Hansa Drives units) and the **Decisions this week** panel.
+   - *Land:* "You don't need to open a single turbine. You see the money, the risk and the one decision that needs you."
+   - *Architect aside:* "Same Lakebase tables as the operations screen, so the numbers agree everywhere. The value case is computed live with the same model as the deck."
+   - Optional: **"View as → Asset management"** for the Head of Asset Management (MTTR, crane share, supplier and age cohorts, maintenance calendar).
+
 **Fallback if the app or the network fails:** stay calm and say *"Let me show you the same moment from this morning's run."* Then use slides 4 and 5 to talk through the flow, and quote the F03-T07 brief from `evidence/queries/ai_briefs.result.json`. All outputs are also in `evidence/app.md` and `evidence/genie_conversations.md`.
 
 ## Q&A bank: two altitudes per answer
