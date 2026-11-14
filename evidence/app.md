@@ -1,5 +1,7 @@
 # Deployed Databricks App: API execution evidence
 
+> Email addresses in this file were redacted on 2026-11-14 (`<demo-user>` = the person who ran the build, `<workspace-user>` = other users of the shared demo workspace). Nothing else was changed.
+
 App `ventoguard` at https://ventoguard-7474660468503815.aws.databricksapps.com, captured 2026-10-10 20:29 UTC.
 React front end (`app_ui/`, built into `app/static`) and FastAPI back end (`app/backend`). Every response below comes from the
 deployed app: reads from Lakebase synced tables (`ventoguard_serving`), writes to the app-owned OLTP schema (`vg_ops`), and Genie via the Conversation API.
@@ -256,7 +258,7 @@ deployed app: reads from Lakebase synced tables (`ventoguard_serving`), writes t
   "notes": "Planned gearbox swap; crane booked for low-wind window",
   "failure_prob_14d": 0.9578,
   "expected_avoidable_eur": 215327,
-  "created_by": "salih.boutadghart@databricks.com",
+  "created_by": "<demo-user>",
   "created_at": "2026-10-10T20:29:06.194624+00:00",
   "updated_at": "2026-10-10T20:29:06.194624+00:00"
 }
@@ -276,7 +278,7 @@ Request body: `{"status":"SCHEDULED"}`
   "notes": "Planned gearbox swap; crane booked for low-wind window",
   "failure_prob_14d": 0.9578,
   "expected_avoidable_eur": 215327,
-  "created_by": "salih.boutadghart@databricks.com",
+  "created_by": "<demo-user>",
   "created_at": "2026-10-10T20:29:06.194624+00:00",
   "updated_at": "2026-10-10T20:29:06.710491+00:00"
 }
@@ -296,7 +298,7 @@ Request body: `{"status":"SCHEDULED"}`
     "notes": "Planned gearbox swap; crane booked for low-wind window",
     "failure_prob_14d": 0.9578,
     "expected_avoidable_eur": 215327,
-    "created_by": "salih.boutadghart@databricks.com",
+    "created_by": "<demo-user>",
     "created_at": "2026-10-10T17:22:38.541454+00:00",
     "updated_at": "2026-10-10T17:22:39.076726+00:00",
     "farm_name": "Uckermark Nord",
@@ -313,7 +315,7 @@ Request body: `{"status":"SCHEDULED"}`
     "notes": "Planned gearbox swap; crane booked for low-wind window",
     "failure_prob_14d": 0.9578,
     "expected_avoidable_eur": 215327,
-    "created_by": "salih.boutadghart@databricks.com",
+    "created_by": "<demo-user>",
     "created_at": "2026-10-10T20:29:06.194624+00:00",
     "updated_at": "2026-10-10T20:29:06.710491+00:00",
     "farm_name": "Uckermark Nord",

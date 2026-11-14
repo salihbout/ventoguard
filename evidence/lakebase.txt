@@ -1,3 +1,4 @@
+# Email addresses in this file were redacted on 2026-11-14 (`<demo-user>` = the person who ran the build, `<workspace-user>` = other users of the shared demo workspace). Nothing else was changed.
 # Lakebase (Autoscaling project 'ventoguard') psql session, 2026-10-10 20:29 UTC
 # endpoint: projects/ventoguard/branches/production/endpoints/primary
 
@@ -50,8 +51,8 @@ SELECT turbine_id, left(headline, 70) AS headline, urgency_days FROM ventoguard_
 SELECT wo_id, turbine_id, component, priority, status, planned_date, crew, created_by, created_at FROM vg_ops.work_orders ORDER BY wo_id;
  wo_id | turbine_id | component | priority |  status   | planned_date |          crew          |            created_by            |          created_at           
 -------+------------+-----------+----------+-----------+--------------+------------------------+----------------------------------+-------------------------------
-     1 | F01-T20    | gearbox   | P1       | SCHEDULED | 2026-10-12   | North crew (Uckermark) | salih.boutadghart@databricks.com | 2026-10-10 17:22:38.541454+00
-     2 | F01-T20    | gearbox   | P1       | SCHEDULED | 2026-10-12   | North crew (Uckermark) | salih.boutadghart@databricks.com | 2026-10-10 20:29:06.194624+00
+     1 | F01-T20    | gearbox   | P1       | SCHEDULED | 2026-10-12   | North crew (Uckermark) | <demo-user> | 2026-10-10 17:22:38.541454+00
+     2 | F01-T20    | gearbox   | P1       | SCHEDULED | 2026-10-12   | North crew (Uckermark) | <demo-user> | 2026-10-10 20:29:06.194624+00
 (2 rows)
 
 EXPLAIN ANALYZE SELECT * FROM ventoguard_serving.turbine_risk_scores WHERE turbine_id = 'F03-T07';

@@ -1,5 +1,7 @@
 # 39a9a9b1-4207-4e8d-a765-34ceddeaaf88: executed notebook (task run 200421997264907)
 
+> Email addresses in this file were redacted on 2026-11-14 (`<demo-user>` = the person who ran the build, `<workspace-user>` = other users of the shared demo workspace). Nothing else was changed.
+
 > Exported from the Databricks job run with `databricks jobs export-run`; cell sources and their outputs exactly as executed on serverless compute.
 
 
@@ -217,38 +219,38 @@ for schema in SCHEMAS.values():
 
 | Principal | ActionType | ObjectType | ObjectKey |
 |---|---|---|---|
-| isabella.altergott@databricks.com | ALL PRIVILEGES | CATALOG | serverless_stable_7zqte5_catalog |
+| <workspace-user> | ALL PRIVILEGES | CATALOG | serverless_stable_7zqte5_catalog |
 | account users | READ METADATA | METASTORE | metastore_aws_us_east_1 |
-| salih.boutadghart@databricks.com | ALL PRIVILEGES | CATALOG | serverless_stable_7zqte5_catalog |
-| salih.boutadghart@databricks.com | MANAGE | CATALOG | serverless_stable_7zqte5_catalog |
-| anton.vlasov@databricks.com | ALL PRIVILEGES | CATALOG | serverless_stable_7zqte5_catalog |
-| sophie.bauer@databricks.com | ALL PRIVILEGES | CATALOG | serverless_stable_7zqte5_catalog |
-| suraj.bang@databricks.com | READ METADATA | METASTORE | metastore_aws_us_east_1 |
+| <demo-user> | ALL PRIVILEGES | CATALOG | serverless_stable_7zqte5_catalog |
+| <demo-user> | MANAGE | CATALOG | serverless_stable_7zqte5_catalog |
+| <workspace-user> | ALL PRIVILEGES | CATALOG | serverless_stable_7zqte5_catalog |
+| <workspace-user> | ALL PRIVILEGES | CATALOG | serverless_stable_7zqte5_catalog |
+| <workspace-user> | READ METADATA | METASTORE | metastore_aws_us_east_1 |
 **Output:**
 
 | Principal | ActionType | ObjectType | ObjectKey |
 |---|---|---|---|
-| isabella.altergott@databricks.com | ALL PRIVILEGES | CATALOG | serverless_stable_7zqte5_catalog |
+| <workspace-user> | ALL PRIVILEGES | CATALOG | serverless_stable_7zqte5_catalog |
 | d44291ff-6f77-48e5-9417-8a6887fb3d86 | USE SCHEMA | SCHEMA | serverless_stable_7zqte5_catalog.ventoguard_silver |
 | account users | READ METADATA | METASTORE | metastore_aws_us_east_1 |
-| salih.boutadghart@databricks.com | ALL PRIVILEGES | CATALOG | serverless_stable_7zqte5_catalog |
-| salih.boutadghart@databricks.com | MANAGE | CATALOG | serverless_stable_7zqte5_catalog |
-| anton.vlasov@databricks.com | ALL PRIVILEGES | CATALOG | serverless_stable_7zqte5_catalog |
-| sophie.bauer@databricks.com | ALL PRIVILEGES | CATALOG | serverless_stable_7zqte5_catalog |
-| suraj.bang@databricks.com | READ METADATA | METASTORE | metastore_aws_us_east_1 |
+| <demo-user> | ALL PRIVILEGES | CATALOG | serverless_stable_7zqte5_catalog |
+| <demo-user> | MANAGE | CATALOG | serverless_stable_7zqte5_catalog |
+| <workspace-user> | ALL PRIVILEGES | CATALOG | serverless_stable_7zqte5_catalog |
+| <workspace-user> | ALL PRIVILEGES | CATALOG | serverless_stable_7zqte5_catalog |
+| <workspace-user> | READ METADATA | METASTORE | metastore_aws_us_east_1 |
 **Output:**
 
 | Principal | ActionType | ObjectType | ObjectKey |
 |---|---|---|---|
-| isabella.altergott@databricks.com | ALL PRIVILEGES | CATALOG | serverless_stable_7zqte5_catalog |
+| <workspace-user> | ALL PRIVILEGES | CATALOG | serverless_stable_7zqte5_catalog |
 | d44291ff-6f77-48e5-9417-8a6887fb3d86 | SELECT | SCHEMA | serverless_stable_7zqte5_catalog.ventoguard_gold |
 | d44291ff-6f77-48e5-9417-8a6887fb3d86 | USE SCHEMA | SCHEMA | serverless_stable_7zqte5_catalog.ventoguard_gold |
 | account users | READ METADATA | METASTORE | metastore_aws_us_east_1 |
-| salih.boutadghart@databricks.com | ALL PRIVILEGES | CATALOG | serverless_stable_7zqte5_catalog |
-| salih.boutadghart@databricks.com | MANAGE | CATALOG | serverless_stable_7zqte5_catalog |
-| anton.vlasov@databricks.com | ALL PRIVILEGES | CATALOG | serverless_stable_7zqte5_catalog |
-| sophie.bauer@databricks.com | ALL PRIVILEGES | CATALOG | serverless_stable_7zqte5_catalog |
-| suraj.bang@databricks.com | READ METADATA | METASTORE | metastore_aws_us_east_1 |
+| <demo-user> | ALL PRIVILEGES | CATALOG | serverless_stable_7zqte5_catalog |
+| <demo-user> | MANAGE | CATALOG | serverless_stable_7zqte5_catalog |
+| <workspace-user> | ALL PRIVILEGES | CATALOG | serverless_stable_7zqte5_catalog |
+| <workspace-user> | ALL PRIVILEGES | CATALOG | serverless_stable_7zqte5_catalog |
+| <workspace-user> | READ METADATA | METASTORE | metastore_aws_us_east_1 |
 
 ## Data quality: Lakeflow expectation results from the pipeline event log
 
