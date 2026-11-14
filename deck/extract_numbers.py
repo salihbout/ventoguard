@@ -23,6 +23,8 @@ def metric(k):
 backtest = re.findall(r"^\| (F\d\d-T\d\d) \| (\w+) \| (2026-\d\d-\d\d) \| (\d+) \| [\d.]+ \| True \|", train, re.M)
 live = re.findall(r"^\| (F\d\d-T\d\d) \| (\w+) \| 2026-[\d\-T:.Z]+ \| (\d+) \| True \| (\w+) \| ([\d.]+) \|", score, re.M)
 brief = briefs[0]
+app_md = open(EV + "app.md").read()
+kpis = json.loads(re.search(r"### `GET /api/kpis`\s*```json\s*(\{.*?\})\s*```", app_md, re.S).group(1))
 N = dict(
     net_annual_benefit_eur=float(vc["net_annual_benefit_eur"]), unplanned_cost_annualised_eur=float(vc["unplanned_cost_annualised_eur"]),
     avoidable_100=float(vc["avoidable_annualised_at_100pct_eur"]), avoidable_75=float(vc["avoidable_annualised_at_75pct_eur"]),
@@ -42,6 +44,8 @@ N = dict(
     backtest=[dict(turbine_id=t, component=c, failure_date=d, lead=int(lead)) for t, c, d, lead in backtest],
     live_check=[dict(turbine_id=t, component=c, days_until=int(d), tier=tier, prob=float(p))
                 for t, c, d, tier, p in sorted(live, key=lambda x: int(x[2]))],
+    app_avoidable_now_eur=float(kpis["avoidable_if_acted_eur"]), app_risk_weighted_eur=float(kpis["risk_weighted_eur"]),
+    app_lost_revenue_30d_eur=float(kpis["lost_revenue_30d_eur"]), app_score_date=kpis["score_date"],
     dq_dropped=sum(int(e["failed_records"]) for e in exp
                    if e["dataset"].endswith("silver_scada") and e["expectation"] in ("oil_temp_sensor_ok", "power_present", "wind_speed_physical")),
 )

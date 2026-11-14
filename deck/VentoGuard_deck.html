@@ -39,6 +39,7 @@ h3 { font-size: 17px; margin: 0 0 10px }
 .flow .st b { display: block; font-size: 19px; margin-bottom: 8px }
 .flow .ar { align-self: center; font-size: 30px; color: #FF3621 }
 code { background: #eee; padding: 1px 5px; border-radius: 4px; font-size: 90% }
+.dense .pts { font-size: 15.5px; line-height: 1.4 } .dense .card p { font-size: 14px }
 @media print { body { background: none } .slide { margin: 0 } }
 </style></head><body>
 <section class='slide title'><h1>Stop paying for surprise gearbox failures</h1><div class="sub">VentoGuard: predictive drivetrain reliability for a 120-turbine onshore wind fleet</div>
@@ -47,8 +48,24 @@ code { background: #eee; padding: 1px 5px; border-radius: 4px; font-size: 90% }
         <div><b>+1.5 pp</b><span>technical availability</span></div>
         <div><b>13 days</b><span>median early warning</span></div>
       </div>
-      <div class="foot">Prepared for: COO (executive sponsor) · Head of Asset Management (domain owner) · Built on the Databricks Data Intelligence Platform</div><div class='brand'>VentoGuard · Databricks Data Intelligence Platform</div><div class='num'>1/10</div></section>
-<section class='slide'><h1>The outcome: turn €11 M of surprise failures into planned, cheaper repairs</h1><div class="grid3">
+      <div class="foot">Prepared for: COO (executive sponsor) · Head of Asset Management (domain owner) · Built on the Databricks Data Intelligence Platform</div><div class='brand'>VentoGuard · Databricks Data Intelligence Platform</div><div class='num'>1/15</div></section>
+<section class='slide'><div class='kick'>Setting the scene</div><h1>Why we're here: 120 turbines, €11 M a year of surprises, and a 30-minute look at the fix</h1><div class="grid2">
+        <div><h3>The customer</h3><ul class="pts">
+          <li>German onshore wind operator: <b>4 farms, 120 turbines</b>, merchant and PPA revenue</li>
+          <li><b>COO</b> is accountable for EBITDA and availability. The <b>Head of Asset Management</b> runs O&M and the maintenance calendar.</li>
+        </ul>
+        <h3>The problem</h3><ul class="pts">
+          <li>Unplanned gearbox and bearing failures cost <b>€11.3 M a year</b>. Hunsrück Höhe sits at <b>95.0 %</b> availability against a 97 % target.</li>
+          <li>The warning signs were in SCADA and in technicians' notes weeks ahead, but nothing combined them.</li>
+        </ul></div>
+        <div><h3>In the next 30 minutes</h3><ol class="pts">
+          <li><b>The outcome and the € case</b> (3 min)</li>
+          <li><b>Live demo</b>: one Monday morning, from risk alert to booked repair (8 min)</li>
+          <li><b>Proof, value for each of you, and how it is built</b> (5 min)</li>
+          <li><b>Your questions</b>, then <b>one decision</b>: an 8-week pilot on Hunsrück Höhe</li>
+        </ol></div>
+      </div><div class='brand'>VentoGuard · Databricks Data Intelligence Platform</div><div class='num'>2/15</div></section>
+<section class='slide'><div class='kick'>The outcome</div><h1>The outcome: turn €11 M of surprise failures into planned, cheaper repairs</h1><div class="grid3">
         <div class="card lava"><div class="big">€11.3 M</div><div>annual cost of unplanned drivetrain failures today<br><small>22 failures in 192 days, repair + lost revenue</small></div></div>
         <div class="card"><div class="big">€4.2 M</div><div>net benefit per year with VentoGuard<br><small>assumes only 75 % of failures caught; false-alarm inspections deducted</small></div></div>
         <div class="card"><div class="big">664</div><div>turbine-days of downtime avoided per year<br><small>= +1.5 pp fleet technical availability</small></div></div>
@@ -57,8 +74,8 @@ code { background: #eee; padding: 1px 5px; border-radius: 4px; font-size: 90% }
         <li><b>What changes:</b> failures are flagged <b>13 days</b> before breakdown. That is enough time to book a crane, pull a spare gearbox and swap it in a low-wind window, so a five-week outage becomes a one-week planned job.</li>
         <li><b>Evidence:</b> 8/8 failures in the hold-out period were caught at least 3 days ahead. Today's top-4 risk turbines are the 4 that are degrading now.</li>
         <li><b>Ask:</b> an 8-week pilot on Hunsrück Höhe (lowest availability at 95.0 %), with a go/no-go on avoided cost.</li>
-      </ul><div class='brand'>VentoGuard · Databricks Data Intelligence Platform</div><div class='num'>2/10</div></section>
-<section class='slide'><h1>The problem in your KPIs: gearboxes and main bearings drive 90 % of the cost</h1><div class="grid2">
+      </ul><div class='brand'>VentoGuard · Databricks Data Intelligence Platform</div><div class='num'>3/15</div></section>
+<section class='slide'><div class='kick'>The problem</div><h1>The problem in your KPIs: gearboxes and main bearings drive 90 % of the cost</h1><div class="grid2">
         <div><table><tr><th>Component</th><th>Failures</th><th>Avg days down</th><th>Total cost</th><th>Per event</th></tr><tr><td>gearbox</td><td>8</td><td>36.4</td><td>€3,424 k</td><td>€428 k</td></tr><tr><td>main bearing</td><td>5</td><td>43.6</td><td>€1,886 k</td><td>€377 k</td></tr><tr><td>generator bearing</td><td>5</td><td>11.4</td><td>€521 k</td><td>€104 k</td></tr><tr><td>pitch hydraulics</td><td>4</td><td>3.1</td><td>€127 k</td><td>€32 k</td></tr></table>
         <p class="note">Last 192 days, 4 farms / 120 turbines. Cost = corrective repair (incl. crane) + lost revenue at day-ahead prices.</p></div>
         <div><ul class="pts">
@@ -66,8 +83,8 @@ code { background: #eee; padding: 1px 5px; border-radius: 4px; font-size: 90% }
           <li><b>Every surprise gearbox</b> costs around <b>€430 k</b> and <b>5+ weeks</b> waiting for a crane and a spare.</li>
           <li><b>The signals were there.</b> Oil temperature, bearing temperature and vibration drifted for 2 to 5 weeks before each failure. Technicians wrote it down in German free text, and nobody connected the dots.</li>
           <li><b>Today the operation is reactive.</b> SCADA alarms are fixed thresholds that fire only days before breakdown.</li>
-        </ul></div></div><div class='brand'>VentoGuard · Databricks Data Intelligence Platform</div><div class='num'>3/10</div></section>
-<section class='slide'><h1>Monday 07:00: what the reliability lead sees</h1><div class="grid2">
+        </ul></div></div><div class='brand'>VentoGuard · Databricks Data Intelligence Platform</div><div class='num'>4/15</div></section>
+<section class='slide'><div class='kick'>Live demo · what you'll see</div><h1>What I'll show you: Monday 07:00 at the reliability desk</h1><div class="grid2">
         <div><ol class="pts">
           <li><b>Risk board</b> (served from Lakebase in milliseconds): <b>3 CRITICAL, 1 HIGH</b> turbines, each with the likely component and € at stake.</li>
           <li><b>AI maintenance brief</b> for F03-T07: the diagnosis cites the sensor evidence and the technician's German note, with steps, crew, parts and the business case.</li>
@@ -75,15 +92,23 @@ code { background: #eee; padding: 1px 5px; border-radius: 4px; font-size: 90% }
           <li><b>Asset manager asks Genie</b>: <i>"Which farm lost the most revenue to failures, and which component caused it?"</i> Genie answers with the SQL shown.</li>
         </ol></div>
         <div class="quote"><div class="qh">F03-T07 Gearbox Imminent Failure: 99.5% Probability Within 14 Days</div><p>Gearbox intermediate stage shows critical degradation with vibration elevated +1.58mm/s, bearing temperature +6.09°C above fleet average, and power curve ratio reduced by -0.05. Technician reports confirm metallic whine, high oil temperature, and elevated iron content with particles in oil.</p><p><b>Business case.</b> Planned intervention avoids EUR 206,523 in additional costs versus unplanned failure (EUR 385,000 corrective vs EUR 205,000 planned repair).</p><small>Generated by Claude on Databricks from the model score, sensor residuals and technician notes</small></div>
-      </div><div class='brand'>VentoGuard · Databricks Data Intelligence Platform</div><div class='num'>4/10</div></section>
-<section class='slide'><h1>Proof: every hold-out failure flagged in advance, and today's alerts point at the right turbines</h1><div class="grid2">
+      </div><div class='brand'>VentoGuard · Databricks Data Intelligence Platform</div><div class='num'>5/15</div></section>
+<section class='slide'><div class='kick'>Live demo · what it means</div><h1>What you just saw: a five-week surprise turned into a planned one-week job, in four clicks</h1><table>
+        <tr><th>What you saw</th><th>What it changes</th><th>KPI it moves</th></tr>
+        <tr><td><b>Risk board</b>: 3 critical and 1 high-risk turbines, ranked by € at stake</td><td>The reliability lead starts the week with the 4 turbines that matter, not 120 alarms</td><td>Technical availability; <b>€806 k</b> avoidable if acted on now</td></tr>
+        <tr><td><b>AI brief</b> for F03-T07: evidence, technician note, steps and business case</td><td>A decision in minutes instead of a morning of digging through SCADA and CMMS</td><td>Planned repair saves about <b>€207 k</b> versus waiting for the failure</td></tr>
+        <tr><td><b>Work order</b> written to Lakebase in one click</td><td>The crane, the spare part and the crew are booked into a low-wind window</td><td>Corrective/planned ratio; MTTR</td></tr>
+        <tr><td><b>Genie</b>: a plain-language question with the SQL shown</td><td>The asset manager answers fleet questions without waiting on the BI team</td><td>Time to insight; supplier and retrofit decisions</td></tr>
+      </table>
+      <p class="pts" style="margin-top:22px"><b>Across the fleet:</b> this loop, run every morning, is worth <b>€4.2 M a year net</b> and <b>+1.5 pp</b> availability.</p><div class='brand'>VentoGuard · Databricks Data Intelligence Platform</div><div class='num'>6/15</div></section>
+<section class='slide'><div class='kick'>Proof</div><h1>Proof: every hold-out failure flagged in advance, and today's alerts point at the right turbines</h1><div class="grid2">
         <div><h3>Back-test (Aug–Sep, never seen in training)</h3><table><tr><th>Turbine</th><th>Component</th><th>Failed</th><th>First alert</th></tr><tr><td>F01-T06</td><td>gearbox</td><td>2026-08-08</td><td><b>7 d</b></td></tr><tr><td>F03-T04</td><td>gearbox</td><td>2026-08-06</td><td><b>5 d</b></td></tr><tr><td>F03-T28</td><td>gearbox</td><td>2026-08-15</td><td><b>14 d</b></td></tr><tr><td>F01-T21</td><td>gearbox</td><td>2026-08-28</td><td><b>14 d</b></td></tr><tr><td>F01-T27</td><td>main bearing</td><td>2026-09-15</td><td><b>14 d</b></td></tr><tr><td>F03-T12</td><td>generator bearing</td><td>2026-09-21</td><td><b>13 d</b></td></tr><tr><td>F04-T04</td><td>generator bearing</td><td>2026-08-13</td><td><b>12 d</b></td></tr><tr><td>F01-T25</td><td>pitch hydraulics</td><td>2026-09-04</td><td><b>13 d</b></td></tr></table>
         <p class="note">ROC-AUC 0.999 · PR-AUC 0.94 · precision 81 % at threshold 0.5 · 13 false-alarm turbine-weeks in 2 months</p></div>
         <div><h3>Live check: failures still in the future</h3><table><tr><th>Turbine</th><th>Will fail</th><th>When</th><th>VentoGuard today</th></tr><tr><td>F03-T09</td><td>gearbox</td><td>in 4 d</td><td><b>CRITICAL</b> (99 %)</td></tr><tr><td>F03-T07</td><td>gearbox</td><td>in 10 d</td><td><b>CRITICAL</b> (100 %)</td></tr><tr><td>F01-T20</td><td>gearbox</td><td>in 14 d</td><td><b>CRITICAL</b> (96 %)</td></tr><tr><td>F04-T16</td><td>main bearing</td><td>in 19 d</td><td><b>HIGH</b> (55 %)</td></tr></table>
         <p class="note">Hidden ground truth from the simulator, never exposed to the pipeline. Two further failures start degrading after the cut-off and cannot be seen yet. That is honest and expected.</p></div>
       </div>
-      <p class="caveat">Built on synthetic SCADA with a physically motivated degradation signal. On real fleet data, expect lower precision. The pilot will measure that, which is why the value case assumes a 75 % catch rate.</p><div class='brand'>VentoGuard · Databricks Data Intelligence Platform</div><div class='num'>5/10</div></section>
-<section class='slide'><h1>For the COO: €4 M+ a year, paid back within one quarter</h1><div class="grid2"><div><table>
+      <p class="caveat">Built on synthetic SCADA with a physically motivated degradation signal. On real fleet data, expect lower precision. The pilot will measure that, which is why the value case assumes a 75 % catch rate.</p><div class='brand'>VentoGuard · Databricks Data Intelligence Platform</div><div class='num'>7/15</div></section>
+<section class='slide'><div class='kick'>Value · executive sponsor</div><h1>For the COO: €4 M+ a year, paid back within one quarter</h1><div class="grid2"><div><table>
         <tr><th>Value driver (annualised)</th><th>€</th></tr>
         <tr><td>Unplanned failure cost today</td><td>€11.3 M</td></tr>
         <tr><td>Avoidable if every failure becomes a planned repair</td><td>€5.8 M</td></tr>
@@ -97,8 +122,8 @@ code { background: #eee; padding: 1px 5px; border-radius: 4px; font-size: 90% }
         <li><b>Revenue:</b> 664 more turbine-days generating, worth +1.5 pp availability and protecting PPA delivery volumes.</li>
         <li><b>Risk:</b> fewer OEM/insurer disputes, and spare-part pools sized from the risk board.</li>
         <li><b>Cost to run:</b> serverless jobs, a scale-to-zero Lakebase and one app. Expect low five figures per year at fleet scale, so payback comes within the first avoided gearbox.</li>
-      </ul></div></div><div class='brand'>VentoGuard · Databricks Data Intelligence Platform</div><div class='num'>6/10</div></section>
-<section class='slide'><h1>For the Head of Asset Management: from firefighting to a planned maintenance calendar</h1><div class="grid2"><div><ul class="pts">
+      </ul></div></div><div class='brand'>VentoGuard · Databricks Data Intelligence Platform</div><div class='num'>8/15</div></section>
+<section class='slide'><div class='kick'>Value · domain owner</div><h1>For the Head of Asset Management: from firefighting to a planned maintenance calendar</h1><div class="grid2"><div><ul class="pts">
         <li><b>13-day horizon</b> lines up with real lead times: crane booking (7–10 d), spare gearbox from the pool, and a low-wind weather window.</li>
         <li><b>Explainable alerts:</b> each score names the component and the three sensor residuals driving it, compared with the fleet on the same day, so ambient temperature doesn't trigger false alarms.</li>
         <li><b>Technician knowledge, unlocked:</b> 519 German/English notes are classified by an LLM for component, severity and precursor. A note like <i>"Ölprobe: erhöhter Eisengehalt"</i> now raises risk.</li>
@@ -108,8 +133,8 @@ code { background: #eee; padding: 1px 5px; border-radius: 4px; font-size: 90% }
         <li><b>Self-service answers with Genie:</b> availability by farm and month, cost by component, supplier and age cohorts, all without waiting on the BI team.</li>
         <li><b>KPIs this owner is measured on:</b> technical availability, MTTR, corrective vs planned ratio, O&M €/MWh. Every one is computed in governed gold tables.</li>
         <li><b>Fleet insight:</b> older Hansa Drives gearboxes in Hunsrück fail disproportionately often, which feeds the next retrofit and contract negotiation.</li>
-      </ul></div></div><div class='brand'>VentoGuard · Databricks Data Intelligence Platform</div><div class='num'>7/10</div></section>
-<section class='slide'><h1>How it works: one governed platform, from raw SCADA to the dispatcher's screen</h1><div class="flow">
+      </ul></div></div><div class='brand'>VentoGuard · Databricks Data Intelligence Platform</div><div class='num'>9/15</div></section>
+<section class='slide'><div class='kick'>How it works</div><h1>How it works: one governed platform, from raw SCADA to the dispatcher's screen</h1><div class="flow">
         <div class="st"><b>Lakeflow</b><span>Auto Loader ingests SCADA (3.3 M rows), CMMS notes, asset register and prices from a UC Volume. Declarative pipeline bronze → silver → gold with data-quality expectations.</span></div>
         <div class="ar">→</div>
         <div class="st"><b>Unity Catalog</b><span>One catalog, layer schemas ventoguard_bronze / _silver / _gold / _serving. Tags, GDPR column mask, lineage, least-privilege grants.</span></div>
@@ -120,16 +145,16 @@ code { background: #eee; padding: 1px 5px; border-radius: 4px; font-size: 90% }
         <div class="ar">→</div>
         <div class="st"><b>App + Genie</b><span>Databricks App: React front end, FastAPI back end. Risk map, AI brief and work orders, plus an embedded Genie space that shows its SQL.</span></div>
       </div>
-      <p class="note" style="margin-top:28px">Orchestrated as one Lakeflow Job (generate → pipeline → train → score + GenAI → govern → sync Lakebase), deployed as a Declarative Automation Bundle. Daily schedule at 05:00 CET.</p><div class='brand'>VentoGuard · Databricks Data Intelligence Platform</div><div class='num'>8/10</div></section>
-<section class='slide'><h1>Trust by design: governed data, explainable models, grounded AI</h1><div class="grid3">
+      <p class="note" style="margin-top:28px">Orchestrated as one Lakeflow Job (generate → pipeline → train → score + GenAI → govern → sync Lakebase), deployed as a Declarative Automation Bundle. Daily schedule at 05:00 CET.</p><div class='brand'>VentoGuard · Databricks Data Intelligence Platform</div><div class='num'>10/15</div></section>
+<section class='slide'><div class='kick'>Trust</div><h1>Trust by design: governed data, explainable models, grounded AI</h1><div class="grid3">
         <div class="card"><b>Data quality</b><p>Lakeflow expectations dropped 7,717 bad readings (sensor 999 °C, negative wind, missing power) before they reached the model. Results are queryable from the event log.</p></div>
         <div class="card"><b>Privacy (GDPR)</b><p>Technician names carry the governed <code>class.name</code> classification tag and are masked by a UC column-mask function. Only the reliability leads group sees them, in every tool including Genie.</p></div>
         <div class="card"><b>Model governance</b><p>UC-registered model with a quality gate (PR-AUC ≥ 0.30 and ≥ 60 % of failures caught) before the <code>@champion</code> alias moves. Back-test tables are logged with every run.</p></div>
         <div class="card"><b>Grounded GenAI</b><p>Briefs are generated only from the model score, measured residuals and the technician's own notes, and the prompt forbids invented measurements. Outputs are tagged <code>ai_generated</code>.</p></div>
         <div class="card"><b>Lineage</b><p>Lineage runs from the raw Volume to the risk board, so any number in the app can be traced back to the SCADA file it came from.</p></div>
         <div class="card"><b>Least privilege</b><p>The app service principal reads gold/serving only and owns just its work-order schema in Lakebase.</p></div>
-      </div><div class='brand'>VentoGuard · Databricks Data Intelligence Platform</div><div class='num'>9/10</div></section>
-<section class='slide'><h1>Next step: an 8-week pilot on Hunsrück Höhe</h1><div class="grid2"><div><table>
+      </div><div class='brand'>VentoGuard · Databricks Data Intelligence Platform</div><div class='num'>11/15</div></section>
+<section class='slide'><div class='kick'>The ask</div><h1>Next step: an 8-week pilot on Hunsrück Höhe</h1><div class="grid2"><div><table>
         <tr><th>Weeks</th><th>Milestone</th></tr>
         <tr><td>1–2</td><td>Connect the real SCADA historian and the SAP PM / CMMS via Lakeflow Connect; replay 24 months of history</td></tr>
         <tr><td>3–4</td><td>Retrain on real failures; calibrate thresholds with the reliability lead; add CMS vibration spectra</td></tr>
@@ -141,5 +166,27 @@ code { background: #eee; padding: 1px 5px; border-radius: 4px; font-size: 90% }
         <li>≤ 1 false alarm per 10 turbines per month</li>
         <li>≥ 1 failure converted to a planned repair, with € avoided documented</li>
         <li>Dispatchers use the app daily (adoption tracked in app logs)</li>
-      </ul><h3>Decisions needed today</h3><ul class="pts"><li>Executive sponsor and pilot farm confirmed</li><li>Access to SCADA and CMMS exports for 24 months</li></ul></div></div><div class='brand'>VentoGuard · Databricks Data Intelligence Platform</div><div class='num'>10/10</div></section>
+      </ul><h3>Decisions needed today</h3><ul class="pts"><li>Executive sponsor and pilot farm confirmed</li><li>Access to SCADA and CMMS exports for 24 months</li></ul></div></div><div class='brand'>VentoGuard · Databricks Data Intelligence Platform</div><div class='num'>12/15</div></section>
+<section class='slide'><div class='kick'>Appendix · business questions</div><h1>Backup: cost, risk and time to value</h1><div class="grid3 dense">
+        <div class="card"><b>Cost</b><p><b>Run cost:</b> serverless jobs and SQL, Lakebase that scales to zero, and one app, with no cluster to keep running. The pilot measures the exact figure from the billing system tables.</p><p><b>Yardstick:</b> one avoided gearbox is worth about <b>€430 k</b>, and the model flagged 8 of 8 hold-out failures.</p><p><b>Downside case:</b> if only 50 % are caught, the benefit is still <b>€2.7 M/yr</b>.</p></div>
+        <div class="card"><b>Risk and mitigation</b><p><b>Precision on real data is lower:</b> the value case already assumes 75 %, and pilot weeks 5–8 run in shadow mode with a field verdict on every alert.</p><p><b>Alert fatigue:</b> tiers and a ranking by € at stake keep the reliability lead's list short, with a target of ≤ 1 false alarm per 10 turbines per month.</p><p><b>Adoption:</b> the work order sits in the same screen as the alert, and daily use is a go/no-go criterion.</p></div>
+        <div class="card"><b>Time to value</b><p><b>Weeks 1–2:</b> real SCADA and CMMS history are connected.</p><p><b>Week 5:</b> the first live alerts reach the Hunsrück crew.</p><p><b>Week 8:</b> go/no-go on measured € avoided.</p><p><b>After go:</b> the same bundle is deployed to all 4 farms. Everything is code (a Declarative Automation Bundle), so roll-out is configuration, not a rebuild.</p></div>
+      </div><div class='brand'>VentoGuard · Databricks Data Intelligence Platform</div><div class='num'>13/15</div></section>
+<section class='slide'><div class='kick'>Appendix · technical questions</div><h1>Backup: architecture and integration with your systems</h1><div class="grid2 dense"><div><ul class="pts">
+        <li><b>Ingest:</b> Auto Loader picks up files incrementally from a UC Volume. In production: the SCADA historian via file drops or Zerobus streaming, and SAP PM / CMMS via Lakeflow Connect.</li>
+        <li><b>Transform:</b> a Lakeflow declarative pipeline, bronze → silver → gold, with expectations at silver. Streaming tables mean reruns only process new data.</li>
+        <li><b>Serve:</b> gold tables are synced to Lakebase Postgres (snapshot after each daily scoring run). The app reads in milliseconds and writes work orders transactionally to its own <code>vg_ops</code> schema.</li>
+        <li><b>Write-back:</b> in the pilot, work orders are pushed to SAP PM through its API, so SAP stays the system of record.</li>
+      </ul></div><div><ul class="pts">
+        <li><b>Orchestration:</b> one Lakeflow Job with six tasks, scheduled daily at 05:00 CET, deployed as a Declarative Automation Bundle with dev and prod targets.</li>
+        <li><b>Scale:</b> about 3.3 M rows of 10-minute SCADA today, aggregated to turbine-day features. More turbines, more sensors or CMS spectra scale out on serverless with no re-architecture.</li>
+        <li><b>Freshness:</b> daily matches the 14-day horizon. The Lakebase sync can be switched to triggered or continuous if intraday is needed.</li>
+        <li><b>Open formats:</b> Delta tables in Unity Catalog, standard Postgres, MLflow models, so nothing is locked in a proprietary store.</li>
+      </ul></div></div><div class='brand'>VentoGuard · Databricks Data Intelligence Platform</div><div class='num'>14/15</div></section>
+<section class='slide'><div class='kick'>Appendix · technical questions</div><h1>Backup: data quality, model validation and the GenAI guard-rails</h1><div class="grid3 dense">
+        <div class="card"><b>Data quality</b><p>Expectations at silver drop physically impossible readings: 7,717 bad readings in this run (999 °C oil, negative wind, missing power). Results sit in the pipeline event log and can be alerted on. Features are <b>relative to the fleet on the same day</b>, so weather and seasonality don't look like degradation.</p></div>
+        <div class="card"><b>Model validation</b><p>Gradient-boosted classifier with a 14-day horizon, validated on a <b>time split</b> (trained before August, tested Aug–Sep) to avoid leakage. A quality gate (PR-AUC ≥ 0.30 and ≥ 60 % of failures caught ≥ 3 days ahead) must pass before <code>@champion</code> moves. Each run logs metrics and back-test tables to MLflow. The pilot adds drift monitoring and a monthly retrain.</p></div>
+        <div class="card"><b>GenAI guard-rails</b><p>Claude via Databricks Foundation Model APIs, called with <code>ai_query</code> in SQL. Briefs use only the score, measured residuals and the technician's own notes, and the prompt forbids invented numbers. Outputs are tagged <code>ai_generated</code> and shown next to the evidence. A human approves every work order.</p></div>
+      </div>
+      <p class="note" style="margin-top:18px">Security: Unity Catalog grants and lineage on every table. Technician names are tagged <code>class.name</code> and masked by a column-mask function in every tool, Genie included. The app runs as a least-privilege service principal that reads gold/serving and owns only its work-order schema.</p><div class='brand'>VentoGuard · Databricks Data Intelligence Platform</div><div class='num'>15/15</div></section>
 </body></html>

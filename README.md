@@ -101,3 +101,6 @@ cd app && OPS_SCHEMA=vg_ops_dev PGUSER=<you> uvicorn backend.main:app --port 876
 ## Business deck
 
 [`deck/VentoGuard_deck.pdf`](deck/VentoGuard_deck.pdf) · text version [`deck/VentoGuard_deck.md`](deck/VentoGuard_deck.md)
+
+15 slides: 12 for the main story (setup → outcome → tell/show/tell demo → value per stakeholder → architecture → pilot ask) and 3 backup slides for Q&A (cost/risk/time to value, integration, data quality/model/GenAI guard-rails).
+The talk track, live-demo click path and Q&A answers for the AI role-play are in [`deck/ROLEPLAY_PLAYBOOK.md`](deck/ROLEPLAY_PLAYBOOK.md).

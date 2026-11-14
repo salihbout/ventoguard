@@ -129,5 +129,9 @@
       "prob": 0.5529
     }
   ],
+  "app_avoidable_now_eur": 805598.33015625,
+  "app_risk_weighted_eur": 849349.0,
+  "app_lost_revenue_30d_eur": 170789.71999999988,
+  "app_score_date": "2026-10-09",
   "dq_dropped": 7717
 }
