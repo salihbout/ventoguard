@@ -40,7 +40,7 @@ Before each screen, say one line about what they'll see. After it, say one line 
 
 1. **Fleet page ("Fleet risk")**
    - *Tell:* "This is what your reliability lead opens at 07:00."
-   - *Show:* the KPI strip: turbines at high or critical risk (**4**), **avoidable cost if acted on now (≈ €806 k)**, availability over 30 days, lost revenue over 30 days. Point to the farm map coloured by risk, then the **Risk board**: **3 CRITICAL, 1 HIGH**, ranked by € at stake.
+   - *Show:* the KPI strip: turbines at high or critical risk (**4**), **avoidable cost if acted on now (≈ €806 k)**, availability over 30 days, lost revenue over 30 days. On the map, click **Hunsrück Höhe** (badge 2) to fly to the farm, then **hover F03-T07** to show its status card (99.5 %, gearbox, €207 k avoidable, act within 72 h). Optionally press **Expand** for the full-screen map. Then scroll to the **Risk board**: **3 CRITICAL, 1 HIGH**, ranked by € at stake.
    - *Land:* "Not 120 alarms, just 4 turbines, sorted by money."
 2. **Click F03-T07, which opens the turbine page**
    - *Show:* failure probability over 14 days (~99 %) and the most likely component (gearbox). Under **"Strongest signals against the fleet"**, the vibration is +1.58 mm/s and the bearing temperature +6 °C *versus the rest of the fleet on the same day*. Then the trend charts, where the drift is visible for weeks.
