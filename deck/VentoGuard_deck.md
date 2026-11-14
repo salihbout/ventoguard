@@ -8,7 +8,7 @@ _Slide 1_
 VentoGuard for **Aerion Windkraft AG** (fictional German onshore wind operator, 4 farms, 120 turbines)
 
 - **€4.2 M** net benefit per year · **+1.5 pp** technical availability · **13 days** early warning
-- Audience: COO (executive sponsor) and Head of Asset Management (domain owner)
+- Audience: COO (executive sponsor, funds the decision), Head of Data & Architecture (technical owner, lives with the build), Head of Asset Management (domain owner)
 
 > Speaker notes: Thank them. One line: I'll keep slides short and spend most of the time in the product. Then go straight to the outcome.
 

@@ -66,12 +66,12 @@ slide("", "Turn surprise failures into planned repairs worth €4.2&nbsp;M&nbsp;
         <div class="a" style="--d:3"><b>{cnt(N['availability_uplift_pp'], 1, '+', ' pp')}</b><span>technical availability</span></div>
         <div class="a" style="--d:4"><b>{cnt(N['median_lead_days'], 0, '', ' days')}</b><span>early warning</span></div>
       </div>
-      <div class="a foot" style="--d:5">For the COO and the Head of Asset Management · {CUSTOMER}</div>""",
+      <div class="a foot" style="--d:5">Prepared for {CUSTOMER}: COO · Head of Data &amp; Architecture · Head of Asset Management</div>""",
       f"""# Turn surprise failures into planned repairs worth €4.2 M a year
 VentoGuard for **{CUSTOMER}** (fictional German onshore wind operator, 4 farms, 120 turbines)
 
 - **{m(net)}** net benefit per year · **+{N['availability_uplift_pp']:.1f} pp** technical availability · **{N['median_lead_days']:.0f} days** early warning
-- Audience: COO (executive sponsor) and Head of Asset Management (domain owner)""",
+- Audience: COO (executive sponsor, funds the decision), Head of Data & Architecture (technical owner, lives with the build), Head of Asset Management (domain owner)""",
       "Thank them. One line: I'll keep slides short and spend most of the time in the product. Then go straight to the outcome.",
       kind="title")
 
