@@ -115,7 +115,7 @@ slide("Proof: every hold-out failure flagged in advance, and today's alerts poin
       "\n\nCaveat: synthetic data; expect lower precision on real fleet data, so the value case assumes a 75 % catch rate.")
 
 # 6 ─ Value for exec sponsor
-slide("For the COO: €4 M+ a year, paid back within one quarter",
+slide("For the COO: €4 M+ a year net, and the first avoided gearbox pays for the platform",
       f"""<div class="grid2"><div><table>
         <tr><th>Value driver (annualised)</th><th>€</th></tr>
         <tr><td>Unplanned failure cost today</td><td>{m(N['unplanned_cost_annualised_eur'])}</td></tr>
@@ -129,9 +129,9 @@ slide("For the COO: €4 M+ a year, paid back within one quarter",
         <li><b>EBITDA:</b> lower corrective O&M spend (crane mobilisation alone is about €120 k per gearbox).</li>
         <li><b>Revenue:</b> {N['downtime_days_avoided']:,} more turbine-days generating, worth +{N['availability_uplift_pp']:.1f} pp availability and protecting PPA delivery volumes.</li>
         <li><b>Risk:</b> fewer OEM/insurer disputes, and spare-part pools sized from the risk board.</li>
-        <li><b>Cost to run:</b> serverless jobs, a scale-to-zero Lakebase and one app. Expect low five figures per year at fleet scale, so payback comes within the first avoided gearbox.</li>
+        <li><b>Cost to run:</b> serverless jobs, a Lakebase that scales to zero and one app, with no always-on cluster. The pilot measures the exact run cost, and one avoided gearbox (≈ €430 k) covers it many times over.</li>
       </ul></div></div>""",
-      f"""## For the COO: €4 M+ a year, paid back within one quarter
+      f"""## For the COO: €4 M+ a year net, and the first avoided gearbox pays for the platform
 | Value driver (annualised) | € |
 |---|---|
 | Unplanned failure cost today | {m(N['unplanned_cost_annualised_eur'])} |
@@ -141,7 +141,7 @@ slide("For the COO: €4 M+ a year, paid back within one quarter",
 | **Net annual benefit** | **{m(N['net_annual_benefit_eur'])}** |
 | Sensitivity: 50 % caught | {m(N['avoidable_100']*0.5 - N['false_alarm_cost'])} |
 
-- EBITDA: less corrective O&M; Revenue: +{N['availability_uplift_pp']:.1f} pp availability; Risk: fewer disputes; Run cost: serverless + scale-to-zero, payback within the first avoided gearbox""")
+- EBITDA: less corrective O&M; Revenue: +{N['availability_uplift_pp']:.1f} pp availability; Risk: fewer disputes; Run cost: serverless + scale-to-zero, measured in the pilot; one avoided gearbox (≈ €430 k) covers it""")
 
 # 7 ─ Value for domain owner
 slide("For the Head of Asset Management: from firefighting to a planned maintenance calendar",

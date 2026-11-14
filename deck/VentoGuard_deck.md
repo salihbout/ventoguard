@@ -104,7 +104,7 @@ Caveat: synthetic data; expect lower precision on real fleet data, so the value 
 
 _Value · executive sponsor_
 
-## For the COO: €4 M+ a year, paid back within one quarter
+## For the COO: €4 M+ a year net, and the first avoided gearbox pays for the platform
 | Value driver (annualised) | € |
 |---|---|
 | Unplanned failure cost today | €11.3 M |
@@ -114,7 +114,7 @@ _Value · executive sponsor_
 | **Net annual benefit** | **€4.2 M** |
 | Sensitivity: 50 % caught | €2.7 M |
 
-- EBITDA: less corrective O&M; Revenue: +1.5 pp availability; Risk: fewer disputes; Run cost: serverless + scale-to-zero, payback within the first avoided gearbox
+- EBITDA: less corrective O&M; Revenue: +1.5 pp availability; Risk: fewer disputes; Run cost: serverless + scale-to-zero, measured in the pilot; one avoided gearbox (≈ €430 k) covers it
 
 ---
 

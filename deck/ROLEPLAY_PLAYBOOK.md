@@ -28,7 +28,7 @@ They are both in the room for one session.
 | 7–15 | **LIVE APP** *(show)* | See the demo click path below |
 | 15–16 | **6 What you just saw** *(tell)* | "Four clicks. The week starts with the 4 turbines that matter, a decision in minutes, the crane booked in a low-wind window. Run every morning, that's the €4.2 M." |
 | 16–17 | **7 Proof** | "Every hold-out failure was flagged in advance, 8 of 8. And the 4 turbines on today's board are exactly the 4 degrading now. The data is synthetic, so we assume only 75 % on your real fleet, and the pilot will measure it." |
-| 17–18 | **8 For the COO** | Look at the COO: "€4.2 M net. If we only catch half, still **€2.7 M**. One avoided gearbox pays for the platform." |
+| 17–18 | **8 For the COO** | Look at the COO: "€4.2 M net. If we only catch half, still **€2.7 M**. The pilot measures the run cost exactly, and one avoided gearbox covers it many times over." |
 | 18–19 | **9 For Asset Management** | Look at the domain owner: "13 days matches your crane and spare-pool lead times. Every alert is explained, and your team's notes finally count." |
 | 19–20 | **10 How it works** | Look at the architect: "One governed platform, from raw SCADA to the dispatcher's screen. One job, one bundle, open formats. Happy to go deep." |
 | 20–21 | **11 Trust** | "Data quality, GDPR masking, model gate, grounded AI, and lineage from the raw file to the risk board." |
@@ -99,6 +99,16 @@ For example: *"[to the architect] … detail … [to the COO] what that means fo
 - **Handle objections in four steps:** acknowledge ("That's the right question") → answer → evidence (slide or number) → check ("Does that address it?").
 - **Never claim more than the evidence.** Concede the synthetic-data caveat yourself, before they raise it.
 - **Close with the ask** and silence. Let them answer.
+
+## Rehearsal plan (do this out loud, with a timer)
+
+1. **60-second opener, 3 times.** Say this from memory, without slides, until it lands at about 60 s: *"You run 120 turbines on four farms. Surprise drivetrain failures cost you €11.3 M last year, and Hunsrück is at 95 % availability against 97 %. The warning signs were in your SCADA and your technicians' notes weeks before. VentoGuard connects them and flags failures 13 days ahead, which is worth €4.2 M a year net. I'll show you one Monday morning, from alert to booked repair, then ask for an 8-week pilot."*
+2. **Demo only, 3 runs, under 8 minutes each.** Say the tell line before every click and the "what it means" line after it. If a run goes over 8 minutes, cut words, not steps.
+3. **Objection drill, one round per stakeholder.** Pick 5 questions from each table at random and answer each in under 45 s: headline first, then evidence, then the bridge. Record yourself once and check that you name the asker and switch altitude.
+4. **Hostile round.** Practise the three hardest questions back to back: *"Synthetic data, why believe it?"*, *"What does it cost?"* and *"Can the LLM hallucinate a repair?"*. Stay calm, concede the caveat, and pivot to the pilot.
+5. **Full dress rehearsal, timed to 22 minutes + Q&A**, with the deck and the live app. Then do the real attempt. You can retake it with any resubmission.
+
+Tip: a mock role-play with Claude playing the COO and the architect is a cheap extra round. Ask it to interrupt, push back on cost and data quality, and score you against the five rubric items.
 
 ## Pre-demo checklist
 
