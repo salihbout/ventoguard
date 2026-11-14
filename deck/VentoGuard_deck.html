@@ -17,11 +17,13 @@ h1 { font-size: 46px; line-height: 1.1; letter-spacing: -.01em; max-width: 1080p
 .logo { position: absolute; top: 56px; right: 80px; width: 44px; height: auto }
 .active .logo { animation: up .6s cubic-bezier(.2,.7,.2,1) both }
 .brand { position: absolute; bottom: 26px; left: 80px; font-size: 13px; opacity: .45 }
-.title, .ask { background: var(--navy); color: var(--light) }
-.title h1 { font-size: 72px; margin: 110px 0 22px; max-width: 1000px }
+.ask { background: var(--navy); color: var(--light) }
+.title { background: var(--light) }
+.title h1 { font-size: 72px; margin: 150px 0 22px; max-width: 1000px }
 .title .sub { font-size: 24px; opacity: .85 }
 .kpis { display: flex; gap: 72px; margin-top: 64px }
-.kpis b { display: block; font-size: 60px; color: var(--lava); line-height: 1 }
+.kpis b { display: block; font-size: 60px; color: var(--navy); line-height: 1 }
+.kpis div:first-child b { color: var(--lava) }
 .kpis span { font-size: 17px; opacity: .75 }
 .foot { position: absolute; bottom: 56px; font-size: 15px; opacity: .6 }
 .trio { display: flex; align-items: stretch; gap: 22px }
@@ -75,12 +77,18 @@ h1 { font-size: 46px; line-height: 1.1; letter-spacing: -.01em; max-width: 1080p
 .decide b { display: block; font-size: 26px; margin-bottom: 6px } .decide span { font-size: 21px }
 .qgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px }
 .card.q { padding: 22px 24px } .card.q b { font-size: 22px; margin-bottom: 8px } .card.q span { font-size: 16px }
-.ask .brand, .title .brand { color: var(--light) }
+.ask .brand { color: var(--light) }
+.cobrand { position: absolute; top: 56px; left: 80px; right: 80px; display: flex; justify-content: space-between; align-items: center }
+.active .cobrand { animation: up .6s cubic-bezier(.2,.7,.2,1) both }
+.cobrand .dbx { width: 190px; height: auto }
+.aerion { display: flex; align-items: center; gap: 12px; color: var(--navy) }
+.aerion b { display: block; font-size: 26px; letter-spacing: .18em; line-height: 1 }
+.aerion small { display: block; font-size: 12px; letter-spacing: .32em; text-transform: uppercase; color: var(--muted); margin-top: 4px }
 #bar { position: fixed; left: 0; bottom: 0; height: 4px; background: var(--lava); transition: width .4s ease; z-index: 5 }
 #num { position: fixed; right: 18px; bottom: 12px; color: rgba(249,247,244,.55); font-size: 13px; z-index: 5 }
 #hint { position: fixed; left: 50%; bottom: 14px; transform: translateX(-50%); color: rgba(249,247,244,.5); font-size: 13px; transition: opacity 1s; z-index: 5 }
 @media (prefers-reduced-motion: reduce) {
-  .a, .kick, h1, .logo { animation: none !important; opacity: 1 !important; transform: none !important }
+  .a, .kick, h1, .logo, .cobrand { animation: none !important; opacity: 1 !important; transform: none !important }
   .fill, .lead .lf { transition: none !important; transform: none !important }
   .slide { transition: none }
 }
@@ -88,13 +96,16 @@ h1 { font-size: 46px; line-height: 1.1; letter-spacing: -.01em; max-width: 1080p
   html, body { overflow: visible; height: auto; background: none }
   #stage { position: static; transform: none !important; width: auto; height: auto }
   .slide { position: relative; width: 1280px; height: 720px; opacity: 1; visibility: visible; page-break-after: always; break-after: page }
-  .a, .kick, h1, .logo { opacity: 1 !important; transform: none !important; animation: none !important }
+  .a, .kick, h1, .logo, .cobrand { opacity: 1 !important; transform: none !important; animation: none !important }
   .fill, .lead .lf { transform: none !important; transition: none !important }
   #bar, #num, #hint { display: none }
 }
 @page { size: 1280px 720px; margin: 0 }
 </style></head><body><div id='stage'>
-<section class='slide title' data-n='1'><h1>Stop paying for surprise gearbox failures</h1><img class="logo" src="assets/databricks-spark-mark.svg" alt="Databricks" width="44" height="49"><div class="a sub" style="--d:1">VentoGuard for <b>Aerion Windkraft AG</b>: predictive drivetrain reliability for 120 turbines</div>
+<section class='slide title' data-n='1'><h1>Stop paying for surprise gearbox failures</h1><div class="cobrand"><div class="aerion"><svg viewBox="-36 -36 72 72" width="46" height="46" aria-hidden="true">
+  <g fill="currentColor"><path id="bl" d="M0,-5 C6,-12 6,-27 0,-35 C-3.5,-27 -4,-12 0,-5Z"/>
+  <use href="#bl" transform="rotate(120)"/><use href="#bl" transform="rotate(240)"/></g>
+  <circle r="5" fill="#FF3621"/></svg><span><b>AERION</b><small>Windkraft AG</small></span></div><img class="dbx" src="assets/databricks-logo.png" alt="Databricks" width="190" height="30"></div><div class="a sub" style="--d:1">VentoGuard for <b>Aerion Windkraft AG</b>: predictive drivetrain reliability for 120 turbines</div>
       <div class="kpis">
         <div class="a" style="--d:2"><b><span class='cnt' data-v='4.188999' data-dec='1' data-pre='€' data-suf=' M'>€4.2 M</span></b><span>net benefit per year</span></div>
         <div class="a" style="--d:3"><b><span class='cnt' data-v='1.52' data-dec='1' data-pre='+' data-suf=' pp'>+1.5 pp</span></b><span>technical availability</span></div>
