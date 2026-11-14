@@ -259,6 +259,9 @@ backup("Data quality, model validation, AI guard-rails",
 - Security: UC grants, column mask on technician names, least-privilege app service principal""",
        "Technical pushback on models and AI. Stay concrete.")
 
+# Story order: promise (title) → problem → where the € comes from → demo
+SLIDES[1], SLIDES[2] = SLIDES[2], SLIDES[1]
+
 # ─ Render ───────────────────────────────────────────────────────────────────────────────────────
 CSS = """
 :root { --lava:#FF3621; --navy:#0B2026; --light:#F9F7F4; --line:#E6E1D9; --muted:#5A6B73 }

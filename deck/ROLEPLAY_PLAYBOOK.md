@@ -12,7 +12,7 @@
 |---|---|
 | Demo setup (customer, problem, what you'll show) | Spoken on slide 1, in 30 seconds. You know Aerion, so frame the session: *why we're here, what you'll see, what we'll ask* |
 | Tell-show-tell | Slide 4 (tell) → live app (show) → slide 5 (tell) |
-| Value at executive altitude | Slides 2, 7 and 11. Talk in € and availability, never in features |
+| Value at executive altitude | Slides 1, 3, 7 and 11. Talk in € and availability, never in features |
 | Reading the room | Q&A bank below: lead with the headline, then the detail, then bridge back to €. Name who you are answering |
 | Professionalism and objections | Acknowledge → answer → evidence → bridge. Never defensive. Concede the synthetic-data caveat up front |
 
@@ -20,9 +20,9 @@
 
 | Min | Slide / screen | Say (key lines) |
 |---|---|---|
-| 0–1 | **1 Title** *(setup, spoken)* | "Thank you both. Last time we spoke you told us surprise gearbox failures were the biggest hit to your year. Today: the outcome in €, then a **live Monday morning** from alert to booked repair, then proof, and **one decision**: an 8-week pilot on Hunsrück Höhe." |
-| 1–3 | **2 Outcome** | "**€11.3 M** a year lost to surprises today. **€4.2 M** of it back, net, every year, plus 664 turbine-days of production. We get there by seeing failures **13 days ahead**, so a five-week outage becomes a one-week planned swap." |
-| 3–4 | **3 Problem** | "Gearboxes and main bearings are 90 % of the cost, about **€430 k** per surprise gearbox, and Hunsrück is at **95 %** against 97 %. The signals were in your SCADA and your technicians' notes weeks ahead. Nothing connected them." |
+| 0–1 | **1 Title** *(setup, spoken)* | "Thank you both. Last time we spoke you told us surprise gearbox failures were the biggest hit to your year. Today: what this is worth to you, the problem behind it, then a **live Monday morning** from alert to booked repair, then proof, and **one decision**: an 8-week pilot on Hunsrück Höhe." |
+| 1–2 | **2 Problem** | "Here's the pain behind that number. Gearboxes and main bearings are 90 % of the cost, about **€430 k** per surprise gearbox, and Hunsrück is at **95 %** against 97 %. The signals were in your SCADA and your technicians' notes weeks ahead. Nothing connected them." |
+| 2–4 | **3 Where the €4.2 M comes from** | "Today **€11.3 M** a year is lost to surprises. **€4.2 M** of it comes back, net, every year, plus 664 turbine-days of production. We get there by seeing failures **13 days ahead**, so a five-week outage becomes a one-week planned swap. Let me show you how." |
 | 4–5 | **4 What you'll see** *(tell)* | "One Monday morning as your reliability lead: **risk board → AI brief → work order → a question to Genie**. Watch for the moment a €400 k surprise becomes a planned job." |
 | 5–13 | **LIVE APP** *(show)* | See the demo click path below |
 | 13–14 | **5 What it means** *(tell)* | "Four clicks. The week starts with the turbines that matter, a decision in minutes, the crane booked in a low-wind window. Run every morning, that's the €4.2 M." |

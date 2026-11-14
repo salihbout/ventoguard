@@ -14,18 +14,7 @@ VentoGuard for **Aerion Windkraft AG** (fictional German onshore wind operator, 
 
 ---
 
-_Slide 2 · The outcome_
-
-## The outcome: where the €4.2 M comes from
-- Today: **€11.3 M/yr** lost to unplanned drivetrain failures (22 failures in 192 days, repair + lost revenue)
-- With VentoGuard: **€4.2 M/yr net** (75 % catch rate, false-alarm inspections deducted) and **664 turbine-days** of production back
-- How: failures flagged 13 days ahead, so a five-week outage becomes a one-week planned swap
-
-> Speaker notes: Say the € number in the first two minutes. €11.3 M today, €4.2 M back per year. Everything after this proves that number.
-
----
-
-_Slide 3 · The problem_
+_Slide 2 · The problem_
 
 ## The problem: gearboxes and main bearings drive 90 % of the cost
 - gearbox: 8 failures, €3,424 k
@@ -36,6 +25,17 @@ _Slide 3 · The problem_
 - Warning signs were visible 2–5 weeks ahead in SCADA and technician notes, but never combined
 
 > Speaker notes: This is their pain in their numbers. Pause on €430 k per gearbox. Say the signals were already there; the problem is that nothing connected them.
+
+---
+
+_Slide 3 · The outcome_
+
+## The outcome: where the €4.2 M comes from
+- Today: **€11.3 M/yr** lost to unplanned drivetrain failures (22 failures in 192 days, repair + lost revenue)
+- With VentoGuard: **€4.2 M/yr net** (75 % catch rate, false-alarm inspections deducted) and **664 turbine-days** of production back
+- How: failures flagged 13 days ahead, so a five-week outage becomes a one-week planned swap
+
+> Speaker notes: Say the € number in the first two minutes. €11.3 M today, €4.2 M back per year. Everything after this proves that number.
 
 ---
 
