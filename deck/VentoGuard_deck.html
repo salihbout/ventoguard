@@ -14,6 +14,8 @@ h1 { font-size: 46px; line-height: 1.1; letter-spacing: -.01em; max-width: 1080p
 .active .a { animation: up .6s cubic-bezier(.2,.7,.2,1) forwards; animation-delay: calc(var(--d, 0) * .18s + .1s) }
 .active .kick, .active h1 { animation: up .55s cubic-bezier(.2,.7,.2,1) both }
 @keyframes up { to { opacity: 1; transform: none } }
+.logo { position: absolute; top: 56px; right: 80px; width: 44px; height: auto }
+.active .logo { animation: up .6s cubic-bezier(.2,.7,.2,1) both }
 .brand { position: absolute; bottom: 26px; left: 80px; font-size: 13px; opacity: .45 }
 .title, .ask { background: var(--navy); color: var(--light) }
 .title h1 { font-size: 72px; margin: 110px 0 22px; max-width: 1000px }
@@ -41,9 +43,9 @@ h1 { font-size: 46px; line-height: 1.1; letter-spacing: -.01em; max-width: 1080p
 .val { font-weight: 700; text-align: right }
 .cnt { font-size: inherit !important; color: inherit !important; opacity: 1 !important; line-height: inherit }
 .note { font-size: 14px; color: var(--muted); margin-top: 10px }
-.facts .fact { border-left: 5px solid var(--lava); padding: 4px 0 4px 20px; margin-bottom: 30px }
-.fact b { display: block; font-size: 38px; line-height: 1.05 } .fact span { font-size: 17px; color: var(--muted) }
-.fact.muted { border-color: #C4CCD6 }
+.facts .fact { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 14px 20px; margin-bottom: 16px }
+.fact b { display: block; font-size: 34px; line-height: 1.05; color: var(--navy) } .fact span { font-size: 17px; color: var(--muted) }
+.fact.muted { background: transparent; border-style: dashed; border-color: #C4CCD6 }
 .steps { display: flex; align-items: center; gap: 14px; margin-top: 20px }
 .step { flex: 1; background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 28px 22px; min-height: 190px }
 .step i { font-style: normal; display: inline-grid; place-items: center; width: 38px; height: 38px; border-radius: 50%; background: var(--lava); color: #fff; font-weight: 700; margin-bottom: 18px }
@@ -77,17 +79,22 @@ h1 { font-size: 46px; line-height: 1.1; letter-spacing: -.01em; max-width: 1080p
 #bar { position: fixed; left: 0; bottom: 0; height: 4px; background: var(--lava); transition: width .4s ease; z-index: 5 }
 #num { position: fixed; right: 18px; bottom: 12px; color: rgba(249,247,244,.55); font-size: 13px; z-index: 5 }
 #hint { position: fixed; left: 50%; bottom: 14px; transform: translateX(-50%); color: rgba(249,247,244,.5); font-size: 13px; transition: opacity 1s; z-index: 5 }
+@media (prefers-reduced-motion: reduce) {
+  .a, .kick, h1, .logo { animation: none !important; opacity: 1 !important; transform: none !important }
+  .fill, .lead .lf { transition: none !important; transform: none !important }
+  .slide { transition: none }
+}
 @media print {
   html, body { overflow: visible; height: auto; background: none }
   #stage { position: static; transform: none !important; width: auto; height: auto }
   .slide { position: relative; width: 1280px; height: 720px; opacity: 1; visibility: visible; page-break-after: always; break-after: page }
-  .a, .kick, h1 { opacity: 1 !important; transform: none !important; animation: none !important }
+  .a, .kick, h1, .logo { opacity: 1 !important; transform: none !important; animation: none !important }
   .fill, .lead .lf { transform: none !important; transition: none !important }
   #bar, #num, #hint { display: none }
 }
 @page { size: 1280px 720px; margin: 0 }
 </style></head><body><div id='stage'>
-<section class='slide title' data-n='1'><h1>Stop paying for surprise gearbox failures</h1><div class="a sub" style="--d:1">VentoGuard for <b>Aerion Windkraft AG</b>: predictive drivetrain reliability for 120 turbines</div>
+<section class='slide title' data-n='1'><h1>Stop paying for surprise gearbox failures</h1><img class="logo" src="assets/databricks-spark-mark.svg" alt="Databricks" width="44" height="49"><div class="a sub" style="--d:1">VentoGuard for <b>Aerion Windkraft AG</b>: predictive drivetrain reliability for 120 turbines</div>
       <div class="kpis">
         <div class="a" style="--d:2"><b><span class='cnt' data-v='4.188999' data-dec='1' data-pre='€' data-suf=' M'>€4.2 M</span></b><span>net benefit per year</span></div>
         <div class="a" style="--d:3"><b><span class='cnt' data-v='1.52' data-dec='1' data-pre='+' data-suf=' pp'>+1.5 pp</span></b><span>technical availability</span></div>
@@ -143,14 +150,14 @@ h1 { font-size: 46px; line-height: 1.1; letter-spacing: -.01em; max-width: 1080p
 <section class='slide' data-n='9'><div class='kick'>How it works</div><h1>One governed platform, from raw SCADA to the dispatcher's screen</h1><div class="flow"><div class='a node' style='--d:1'><b>Lakeflow</b><span>ingest SCADA, notes, assets, prices</span></div><div class='a link' style='--d:1.5'></div><div class='a node' style='--d:2'><b>Unity Catalog</b><span>govern, mask, lineage</span></div><div class='a link' style='--d:2.5'></div><div class='a node' style='--d:3'><b>ML + GenAI</b><span>14-day risk and AI briefs</span></div><div class='a link' style='--d:3.5'></div><div class='a node' style='--d:4'><b>Lakebase</b><span>millisecond serving and work orders</span></div><div class='a link' style='--d:4.5'></div><div class='a node' style='--d:5'><b>App + Genie</b><span>where the business works</span></div></div>
       <p class="a line small" style="--d:6">One Lakeflow Job, daily at 05:00 · deployed as one bundle · open formats (Delta, Postgres, MLflow)</p><div class='brand'>VentoGuard · Aerion Windkraft AG · Databricks Data Intelligence Platform</div></section>
 <section class='slide' data-n='10'><div class='kick'>Trust</div><h1>Governed data, explainable models, grounded AI</h1><div class="tiles six"><div class='a tile sm' style='--d:1.0'><b>Data quality</b><span>7,717 bad readings dropped before the model</span></div><div class='a tile sm' style='--d:1.6'><b>GDPR</b><span>technician names masked in every tool</span></div><div class='a tile sm' style='--d:2.2'><b>Model gate</b><span>no promotion without passing quality checks</span></div><div class='a tile sm' style='--d:2.8'><b>Grounded AI</b><span>briefs use only measured facts</span></div><div class='a tile sm' style='--d:3.4'><b>Lineage</b><span>every number traces back to its raw file</span></div><div class='a tile sm' style='--d:4.0'><b>Least privilege</b><span>the app sees only what it needs</span></div></div><div class='brand'>VentoGuard · Aerion Windkraft AG · Databricks Data Intelligence Platform</div></section>
-<section class='slide ask' data-n='11'><div class='kick'>The ask</div><h1>An 8-week pilot on Hunsrück Höhe</h1><div class="timeline"><div class='a ms' style='--d:1'><i></i><b>Weeks 1–2</b><span>connect real SCADA and SAP PM</span></div><div class='a ms' style='--d:2'><i></i><b>Weeks 3–4</b><span>retrain and calibrate with your reliability lead</span></div><div class='a ms' style='--d:3'><i></i><b>Weeks 5–8</b><span>live shadow mode on Hunsrück Höhe</span></div><div class='a ms' style='--d:4'><i></i><b>Week 8</b><span>go/no-go on € avoided</span></div></div>
+<section class='slide ask' data-n='11'><div class='kick'>The ask</div><h1>An 8-week pilot on Hunsrück Höhe</h1><img class="logo" src="assets/databricks-spark-mark.svg" alt="Databricks" width="44" height="49"><div class="timeline"><div class='a ms' style='--d:1'><i></i><b>Weeks 1–2</b><span>connect real SCADA and SAP PM</span></div><div class='a ms' style='--d:2'><i></i><b>Weeks 3–4</b><span>retrain and calibrate with your reliability lead</span></div><div class='a ms' style='--d:3'><i></i><b>Weeks 5–8</b><span>live shadow mode on Hunsrück Höhe</span></div><div class='a ms' style='--d:4'><i></i><b>Week 8</b><span>go/no-go on € avoided</span></div></div>
       <div class="a decide" style="--d:5"><b>Two decisions today</b><span>① your sponsorship &nbsp; ② access to 24 months of SCADA and CMMS data</span></div><div class='brand'>VentoGuard · Aerion Windkraft AG · Databricks Data Intelligence Platform</div></section>
 <section class='slide' data-n='12'><div class='kick'>Backup · Q&A</div><h1>Cost, risk and time to value</h1><div class='qgrid'><div class='a card q' style='--d:1'><b>Cost</b><span>Serverless and scale-to-zero, so no idle cluster. The pilot measures it exactly. One gearbox ≈ €430 k.</span></div><div class='a card q' style='--d:2'><b>Downside case</b><span>Only 50 % caught still gives €2.7 M/yr.</span></div><div class='a card q' style='--d:3'><b>Precision risk</b><span>The case assumes 75 %, and shadow mode puts a field verdict on every alert.</span></div><div class='a card q' style='--d:4'><b>Alert fatigue</b><span>Ranked by € at stake. Target ≤ 1 false alarm per 10 turbines per month.</span></div><div class='a card q' style='--d:5'><b>Adoption</b><span>The work order sits on the same screen as the alert. Daily use is a go/no-go criterion.</span></div><div class='a card q' style='--d:6'><b>Time to value</b><span>First live alerts in week 5, go/no-go in week 8, then the same bundle on all 4 farms.</span></div></div><div class='brand'>VentoGuard · Aerion Windkraft AG · Databricks Data Intelligence Platform</div></section>
 <section class='slide' data-n='13'><div class='kick'>Backup · Q&A</div><h1>Architecture and integration</h1><div class='qgrid'><div class='a card q' style='--d:1'><b>Ingest</b><span>Auto Loader today. In the pilot: historian exports or Zerobus for SCADA, and Lakeflow Connect for SAP PM.</span></div><div class='a card q' style='--d:2'><b>Transform</b><span>Declarative pipeline bronze → silver → gold, with expectations at silver.</span></div><div class='a card q' style='--d:3'><b>Serve</b><span>Gold tables sync to Lakebase Postgres. Work orders are transactional, in the app's own schema.</span></div><div class='a card q' style='--d:4'><b>Write-back</b><span>Work orders go to SAP PM through its API. SAP stays the system of record.</span></div><div class='a card q' style='--d:5'><b>Scale</b><span>≈ 3.3 M rows of 10-minute SCADA on serverless. More farms is configuration, not a rebuild.</span></div><div class='a card q' style='--d:6'><b>Freshness</b><span>Daily fits the 14-day horizon. The sync can switch to continuous.</span></div></div><div class='brand'>VentoGuard · Aerion Windkraft AG · Databricks Data Intelligence Platform</div></section>
 <section class='slide' data-n='14'><div class='kick'>Backup · Q&A</div><h1>Data quality, model validation, AI guard-rails</h1><div class='qgrid'><div class='a card q' style='--d:1'><b>Data quality</b><span>Expectations dropped 7,717 impossible readings. Features are fleet-relative, so weather isn't mistaken for failure.</span></div><div class='a card q' style='--d:2'><b>Validation</b><span>Time split: trained before August, tested Aug–Sep, so no leakage.</span></div><div class='a card q' style='--d:3'><b>Model gate</b><span>PR-AUC ≥ 0.30 and ≥ 60 % caught ≥ 3 days ahead, or no @champion.</span></div><div class='a card q' style='--d:4'><b>Lifecycle</b><span>MLflow tracks every run. The pilot adds drift monitoring and a monthly retrain.</span></div><div class='a card q' style='--d:5'><b>Grounded AI</b><span>Claude via ai_query, using only the score, residuals and notes. Tagged ai_generated.</span></div><div class='a card q' style='--d:6'><b>Security</b><span>UC grants, column mask on names, and a least-privilege app service principal.</span></div></div><div class='brand'>VentoGuard · Aerion Windkraft AG · Databricks Data Intelligence Platform</div></section>
 </div><div id='bar'></div><div id='num'></div><div id='hint'>← → to navigate · F for full screen</div>
 <script>
-const PRINT = location.search.includes('print');
+const PRINT = location.search.includes('print') || matchMedia('(prefers-reduced-motion: reduce)').matches;
 const slides = [...document.querySelectorAll('.slide')], stage = document.getElementById('stage');
 let i = Math.min(Math.max(parseInt(location.hash.slice(1)) - 1 || 0, 0), slides.length - 1);
 function fit() { const s = Math.min(innerWidth / 1280, innerHeight / 720); stage.style.transform = `translate(-50%,-50%) scale(${s})`; }

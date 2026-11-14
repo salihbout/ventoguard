@@ -45,7 +45,7 @@ cmax = max(c["total_eur"] for c in comp)
 
 # 1 ─ Title
 slide("", "Stop paying for surprise gearbox failures",
-      f"""<div class="a sub" style="--d:1">VentoGuard for <b>{CUSTOMER}</b>: predictive drivetrain reliability for 120 turbines</div>
+      f"""<img class="logo" src="assets/databricks-spark-mark.svg" alt="Databricks" width="44" height="49"><div class="a sub" style="--d:1">VentoGuard for <b>{CUSTOMER}</b>: predictive drivetrain reliability for 120 turbines</div>
       <div class="kpis">
         <div class="a" style="--d:2"><b>{cnt(net/1e6, 1, '€', ' M')}</b><span>net benefit per year</span></div>
         <div class="a" style="--d:3"><b>{cnt(N['availability_uplift_pp'], 1, '+', ' pp')}</b><span>technical availability</span></div>
@@ -192,7 +192,7 @@ plan = [("Weeks 1–2", "connect real SCADA and SAP PM"), ("Weeks 3–4", "retra
         ("Weeks 5–8", "live shadow mode on Hunsrück Höhe"), ("Week 8", "go/no-go on € avoided")]
 ph = "".join(f"<div class='a ms' style='--d:{i+1}'><i></i><b>{a}</b><span>{b}</span></div>" for i, (a, b) in enumerate(plan))
 slide("The ask", "An 8-week pilot on Hunsrück Höhe",
-      f"""<div class="timeline">{ph}</div>
+      f"""<img class="logo" src="assets/databricks-spark-mark.svg" alt="Databricks" width="44" height="49"><div class="timeline">{ph}</div>
       <div class="a decide" style="--d:5"><b>Two decisions today</b><span>① your sponsorship &nbsp; ② access to 24 months of SCADA and CMMS data</span></div>""",
       "## The ask: an 8-week pilot on Hunsrück Höhe\n" + "\n".join(f"- {a}: {b}" for a, b in plan) +
       "\n- Success: ≥ 60 % of major failures flagged ≥ 7 days ahead; ≤ 1 false alarm per 10 turbines per month; ≥ 1 documented planned-instead-of-unplanned repair\n- Two decisions today: sponsorship, and access to 24 months of SCADA and CMMS data",
@@ -258,6 +258,8 @@ h1 { font-size: 46px; line-height: 1.1; letter-spacing: -.01em; max-width: 1080p
 .active .a { animation: up .6s cubic-bezier(.2,.7,.2,1) forwards; animation-delay: calc(var(--d, 0) * .18s + .1s) }
 .active .kick, .active h1 { animation: up .55s cubic-bezier(.2,.7,.2,1) both }
 @keyframes up { to { opacity: 1; transform: none } }
+.logo { position: absolute; top: 56px; right: 80px; width: 44px; height: auto }
+.active .logo { animation: up .6s cubic-bezier(.2,.7,.2,1) both }
 .brand { position: absolute; bottom: 26px; left: 80px; font-size: 13px; opacity: .45 }
 .title, .ask { background: var(--navy); color: var(--light) }
 .title h1 { font-size: 72px; margin: 110px 0 22px; max-width: 1000px }
@@ -285,9 +287,9 @@ h1 { font-size: 46px; line-height: 1.1; letter-spacing: -.01em; max-width: 1080p
 .val { font-weight: 700; text-align: right }
 .cnt { font-size: inherit !important; color: inherit !important; opacity: 1 !important; line-height: inherit }
 .note { font-size: 14px; color: var(--muted); margin-top: 10px }
-.facts .fact { border-left: 5px solid var(--lava); padding: 4px 0 4px 20px; margin-bottom: 30px }
-.fact b { display: block; font-size: 38px; line-height: 1.05 } .fact span { font-size: 17px; color: var(--muted) }
-.fact.muted { border-color: #C4CCD6 }
+.facts .fact { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 14px 20px; margin-bottom: 16px }
+.fact b { display: block; font-size: 34px; line-height: 1.05; color: var(--navy) } .fact span { font-size: 17px; color: var(--muted) }
+.fact.muted { background: transparent; border-style: dashed; border-color: #C4CCD6 }
 .steps { display: flex; align-items: center; gap: 14px; margin-top: 20px }
 .step { flex: 1; background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 28px 22px; min-height: 190px }
 .step i { font-style: normal; display: inline-grid; place-items: center; width: 38px; height: 38px; border-radius: 50%; background: var(--lava); color: #fff; font-weight: 700; margin-bottom: 18px }
@@ -321,11 +323,16 @@ h1 { font-size: 46px; line-height: 1.1; letter-spacing: -.01em; max-width: 1080p
 #bar { position: fixed; left: 0; bottom: 0; height: 4px; background: var(--lava); transition: width .4s ease; z-index: 5 }
 #num { position: fixed; right: 18px; bottom: 12px; color: rgba(249,247,244,.55); font-size: 13px; z-index: 5 }
 #hint { position: fixed; left: 50%; bottom: 14px; transform: translateX(-50%); color: rgba(249,247,244,.5); font-size: 13px; transition: opacity 1s; z-index: 5 }
+@media (prefers-reduced-motion: reduce) {
+  .a, .kick, h1, .logo { animation: none !important; opacity: 1 !important; transform: none !important }
+  .fill, .lead .lf { transition: none !important; transform: none !important }
+  .slide { transition: none }
+}
 @media print {
   html, body { overflow: visible; height: auto; background: none }
   #stage { position: static; transform: none !important; width: auto; height: auto }
   .slide { position: relative; width: 1280px; height: 720px; opacity: 1; visibility: visible; page-break-after: always; break-after: page }
-  .a, .kick, h1 { opacity: 1 !important; transform: none !important; animation: none !important }
+  .a, .kick, h1, .logo { opacity: 1 !important; transform: none !important; animation: none !important }
   .fill, .lead .lf { transform: none !important; transition: none !important }
   #bar, #num, #hint { display: none }
 }
@@ -333,7 +340,7 @@ h1 { font-size: 46px; line-height: 1.1; letter-spacing: -.01em; max-width: 1080p
 """
 
 JS = """
-const PRINT = location.search.includes('print');
+const PRINT = location.search.includes('print') || matchMedia('(prefers-reduced-motion: reduce)').matches;
 const slides = [...document.querySelectorAll('.slide')], stage = document.getElementById('stage');
 let i = Math.min(Math.max(parseInt(location.hash.slice(1)) - 1 || 0, 0), slides.length - 1);
 function fit() { const s = Math.min(innerWidth / 1280, innerHeight / 720); stage.style.transform = `translate(-50%,-50%) scale(${s})`; }
