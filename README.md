@@ -1,6 +1,6 @@
 # VentoGuard: predictive drivetrain reliability for onshore wind
 
-**Industry:** Energy & Utilities, renewable generation (onshore wind O&M)
+**Customer:** Aerion Windkraft AG (fictional) · **Industry:** Energy & Utilities, renewable generation (onshore wind O&M)
 **Customer problem:** A German onshore wind operator runs 120 turbines across 4 farms. It loses **€11 M a year** to *unplanned*
 gearbox, main-bearing, generator-bearing and pitch failures. Each surprise gearbox costs about **€430 k** (repair, crane mobilisation
 and lost revenue) and keeps the turbine down for **5+ weeks**, while the degradation was visible in SCADA and in technicians'
@@ -168,5 +168,5 @@ cd app && OPS_SCHEMA=vg_ops_dev PGUSER=<you> uvicorn backend.main:app --port 876
 
 [`deck/VentoGuard_deck.pdf`](deck/VentoGuard_deck.pdf) · text version [`deck/VentoGuard_deck.md`](deck/VentoGuard_deck.md)
 
-15 slides: 12 for the main story (setup → outcome → tell/show/tell demo → value per stakeholder → architecture → pilot ask) and 3 backup slides for Q&A (cost/risk/time to value, integration, data quality/model/GenAI guard-rails).
+Prepared for **Aerion Windkraft AG**, a fictional customer. The presentation is [`deck/VentoGuard_deck.html`](deck/VentoGuard_deck.html): one slide per screen, ← → to navigate, F for full screen, with animated KPIs and charts. It has 14 slides: 11 for the main story (outcome → problem → tell/show/tell demo → proof → value per stakeholder → architecture → trust → pilot ask) and 3 backup slides for Q&A (cost/risk/time to value, integration, data quality/model/GenAI guard-rails). The `.md` version includes speaker notes.
 The talk track, live-demo click path and Q&A answers for the AI role-play are in [`deck/ROLEPLAY_PLAYBOOK.md`](deck/ROLEPLAY_PLAYBOOK.md).

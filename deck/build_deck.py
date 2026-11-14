@@ -1,7 +1,12 @@
-"""Build the VentoGuard business deck as HTML (16:9 slides) + Markdown, then print to PDF with headless Chrome.
+"""Build the VentoGuard business deck for Aerion Windkraft AG (a fictional customer).
 
-Usage: python deck/build_deck.py      -> deck/VentoGuard_deck.html, deck/VentoGuard_deck.md, deck/VentoGuard_deck.pdf
-All figures come from evidence/ (value_case.result.json, model back-test, risk board) — see deck/numbers.json.
+Outputs:
+  deck/VentoGuard_deck.html  presentation: one slide per screen, ← → / Space to navigate, F for full screen, animated
+  deck/VentoGuard_deck.pdf   the same slides printed with headless Chrome (one page each, final state)
+  deck/VentoGuard_deck.md    text version with speaker notes (for text-only readers)
+
+Usage: python deck/build_deck.py
+All figures come from evidence/ via deck/extract_numbers.py -> deck/numbers.json. Nothing is typed in by hand.
 """
 import json
 import subprocess
@@ -9,6 +14,7 @@ from pathlib import Path
 
 HERE = Path(__file__).parent
 N = json.loads((HERE / "numbers.json").read_text())
+CUSTOMER = "Aerion Windkraft AG"
 
 
 def m(x):  # € millions
@@ -19,374 +25,368 @@ def k(x):
     return f"€{x/1e3:,.0f} k"
 
 
+def cnt(value, dec=1, pre="", suf=""):
+    """Number that counts up when its slide appears. The final value is the static text, so PDF and no-JS views are correct."""
+    txt = f"{pre}{value:,.{dec}f}{suf}"
+    return f"<span class='cnt' data-v='{value}' data-dec='{dec}' data-pre='{pre}' data-suf='{suf}'>{txt}</span>"
+
+
 SLIDES = []
 
 
-def slide(title, body_html, md, kind="std", kicker=""):
-    SLIDES.append(dict(title=title, body=body_html, md=md, kind=kind, kicker=kicker))
+def slide(kicker, title, body, md, notes="", kind=""):
+    SLIDES.append(dict(kicker=kicker, title=title, body=body, md=md, notes=notes, kind=kind))
 
+
+net, unpl = N["net_annual_benefit_eur"], N["unplanned_cost_annualised_eur"]
+half = N["avoidable_100"] * 0.5 - N["false_alarm_cost"]
+comp = N["by_component"]
+cmax = max(c["total_eur"] for c in comp)
 
 # 1 ─ Title
-slide("Stop paying for surprise gearbox failures",
-      f"""<div class="sub">VentoGuard: predictive drivetrain reliability for a 120-turbine onshore wind fleet</div>
-      <div class="titlekpis">
-        <div><b>{m(N['net_annual_benefit_eur'])}</b><span>net annual benefit</span></div>
-        <div><b>+{N['availability_uplift_pp']:.1f} pp</b><span>technical availability</span></div>
-        <div><b>{N['median_lead_days']:.0f} days</b><span>median early warning</span></div>
+slide("", "Stop paying for surprise gearbox failures",
+      f"""<div class="a sub" style="--d:1">VentoGuard for <b>{CUSTOMER}</b>: predictive drivetrain reliability for 120 turbines</div>
+      <div class="kpis">
+        <div class="a" style="--d:2"><b>{cnt(net/1e6, 1, '€', ' M')}</b><span>net benefit per year</span></div>
+        <div class="a" style="--d:3"><b>{cnt(N['availability_uplift_pp'], 1, '+', ' pp')}</b><span>technical availability</span></div>
+        <div class="a" style="--d:4"><b>{cnt(N['median_lead_days'], 0, '', ' days')}</b><span>early warning</span></div>
       </div>
-      <div class="foot">Prepared for: COO (executive sponsor) · Head of Asset Management (domain owner) · Built on the Databricks Data Intelligence Platform</div>""",
+      <div class="a foot" style="--d:5">For the COO and the Head of Asset Management · {CUSTOMER}</div>""",
       f"""# Stop paying for surprise gearbox failures
-VentoGuard: predictive drivetrain reliability for a 120-turbine onshore wind fleet
+VentoGuard for **{CUSTOMER}** (fictional German onshore wind operator, 4 farms, 120 turbines)
 
-- **{m(N['net_annual_benefit_eur'])}** net annual benefit
-- **+{N['availability_uplift_pp']:.1f} pp** technical availability
-- **{N['median_lead_days']:.0f} days** median early warning
+- **{m(net)}** net benefit per year · **+{N['availability_uplift_pp']:.1f} pp** technical availability · **{N['median_lead_days']:.0f} days** early warning
+- Audience: COO (executive sponsor) and Head of Asset Management (domain owner)""",
+      "Thank them. One line: I'll keep slides short and spend most of the time in the product. Then go straight to the outcome.",
+      kind="title")
 
-Prepared for: COO (executive sponsor) · Head of Asset Management (domain owner)""", kind="title")
-
-# 2 ─ Executive summary
-slide("The outcome: turn €11 M of surprise failures into planned, cheaper repairs",
-      f"""<div class="grid3">
-        <div class="card lava"><div class="big">{m(N['unplanned_cost_annualised_eur'])}</div><div>annual cost of unplanned drivetrain failures today<br><small>{N['failures_observed']} failures in {N['observed_days']} days, repair + lost revenue</small></div></div>
-        <div class="card"><div class="big">{m(N['net_annual_benefit_eur'])}</div><div>net benefit per year with VentoGuard<br><small>assumes only 75 % of failures caught; false-alarm inspections deducted</small></div></div>
-        <div class="card"><div class="big">{N['downtime_days_avoided']:,}</div><div>turbine-days of downtime avoided per year<br><small>= +{N['availability_uplift_pp']:.1f} pp fleet technical availability</small></div></div>
+# 2 ─ Outcome
+slide("The outcome", "Turn €11 M of surprises into planned, cheaper repairs",
+      f"""<div class="trio">
+        <div class="a card dark" style="--d:1"><b>{cnt(unpl/1e6, 1, '€', ' M')}</b><span>lost each year to unplanned drivetrain failures today</span></div>
+        <div class="a arrow" style="--d:2">→</div>
+        <div class="a card lava" style="--d:3"><b>{cnt(net/1e6, 1, '€', ' M')}</b><span>saved each year, net, at a conservative 75 % catch rate</span></div>
+        <div class="a card" style="--d:4"><b>{cnt(N['downtime_days_avoided'], 0)}</b><span>turbine-days of production back each year</span></div>
       </div>
-      <ul class="pts">
-        <li><b>What changes:</b> failures are flagged <b>{N['median_lead_days']:.0f} days</b> before breakdown. That is enough time to book a crane, pull a spare gearbox and swap it in a low-wind window, so a five-week outage becomes a one-week planned job.</li>
-        <li><b>Evidence:</b> {N['bt_caught']}/{N['bt_total']} failures in the hold-out period were caught at least 3 days ahead. Today's top-4 risk turbines are the 4 that are degrading now.</li>
-        <li><b>Ask:</b> an 8-week pilot on Hunsrück Höhe (lowest availability at {N['avail_hunsrueck']:.1f} %), with a go/no-go on avoided cost.</li>
-      </ul>""",
-      f"""## The outcome: turn €11 M of surprise failures into planned, cheaper repairs
-- **{m(N['unplanned_cost_annualised_eur'])}/yr**: today's cost of unplanned drivetrain failures ({N['failures_observed']} failures in {N['observed_days']} days, repair + lost revenue)
-- **{m(N['net_annual_benefit_eur'])}/yr** net benefit with VentoGuard (75 % catch rate, false-alarm inspections deducted)
-- **{N['downtime_days_avoided']:,} turbine-days** of downtime avoided per year = **+{N['availability_uplift_pp']:.1f} pp** technical availability
-- What changes: failures are flagged {N['median_lead_days']:.0f} days ahead, so a five-week outage becomes a one-week planned swap in a low-wind window
-- Evidence: {N['bt_caught']}/{N['bt_total']} hold-out failures caught ≥3 days ahead; today's top-4 risk turbines are the 4 degrading now
-- Ask: 8-week pilot on Hunsrück Höhe (availability {N['avail_hunsrueck']:.1f} %)""")
+      <p class="a line" style="--d:5">Failures are flagged <b>{N['median_lead_days']:.0f} days</b> ahead, so a <b>five-week outage</b> becomes a <b>one-week planned swap</b>.</p>""",
+      f"""## The outcome: turn €11 M of surprises into planned, cheaper repairs
+- Today: **{m(unpl)}/yr** lost to unplanned drivetrain failures ({N['failures_observed']} failures in {N['observed_days']} days, repair + lost revenue)
+- With VentoGuard: **{m(net)}/yr net** (75 % catch rate, false-alarm inspections deducted) and **{N['downtime_days_avoided']:,} turbine-days** of production back
+- How: failures flagged {N['median_lead_days']:.0f} days ahead, so a five-week outage becomes a one-week planned swap""",
+      "Say the € number in the first two minutes. €11.3 M today, €4.2 M back per year. Everything after this proves that number.")
 
-# 3 ─ Problem in buyer KPIs
-rows = "".join(f"<tr><td>{c['component'].replace('_',' ')}</td><td>{c['failures']}</td><td>{c['avg_downtime_days']}</td><td>{k(c['total_eur'])}</td><td>{k(c['total_eur']/c['failures'])}</td></tr>" for c in N["by_component"])
-slide("The problem in your KPIs: gearboxes and main bearings drive 90 % of the cost",
-      f"""<div class="grid2">
-        <div><table><tr><th>Component</th><th>Failures</th><th>Avg days down</th><th>Total cost</th><th>Per event</th></tr>{rows}</table>
-        <p class="note">Last {N['observed_days']} days, 4 farms / 120 turbines. Cost = corrective repair (incl. crane) + lost revenue at day-ahead prices.</p></div>
-        <div><ul class="pts">
-          <li><b>Availability gap:</b> Hunsrück Höhe runs at <b>{N['avail_hunsrueck']:.1f} %</b> against a 97 % target. The fleet average is {N['avail_fleet']:.1f} %.</li>
-          <li><b>Every surprise gearbox</b> costs around <b>€430 k</b> and <b>5+ weeks</b> waiting for a crane and a spare.</li>
-          <li><b>The signals were there.</b> Oil temperature, bearing temperature and vibration drifted for 2 to 5 weeks before each failure. Technicians wrote it down in German free text, and nobody connected the dots.</li>
-          <li><b>Today the operation is reactive.</b> SCADA alarms are fixed thresholds that fire only days before breakdown.</li>
-        </ul></div></div>""",
-      "## The problem in your KPIs: gearboxes and main bearings drive 90 % of the cost\n| Component | Failures | Avg days down | Total cost | Per event |\n|---|---|---|---|---|\n" +
-      "\n".join(f"| {c['component']} | {c['failures']} | {c['avg_downtime_days']} | {k(c['total_eur'])} | {k(c['total_eur']/c['failures'])} |" for c in N["by_component"]) +
-      f"\n\n- Hunsrück Höhe availability {N['avail_hunsrueck']:.1f} % vs 97 % target (fleet {N['avail_fleet']:.1f} %)\n- Each surprise gearbox costs about €430 k and 5+ weeks waiting for a crane\n- Degradation was visible 2–5 weeks ahead in SCADA and in German technician notes, but nobody combined them\n- SCADA threshold alarms fire too late")
+# 3 ─ Problem
+bars = "".join(
+    f"""<div class="bar a" style="--d:{i+1}"><span class="lbl">{c['component'].replace('_', ' ')}</span>
+        <span class="track"><span class="fill{' hot' if i < 2 else ''}" style="--w:{c['total_eur']/cmax*100:.1f}%"></span></span>
+        <span class="val">{k(c['total_eur'])}</span></div>""" for i, c in enumerate(comp))
+slide("The problem", "Gearboxes and main bearings drive 90 % of the cost",
+      f"""<div class="split">
+        <div class="bars">{bars}<p class="a note" style="--d:5">Cost of unplanned failures by component, last {N['observed_days']} days</p></div>
+        <div class="facts">
+          <div class="a fact" style="--d:3"><b>€430 k</b><span>and 5+ weeks down for every surprise gearbox</span></div>
+          <div class="a fact" style="--d:4"><b>{N['avail_hunsrueck']:.1f} %</b><span>availability at Hunsrück Höhe, against a 97 % target</span></div>
+          <div class="a fact" style="--d:5"><b>2–5 weeks</b><span>of warning signs in SCADA and technicians' notes that nobody combined</span></div>
+        </div></div>""",
+      "## The problem: gearboxes and main bearings drive 90 % of the cost\n" +
+      "\n".join(f"- {c['component']}: {c['failures']} failures, {k(c['total_eur'])}" for c in comp) +
+      f"\n- €430 k and 5+ weeks per surprise gearbox · Hunsrück Höhe at {N['avail_hunsrueck']:.1f} % vs 97 % target\n- Warning signs were visible 2–5 weeks ahead in SCADA and technician notes, but never combined",
+      "This is their pain in their numbers. Pause on €430 k per gearbox. Say the signals were already there; the problem is that nothing connected them.")
 
-# 4 ─ Day in the life
-slide("What I'll show you: Monday 07:00 at the reliability desk",
-      f"""<div class="grid2">
-        <div><ol class="pts">
-          <li><b>Risk board</b> (served from Lakebase in milliseconds): <b>{N['n_critical']} CRITICAL, {N['n_high']} HIGH</b> turbines, each with the likely component and € at stake.</li>
-          <li><b>AI maintenance brief</b> for {N['brief_turbine']}: the diagnosis cites the sensor evidence and the technician's German note, with steps, crew, parts and the business case.</li>
-          <li><b>One click → work order</b>, written transactionally to Lakebase with priority, crew and planned date.</li>
-          <li><b>Asset manager asks Genie</b>: <i>"Which farm lost the most revenue to failures, and which component caused it?"</i> Genie answers with the SQL shown.</li>
-        </ol></div>
-        <div class="quote"><div class="qh">{N['brief_headline']}</div><p>{N['brief_diagnosis']}</p><p><b>Business case.</b> {N['brief_business_case']}</p><small>Generated by Claude on Databricks from the model score, sensor residuals and technician notes</small></div>
-      </div>""",
-      f"""## What I'll show you: Monday 07:00 at the reliability desk
-1. Risk board (Lakebase): {N['n_critical']} CRITICAL, {N['n_high']} HIGH turbines, each with likely component and € at stake
-2. AI maintenance brief for {N['brief_turbine']}: "{N['brief_headline']}". {N['brief_diagnosis']} Business case: {N['brief_business_case']}
-3. One click → work order written to Lakebase
-4. Asset manager asks Genie in plain language and sees the SQL behind the answer""")
+# 4 ─ Demo intro (tell)
+steps = ["Risk board", "AI brief", "Work order", "Ask Genie"]
+subs = [f"{N['n_critical']} critical turbines, ranked by €", "diagnosis + business case", "booked in one click", "plain-language fleet questions"]
+chips = "".join(f"<div class='a step' style='--d:{i+1}'><i>{i+1}</i><b>{s}</b><span>{t}</span></div>" + ("<div class='a chev' style='--d:%d'>›</div>" % (i + 1) if i < 3 else "")
+                for i, (s, t) in enumerate(zip(steps, subs)))
+slide("Live demo · what you'll see", "Monday 07:00 at the reliability desk",
+      f"""<div class="steps">{chips}</div>
+      <p class="a line" style="--d:5">Watch for the moment a <b>€400 k surprise</b> becomes a <b>planned job</b>.</p>""",
+      """## Live demo · what you'll see: Monday 07:00 at the reliability desk
+1. Risk board: critical turbines ranked by € at stake
+2. AI maintenance brief: diagnosis, technician notes, business case
+3. One-click work order (Lakebase)
+4. Ask Genie a fleet question, with the SQL shown""",
+      "TELL before you SHOW. Say the four steps, then switch to the app.")
 
-# 5 ─ Proof
-bt = "".join(f"<tr><td>{b['turbine_id']}</td><td>{b['component'].replace('_',' ')}</td><td>{b['failure_date']}</td><td><b>{b['lead']} d</b></td></tr>" for b in N["backtest"])
-live = "".join(f"<tr><td>{x['turbine_id']}</td><td>{x['component'].replace('_',' ')}</td><td>in {x['days_until']} d</td><td><b>{x['tier']}</b> ({x['prob']*100:.0f} %)</td></tr>" for x in N["live_check"])
-slide("Proof: every hold-out failure flagged in advance, and today's alerts point at the right turbines",
-      f"""<div class="grid2">
-        <div><h3>Back-test (Aug–Sep, never seen in training)</h3><table><tr><th>Turbine</th><th>Component</th><th>Failed</th><th>First alert</th></tr>{bt}</table>
-        <p class="note">ROC-AUC {N['auc']:.3f} · PR-AUC {N['pr_auc']:.2f} · precision {N['precision']*100:.0f} % at threshold 0.5 · {N['false_alarm_weeks']} false-alarm turbine-weeks in 2 months</p></div>
-        <div><h3>Live check: failures still in the future</h3><table><tr><th>Turbine</th><th>Will fail</th><th>When</th><th>VentoGuard today</th></tr>{live}</table>
-        <p class="note">Hidden ground truth from the simulator, never exposed to the pipeline. Two further failures start degrading after the cut-off and cannot be seen yet. That is honest and expected.</p></div>
-      </div>
-      <p class="caveat">Built on synthetic SCADA with a physically motivated degradation signal. On real fleet data, expect lower precision. The pilot will measure that, which is why the value case assumes a 75 % catch rate.</p>""",
-      "## Proof\nBack-test (hold-out Aug–Sep):\n| Turbine | Component | Failed | First alert |\n|---|---|---|---|\n" +
-      "\n".join(f"| {b['turbine_id']} | {b['component']} | {b['failure_date']} | {b['lead']} days ahead |" for b in N["backtest"]) +
-      f"\n\nROC-AUC {N['auc']:.3f}, PR-AUC {N['pr_auc']:.2f}, precision {N['precision']*100:.0f} %, {N['false_alarm_weeks']} false-alarm turbine-weeks.\n\nLive check vs hidden future failures:\n| Turbine | Will fail | When | VentoGuard today |\n|---|---|---|---|\n" +
-      "\n".join(f"| {x['turbine_id']} | {x['component']} | in {x['days_until']} d | {x['tier']} ({x['prob']*100:.0f} %) |" for x in N["live_check"]) +
-      "\n\nCaveat: synthetic data; expect lower precision on real fleet data, so the value case assumes a 75 % catch rate.")
+# 5 ─ Demo landing (tell)
+rows = [("Risk board", "Only the turbines that matter, ranked by money", f"{k(N['app_avoidable_now_eur'])} avoidable now"),
+        ("AI brief", f"A decision on {N['brief_turbine']} in minutes", "≈ €207 k saved"),
+        ("Work order", "Crane, spare and crew in a low-wind window", "Corrective → planned"),
+        ("Genie", "Answers without a BI ticket", "Time to insight")]
+tr = "".join(f"<div class='a row' style='--d:{i+1}'><b>{a}</b><span>{b}</span><em>{c}</em></div>" for i, (a, b, c) in enumerate(rows))
+slide("Live demo · what it means", "Four clicks: a five-week surprise became a one-week plan",
+      f"""<div class="rows">{tr}</div>
+      <p class="a line" style="--d:5">Run every morning across the fleet: <b>{m(net)} a year</b>.</p>""",
+      "## Live demo · what it means: four clicks, a five-week surprise became a one-week plan\n" +
+      "\n".join(f"- {a}: {b} ({c})" for a, b, c in rows) + f"\n- Run every morning across the fleet: {m(net)}/yr",
+      "TELL after you SHOW. Land it in business terms, not features.")
 
-# 6 ─ Value for exec sponsor
-slide("For the COO: €4 M+ a year net, and the first avoided gearbox pays for the platform",
-      f"""<div class="grid2"><div><table>
-        <tr><th>Value driver (annualised)</th><th>€</th></tr>
-        <tr><td>Unplanned failure cost today</td><td>{m(N['unplanned_cost_annualised_eur'])}</td></tr>
-        <tr><td>Avoidable if every failure becomes a planned repair</td><td>{m(N['avoidable_100'])}</td></tr>
-        <tr><td>Avoidable at a conservative 75 % catch rate</td><td>{m(N['avoidable_75'])}</td></tr>
-        <tr><td>Less false-alarm inspections (€2.5 k each)</td><td>−{k(N['false_alarm_cost'])}</td></tr>
-        <tr class="tot"><td>Net annual benefit</td><td>{m(N['net_annual_benefit_eur'])}</td></tr>
-        <tr><td>Sensitivity: only 50 % caught</td><td>{m(N['avoidable_100']*0.5 - N['false_alarm_cost'])}</td></tr>
-      </table></div>
-      <div><ul class="pts">
-        <li><b>EBITDA:</b> lower corrective O&M spend (crane mobilisation alone is about €120 k per gearbox).</li>
-        <li><b>Revenue:</b> {N['downtime_days_avoided']:,} more turbine-days generating, worth +{N['availability_uplift_pp']:.1f} pp availability and protecting PPA delivery volumes.</li>
-        <li><b>Risk:</b> fewer OEM/insurer disputes, and spare-part pools sized from the risk board.</li>
-        <li><b>Cost to run:</b> serverless jobs, a Lakebase that scales to zero and one app, with no always-on cluster. The pilot measures the exact run cost, and one avoided gearbox (≈ €430 k) covers it many times over.</li>
-      </ul></div></div>""",
-      f"""## For the COO: €4 M+ a year net, and the first avoided gearbox pays for the platform
-| Value driver (annualised) | € |
-|---|---|
-| Unplanned failure cost today | {m(N['unplanned_cost_annualised_eur'])} |
-| Avoidable at 100 % catch | {m(N['avoidable_100'])} |
-| Avoidable at 75 % catch | {m(N['avoidable_75'])} |
-| Less false-alarm inspections | −{k(N['false_alarm_cost'])} |
-| **Net annual benefit** | **{m(N['net_annual_benefit_eur'])}** |
-| Sensitivity: 50 % caught | {m(N['avoidable_100']*0.5 - N['false_alarm_cost'])} |
+# 6 ─ Proof
+leads = "".join(f"<div class='lead a' style='--d:{1 + i*0.35:.2f}'><span class='lf' style='--h:{b['lead']/14*100:.0f}%'></span><small>{b['lead']} d</small></div>" for i, b in enumerate(N["backtest"]))
+slide("Proof", f"{N['bt_caught']} of {N['bt_total']} hold-out failures were flagged in advance",
+      f"""<div class="split">
+        <div><div class="leads">{leads}</div><p class="a note" style="--d:4">Days of warning before each failure in the back-test (Aug–Sep, never seen in training)</p></div>
+        <div class="facts">
+          <div class="a fact" style="--d:3"><b>4 / 4</b><span>turbines degrading right now are the 4 on today's risk board</span></div>
+          <div class="a fact" style="--d:4"><b>{N['precision']*100:.0f} %</b><span>of alerts were real failures</span></div>
+          <div class="a fact muted" style="--d:5"><b>75 %</b><span>catch rate assumed in the value case. Synthetic data, so the pilot measures the real number</span></div>
+        </div></div>""",
+      "## Proof\n" + f"- Back-test: {N['bt_caught']}/{N['bt_total']} hold-out failures flagged ahead; lead times " +
+      ", ".join(f"{b['lead']} d" for b in N["backtest"]) +
+      f"\n- Live check: today's 4 high/critical turbines are the 4 that are degrading (hidden ground truth)\n- Precision {N['precision']*100:.0f} %, ROC-AUC {N['auc']:.3f}, PR-AUC {N['pr_auc']:.2f}\n- Caveat: synthetic data, so the value case assumes a 75 % catch rate and the pilot measures the real one",
+      "Concede the synthetic-data caveat yourself, before they raise it. That's why the case assumes 75 %.")
 
-- EBITDA: less corrective O&M; Revenue: +{N['availability_uplift_pp']:.1f} pp availability; Risk: fewer disputes; Run cost: serverless + scale-to-zero, measured in the pilot; one avoided gearbox (≈ €430 k) covers it""")
+# 7 ─ COO value
+wf = [("Avoidable if every failure is planned", N["avoidable_100"], ""), ("At a 75 % catch rate", N["avoidable_75"], ""),
+      ("False-alarm inspections", -N["false_alarm_cost"], "neg"), ("Net benefit per year", net, "tot")]
+wmax = N["avoidable_100"]
+wfh = "".join(f"""<div class="bar a" style="--d:{i+1}"><span class="lbl">{l}</span><span class="track"><span class="fill {c}" style="--w:{abs(v)/wmax*100:.1f}%"></span></span>
+              <span class="val">{'−' if v < 0 else ''}{m(abs(v)) if abs(v) >= 1e6 else k(abs(v))}</span></div>""" for i, (l, v, c) in enumerate(wf))
+slide("Value · COO", f"{m(net)} a year net, and {m(half)} even if we catch only half",
+      f"""<div class="split">
+        <div class="bars wide">{wfh}</div>
+        <div class="facts">
+          <div class="a fact" style="--d:3"><b>EBITDA</b><span>less corrective O&M, with crane mobilisation alone ≈ €120 k per gearbox</span></div>
+          <div class="a fact" style="--d:4"><b>Revenue</b><span>+{N['availability_uplift_pp']:.1f} pp availability protects PPA volumes</span></div>
+          <div class="a fact" style="--d:5"><b>Run cost</b><span>serverless and scale-to-zero, measured in the pilot; one avoided gearbox covers it many times</span></div>
+        </div></div>""",
+      f"""## Value for the COO: {m(net)} a year net, {m(half)} even at half the catch rate
+- Avoidable at 100 %: {m(N['avoidable_100'])} · at 75 %: {m(N['avoidable_75'])} · minus false-alarm inspections −{k(N['false_alarm_cost'])} · **net {m(net)}/yr**
+- EBITDA: less corrective O&M (crane ≈ €120 k per gearbox) · Revenue: +{N['availability_uplift_pp']:.1f} pp availability · Run cost: serverless, measured in the pilot""",
+      "Look at the COO. Lead with the downside case: even at 50 % it's €2.7 M.")
 
-# 7 ─ Value for domain owner
-slide("For the Head of Asset Management: from firefighting to a planned maintenance calendar",
-      """<div class="grid2"><div><ul class="pts">
-        <li><b>13-day horizon</b> lines up with real lead times: crane booking (7–10 d), spare gearbox from the pool, and a low-wind weather window.</li>
-        <li><b>Explainable alerts:</b> each score names the component and the three sensor residuals driving it, compared with the fleet on the same day, so ambient temperature doesn't trigger false alarms.</li>
-        <li><b>Technician knowledge, unlocked:</b> 519 German/English notes are classified by an LLM for component, severity and precursor. A note like <i>"Ölprobe: erhöhter Eisengehalt"</i> now raises risk.</li>
-        <li><b>One workflow:</b> risk board → AI brief → work order, in one app that dispatchers actually open.</li>
-      </ul></div>
-      <div><ul class="pts">
-        <li><b>Self-service answers with Genie:</b> availability by farm and month, cost by component, supplier and age cohorts, all without waiting on the BI team.</li>
-        <li><b>KPIs this owner is measured on:</b> technical availability, MTTR, corrective vs planned ratio, O&M €/MWh. Every one is computed in governed gold tables.</li>
-        <li><b>Fleet insight:</b> older Hansa Drives gearboxes in Hunsrück fail disproportionately often, which feeds the next retrofit and contract negotiation.</li>
-      </ul></div></div>""",
-      """## For the Head of Asset Management: from firefighting to a planned maintenance calendar
-- 13-day horizon matches crane booking, spare-pool and weather-window lead times
-- Explainable: component + top-3 sensor residuals vs fleet
-- 519 German/English technician notes classified by an LLM (component, severity, precursor)
-- One workflow: risk board → AI brief → work order
-- Genie self-service: availability, cost by component, supplier and age cohorts
-- KPIs: technical availability, MTTR, corrective/planned ratio, O&M €/MWh, all from governed gold tables
-- Insight: older Hansa Drives gearboxes in Hunsrück fail disproportionately often""")
+# 8 ─ Asset management value
+tiles = [("13 days", "matches crane booking and spare-pool lead times"), ("Explained", "each alert names the component and the 3 sensor signals behind it"),
+         ("519 notes", "German and English technician notes now raise risk"), ("Self-service", "fleet questions answered by Genie, with the SQL shown")]
+th = "".join(f"<div class='a tile' style='--d:{i+1}'><b>{a}</b><span>{b}</span></div>" for i, (a, b) in enumerate(tiles))
+slide("Value · Head of Asset Management", "From firefighting to a planned maintenance calendar",
+      f"""<div class="tiles">{th}</div>
+      <p class="a line" style="--d:5">KPIs you're measured on, from governed tables: <b>availability · MTTR · corrective/planned ratio · O&M €/MWh</b></p>""",
+      "## Value for the Head of Asset Management: from firefighting to a planned maintenance calendar\n" +
+      "\n".join(f"- **{a}**: {b}" for a, b in tiles) + "\n- KPIs from governed gold tables: availability, MTTR, corrective/planned ratio, O&M €/MWh",
+      "Look at the domain owner. Talk about their week: fewer surprises, explainable alerts, their team's notes finally count.")
 
-# 8 ─ Architecture
-slide("How it works: one governed platform, from raw SCADA to the dispatcher's screen",
-      """<div class="flow">
-        <div class="st"><b>Lakeflow</b><span>Auto Loader ingests SCADA (3.3 M rows), CMMS notes, asset register and prices from a UC Volume. Declarative pipeline bronze → silver → gold with data-quality expectations.</span></div>
-        <div class="ar">→</div>
-        <div class="st"><b>Unity Catalog</b><span>One catalog, layer schemas ventoguard_bronze / _silver / _gold / _serving. Tags, GDPR column mask, lineage, least-privilege grants.</span></div>
-        <div class="ar">→</div>
-        <div class="st"><b>ML + GenAI</b><span>Fleet-relative features → gradient-boosted 14-day failure model (MLflow, UC registry, @champion gate). ai_query + Claude: note extraction and maintenance briefs.</span></div>
-        <div class="ar">→</div>
-        <div class="st"><b>Lakebase</b><span>Synced tables (risk board, briefs, trends) + transactional work orders, served in Postgres.</span></div>
-        <div class="ar">→</div>
-        <div class="st"><b>App + Genie</b><span>Databricks App: React front end, FastAPI back end. Risk map, AI brief and work orders, plus an embedded Genie space that shows its SQL.</span></div>
-      </div>
-      <p class="note" style="margin-top:28px">Orchestrated as one Lakeflow Job (generate → pipeline → train → score + GenAI → govern → sync Lakebase), deployed as a Declarative Automation Bundle. Daily schedule at 05:00 CET.</p>""",
-      """## How it works: one governed platform
-Lakeflow (Auto Loader + declarative pipeline, expectations) → Unity Catalog (bronze / silver / gold / serving schemas; tags, GDPR mask, lineage, grants) → ML + GenAI (MLflow model in UC with champion gate; ai_query + Claude for notes and briefs) → Lakebase (synced tables + transactional work orders) → Databricks App (React + FastAPI) + Genie space.
-Orchestrated by one Lakeflow Job, deployed via Declarative Automation Bundle, scheduled daily 05:00 CET.""")
+# 9 ─ Architecture
+flow = [("Lakeflow", "ingest SCADA, notes, assets, prices"), ("Unity Catalog", "govern, mask, lineage"), ("ML + GenAI", "14-day risk and AI briefs"),
+        ("Lakebase", "millisecond serving and work orders"), ("App + Genie", "where the business works")]
+fh = "".join(f"<div class='a node' style='--d:{i+1}'><b>{a}</b><span>{b}</span></div>" + (f"<div class='a link' style='--d:{i+1.5}'></div>" if i < 4 else "") for i, (a, b) in enumerate(flow))
+slide("How it works", "One governed platform, from raw SCADA to the dispatcher's screen",
+      f"""<div class="flow">{fh}</div>
+      <p class="a line small" style="--d:6">One Lakeflow Job, daily at 05:00 · deployed as one bundle · open formats (Delta, Postgres, MLflow)</p>""",
+      "## How it works: one governed platform\n" + " → ".join(f"**{a}** ({b})" for a, b in flow) +
+      "\n- One Lakeflow Job daily at 05:00, deployed as a Declarative Automation Bundle, open formats",
+      "Look at the architect. Keep it to one breath, and offer to go deeper in Q&A (backup slides).")
 
-# 9 ─ Governance & trust
-slide("Trust by design: governed data, explainable models, grounded AI",
-      f"""<div class="grid3">
-        <div class="card"><b>Data quality</b><p>Lakeflow expectations dropped {N['dq_dropped']:,} bad readings (sensor 999 °C, negative wind, missing power) before they reached the model. Results are queryable from the event log.</p></div>
-        <div class="card"><b>Privacy (GDPR)</b><p>Technician names carry the governed <code>class.name</code> classification tag and are masked by a UC column-mask function. Only the reliability leads group sees them, in every tool including Genie.</p></div>
-        <div class="card"><b>Model governance</b><p>UC-registered model with a quality gate (PR-AUC ≥ 0.30 and ≥ 60 % of failures caught) before the <code>@champion</code> alias moves. Back-test tables are logged with every run.</p></div>
-        <div class="card"><b>Grounded GenAI</b><p>Briefs are generated only from the model score, measured residuals and the technician's own notes, and the prompt forbids invented measurements. Outputs are tagged <code>ai_generated</code>.</p></div>
-        <div class="card"><b>Lineage</b><p>Lineage runs from the raw Volume to the risk board, so any number in the app can be traced back to the SCADA file it came from.</p></div>
-        <div class="card"><b>Least privilege</b><p>The app service principal reads gold/serving only and owns just its work-order schema in Lakebase.</p></div>
-      </div>""",
-      f"""## Trust by design
-- Data quality: expectations dropped {N['dq_dropped']:,} bad readings
-- GDPR: technician names tagged class.name + UC column mask
-- Model governance: quality gate before @champion
-- Grounded GenAI: briefs only from score, residuals and notes; tagged ai_generated
-- Lineage: raw Volume → risk board
-- Least privilege for the app service principal""")
+# 10 ─ Trust
+trust = [("Data quality", f"{N['dq_dropped']:,} bad readings dropped before the model"), ("GDPR", "technician names masked in every tool"),
+         ("Model gate", "no promotion without passing quality checks"), ("Grounded AI", "briefs use only measured facts"),
+         ("Lineage", "every number traces back to its raw file"), ("Least privilege", "the app sees only what it needs")]
+tt = "".join(f"<div class='a tile sm' style='--d:{1 + i*0.6:.1f}'><b>{a}</b><span>{b}</span></div>" for i, (a, b) in enumerate(trust))
+slide("Trust", "Governed data, explainable models, grounded AI",
+      f"""<div class="tiles six">{tt}</div>""",
+      "## Trust: governed data, explainable models, grounded AI\n" + "\n".join(f"- **{a}**: {b}" for a, b in trust),
+      "Short. These are the answers to the architect's security questions before they ask.")
 
-# 10 ─ Pilot plan
-slide("Next step: an 8-week pilot on Hunsrück Höhe",
-      """<div class="grid2"><div><table>
-        <tr><th>Weeks</th><th>Milestone</th></tr>
-        <tr><td>1–2</td><td>Connect the real SCADA historian and the SAP PM / CMMS via Lakeflow Connect; replay 24 months of history</td></tr>
-        <tr><td>3–4</td><td>Retrain on real failures; calibrate thresholds with the reliability lead; add CMS vibration spectra</td></tr>
-        <tr><td>5–8</td><td>Live shadow mode: daily risk board + AI briefs to the Hunsrück crew; every alert gets a field verdict</td></tr>
-        <tr><td>8</td><td>Go/no-go with COO on measured precision, lead time and € avoided</td></tr>
-      </table></div>
-      <div><h3>Success criteria</h3><ul class="pts">
-        <li>≥ 60 % of major failures flagged ≥ 7 days ahead</li>
-        <li>≤ 1 false alarm per 10 turbines per month</li>
-        <li>≥ 1 failure converted to a planned repair, with € avoided documented</li>
-        <li>Dispatchers use the app daily (adoption tracked in app logs)</li>
-      </ul><h3>Decisions needed today</h3><ul class="pts"><li>Executive sponsor and pilot farm confirmed</li><li>Access to SCADA and CMMS exports for 24 months</li></ul></div></div>""",
-      """## Next step: an 8-week pilot on Hunsrück Höhe
-| Weeks | Milestone |
-|---|---|
-| 1–2 | Connect SCADA + SAP PM/CMMS via Lakeflow Connect, replay 24 months |
-| 3–4 | Retrain on real failures, calibrate with reliability lead, add CMS spectra |
-| 5–8 | Live shadow mode with field verdict on every alert |
-| 8 | Go/no-go on measured precision, lead time, € avoided |
+# 11 ─ Ask
+plan = [("Weeks 1–2", "connect real SCADA and SAP PM"), ("Weeks 3–4", "retrain and calibrate with your reliability lead"),
+        ("Weeks 5–8", "live shadow mode on Hunsrück Höhe"), ("Week 8", "go/no-go on € avoided")]
+ph = "".join(f"<div class='a ms' style='--d:{i+1}'><i></i><b>{a}</b><span>{b}</span></div>" for i, (a, b) in enumerate(plan))
+slide("The ask", "An 8-week pilot on Hunsrück Höhe",
+      f"""<div class="timeline">{ph}</div>
+      <div class="a decide" style="--d:5"><b>Two decisions today</b><span>① your sponsorship &nbsp; ② access to 24 months of SCADA and CMMS data</span></div>""",
+      "## The ask: an 8-week pilot on Hunsrück Höhe\n" + "\n".join(f"- {a}: {b}" for a, b in plan) +
+      "\n- Success: ≥ 60 % of major failures flagged ≥ 7 days ahead; ≤ 1 false alarm per 10 turbines per month; ≥ 1 documented planned-instead-of-unplanned repair\n- Two decisions today: sponsorship, and access to 24 months of SCADA and CMMS data",
+      "Ask, then stop talking. Let them answer.", kind="ask")
 
-Success criteria: ≥60 % of major failures flagged ≥7 days ahead; ≤1 false alarm / 10 turbines / month; ≥1 documented planned-instead-of-unplanned repair; daily app use.
-Decisions needed: sponsor + pilot farm; 24 months of SCADA/CMMS exports.""")
+# ─ Backup (Q&A)
+def backup(title, cards, md, notes):
+    ch = "".join(f"<div class='a card q' style='--d:{i+1}'><b>{a}</b><span>{b}</span></div>" for i, (a, b) in enumerate(cards))
+    slide("Backup · Q&A", title, f"<div class='qgrid'>{ch}</div>", md, notes)
 
-# ─ Role-play structure: setup slide, demo landing slide, Q&A appendix ─────────────────────────────
 
-slide("Why we're here: 120 turbines, €11 M a year of surprises, and a 30-minute look at the fix",
-      f"""<div class="grid2">
-        <div><h3>The customer</h3><ul class="pts">
-          <li>German onshore wind operator: <b>4 farms, 120 turbines</b>, merchant and PPA revenue</li>
-          <li><b>COO</b> is accountable for EBITDA and availability. The <b>Head of Asset Management</b> runs O&M and the maintenance calendar.</li>
-        </ul>
-        <h3>The problem</h3><ul class="pts">
-          <li>Unplanned gearbox and bearing failures cost <b>{m(N['unplanned_cost_annualised_eur'])} a year</b>. Hunsrück Höhe sits at <b>{N['avail_hunsrueck']:.1f} %</b> availability against a 97 % target.</li>
-          <li>The warning signs were in SCADA and in technicians' notes weeks ahead, but nothing combined them.</li>
-        </ul></div>
-        <div><h3>In the next 30 minutes</h3><ol class="pts">
-          <li><b>The outcome and the € case</b> (3 min)</li>
-          <li><b>Live demo</b>: one Monday morning, from risk alert to booked repair (8 min)</li>
-          <li><b>Proof, value for each of you, and how it is built</b> (5 min)</li>
-          <li><b>Your questions</b>, then <b>one decision</b>: an 8-week pilot on Hunsrück Höhe</li>
-        </ol></div>
-      </div>""",
-      f"""## Why we're here: 120 turbines, €11 M a year of surprises, and a 30-minute look at the fix
-**Customer:** German onshore wind operator, 4 farms / 120 turbines. In the room: COO (EBITDA, availability) and Head of Asset Management (O&M, maintenance calendar).
+backup("Cost, risk and time to value",
+       [("Cost", f"Serverless and scale-to-zero, so no idle cluster. The pilot measures it exactly. One gearbox ≈ €430 k."),
+        ("Downside case", f"Only 50 % caught still gives {m(half)}/yr."),
+        ("Precision risk", "The case assumes 75 %, and shadow mode puts a field verdict on every alert."),
+        ("Alert fatigue", "Ranked by € at stake. Target ≤ 1 false alarm per 10 turbines per month."),
+        ("Adoption", "The work order sits on the same screen as the alert. Daily use is a go/no-go criterion."),
+        ("Time to value", "First live alerts in week 5, go/no-go in week 8, then the same bundle on all 4 farms.")],
+       f"""## Backup: cost, risk and time to value
+- Cost: serverless + scale-to-zero, measured in the pilot; one gearbox ≈ €430 k · Downside: {m(half)}/yr at 50 % caught
+- Risk: 75 % assumed, shadow mode with field verdicts; ≤ 1 false alarm/10 turbines/month; work order in the same screen
+- Time to value: live alerts week 5, go/no-go week 8, then all 4 farms with the same bundle""",
+       "Business pushback. Answer with the headline first, then point at the card.")
 
-**Problem:** unplanned gearbox and bearing failures cost {m(N['unplanned_cost_annualised_eur'])}/yr; Hunsrück Höhe at {N['avail_hunsrueck']:.1f} % availability vs 97 % target; warning signs sat in SCADA and technician notes, never combined.
+backup("Architecture and integration",
+       [("Ingest", "Auto Loader today. In the pilot: historian exports or Zerobus for SCADA, and Lakeflow Connect for SAP PM."),
+        ("Transform", "Declarative pipeline bronze → silver → gold, with expectations at silver."),
+        ("Serve", "Gold tables sync to Lakebase Postgres. Work orders are transactional, in the app's own schema."),
+        ("Write-back", "Work orders go to SAP PM through its API. SAP stays the system of record."),
+        ("Scale", "≈ 3.3 M rows of 10-minute SCADA on serverless. More farms is configuration, not a rebuild."),
+        ("Freshness", "Daily fits the 14-day horizon. The sync can switch to continuous.")],
+       """## Backup: architecture and integration
+- Ingest: Auto Loader; pilot = historian exports or Zerobus (SCADA), Lakeflow Connect (SAP PM)
+- Transform: declarative pipeline with expectations · Serve: Lakebase synced tables + transactional work orders
+- Write-back to SAP PM (system of record) · Scale: ~3.3 M rows of 10-min SCADA on serverless · Freshness: daily, can go continuous""",
+       "Technical pushback. Give real detail, then one sentence back to the COO.")
 
-**Agenda:** (1) outcome and € case, 3 min; (2) live demo, Monday morning from alert to booked repair, 8 min; (3) proof, value per stakeholder, architecture, 5 min; (4) questions, then one decision: an 8-week pilot on Hunsrück Höhe.""",
-      kicker="Setting the scene")
+backup("Data quality, model validation, AI guard-rails",
+       [("Data quality", f"Expectations dropped {N['dq_dropped']:,} impossible readings. Features are fleet-relative, so weather isn't mistaken for failure."),
+        ("Validation", "Time split: trained before August, tested Aug–Sep, so no leakage."),
+        ("Model gate", "PR-AUC ≥ 0.30 and ≥ 60 % caught ≥ 3 days ahead, or no @champion."),
+        ("Lifecycle", "MLflow tracks every run. The pilot adds drift monitoring and a monthly retrain."),
+        ("Grounded AI", "Claude via ai_query, using only the score, residuals and notes. Tagged ai_generated."),
+        ("Security", "UC grants, column mask on names, and a least-privilege app service principal.")],
+       f"""## Backup: data quality, model validation, AI guard-rails
+- Data quality: expectations dropped {N['dq_dropped']:,} readings; fleet-relative features
+- Validation: time split (train < Aug, test Aug–Sep); gate PR-AUC ≥ 0.30 and ≥ 60 % caught ≥ 3 d ahead before @champion; MLflow tracking; pilot adds drift monitoring + monthly retrain
+- GenAI: Claude via ai_query, grounded on score, residuals and notes, tagged ai_generated; a human approves every work order
+- Security: UC grants, column mask on technician names, least-privilege app service principal""",
+       "Technical pushback on models and AI. Stay concrete.")
 
-slide("What you just saw: a five-week surprise turned into a planned one-week job, in four clicks",
-      f"""<table>
-        <tr><th>What you saw</th><th>What it changes</th><th>KPI it moves</th></tr>
-        <tr><td><b>Risk board</b>: {N['n_critical']} critical and {N['n_high']} high-risk turbines, ranked by € at stake</td><td>The reliability lead starts the week with the 4 turbines that matter, not 120 alarms</td><td>Technical availability; <b>€{N['app_avoidable_now_eur']/1e3:,.0f} k</b> avoidable if acted on now</td></tr>
-        <tr><td><b>AI brief</b> for {N['brief_turbine']}: evidence, technician note, steps and business case</td><td>A decision in minutes instead of a morning of digging through SCADA and CMMS</td><td>Planned repair saves about <b>€207 k</b> versus waiting for the failure</td></tr>
-        <tr><td><b>Work order</b> written to Lakebase in one click</td><td>The crane, the spare part and the crew are booked into a low-wind window</td><td>Corrective/planned ratio; MTTR</td></tr>
-        <tr><td><b>Genie</b>: a plain-language question with the SQL shown</td><td>The asset manager answers fleet questions without waiting on the BI team</td><td>Time to insight; supplier and retrofit decisions</td></tr>
-      </table>
-      <p class="pts" style="margin-top:22px"><b>Across the fleet:</b> this loop, run every morning, is worth <b>{m(N['net_annual_benefit_eur'])} a year net</b> and <b>+{N['availability_uplift_pp']:.1f} pp</b> availability.</p>""",
-      f"""## What you just saw: a five-week surprise turned into a planned one-week job, in four clicks
-| What you saw | What it changes | KPI it moves |
-|---|---|---|
-| Risk board: {N['n_critical']} critical, {N['n_high']} high, ranked by € | Week starts with the 4 turbines that matter | Availability; €{N['app_avoidable_now_eur']/1e3:,.0f} k avoidable if acted on now |
-| AI brief for {N['brief_turbine']} | Decision in minutes, not a morning of digging | ~€207 k saved by planned vs unplanned repair |
-| One-click work order (Lakebase) | Crane, spare and crew booked into a low-wind window | Corrective/planned ratio; MTTR |
-| Genie question with SQL shown | Self-service fleet answers, no BI backlog | Time to insight; supplier/retrofit decisions |
-
-Across the fleet: {m(N['net_annual_benefit_eur'])}/yr net, +{N['availability_uplift_pp']:.1f} pp availability.""",
-      kicker="Live demo · what it means")
-
-slide("Backup: cost, risk and time to value",
-      f"""<div class="grid3 dense">
-        <div class="card"><b>Cost</b><p><b>Run cost:</b> serverless jobs and SQL, Lakebase that scales to zero, and one app, with no cluster to keep running. The pilot measures the exact figure from the billing system tables.</p><p><b>Yardstick:</b> one avoided gearbox is worth about <b>€430 k</b>, and the model flagged {N['bt_caught']} of {N['bt_total']} hold-out failures.</p><p><b>Downside case:</b> if only 50 % are caught, the benefit is still <b>{m(N['avoidable_100']*0.5 - N['false_alarm_cost'])}/yr</b>.</p></div>
-        <div class="card"><b>Risk and mitigation</b><p><b>Precision on real data is lower:</b> the value case already assumes 75 %, and pilot weeks 5–8 run in shadow mode with a field verdict on every alert.</p><p><b>Alert fatigue:</b> tiers and a ranking by € at stake keep the reliability lead's list short, with a target of ≤ 1 false alarm per 10 turbines per month.</p><p><b>Adoption:</b> the work order sits in the same screen as the alert, and daily use is a go/no-go criterion.</p></div>
-        <div class="card"><b>Time to value</b><p><b>Weeks 1–2:</b> real SCADA and CMMS history are connected.</p><p><b>Week 5:</b> the first live alerts reach the Hunsrück crew.</p><p><b>Week 8:</b> go/no-go on measured € avoided.</p><p><b>After go:</b> the same bundle is deployed to all 4 farms. Everything is code (a Declarative Automation Bundle), so roll-out is configuration, not a rebuild.</p></div>
-      </div>""",
-      f"""## Backup: cost, risk and time to value
-- **Cost:** serverless jobs + SQL, scale-to-zero Lakebase, one app; no always-on cluster. Exact run cost measured in the pilot from billing system tables. One avoided gearbox ≈ €430 k. Downside (50 % caught): {m(N['avoidable_100']*0.5 - N['false_alarm_cost'])}/yr.
-- **Risk:** precision lower on real data → value case assumes 75 %, shadow mode with field verdicts; alert fatigue → tiers + € ranking, target ≤1 false alarm/10 turbines/month; adoption → work order in the same screen, daily use is a go/no-go criterion.
-- **Time to value:** weeks 1–2 data connected; week 5 first live alerts; week 8 go/no-go; then same bundle to all 4 farms (configuration, not rebuild).""",
-      kicker="Appendix · business questions")
-
-slide("Backup: architecture and integration with your systems",
-      """<div class="grid2 dense"><div><ul class="pts">
-        <li><b>Ingest:</b> Auto Loader picks up files incrementally from a UC Volume. In production: the SCADA historian via file drops or Zerobus streaming, and SAP PM / CMMS via Lakeflow Connect.</li>
-        <li><b>Transform:</b> a Lakeflow declarative pipeline, bronze → silver → gold, with expectations at silver. Streaming tables mean reruns only process new data.</li>
-        <li><b>Serve:</b> gold tables are synced to Lakebase Postgres (snapshot after each daily scoring run). The app reads in milliseconds and writes work orders transactionally to its own <code>vg_ops</code> schema.</li>
-        <li><b>Write-back:</b> in the pilot, work orders are pushed to SAP PM through its API, so SAP stays the system of record.</li>
-      </ul></div><div><ul class="pts">
-        <li><b>Orchestration:</b> one Lakeflow Job with six tasks, scheduled daily at 05:00 CET, deployed as a Declarative Automation Bundle with dev and prod targets.</li>
-        <li><b>Scale:</b> about 3.3 M rows of 10-minute SCADA today, aggregated to turbine-day features. More turbines, more sensors or CMS spectra scale out on serverless with no re-architecture.</li>
-        <li><b>Freshness:</b> daily matches the 14-day horizon. The Lakebase sync can be switched to triggered or continuous if intraday is needed.</li>
-        <li><b>Open formats:</b> Delta tables in Unity Catalog, standard Postgres, MLflow models, so nothing is locked in a proprietary store.</li>
-      </ul></div></div>""",
-      """## Backup: architecture and integration
-- Ingest: Auto Loader from UC Volume; production = SCADA historian (file drops or Zerobus), SAP PM/CMMS via Lakeflow Connect
-- Transform: Lakeflow declarative pipeline bronze → silver → gold, expectations at silver, incremental streaming tables
-- Serve: gold → Lakebase synced tables (snapshot after daily scoring); app writes work orders to its own `vg_ops` schema; pilot pushes work orders to SAP PM (system of record)
-- Orchestration: one Lakeflow Job, 6 tasks, daily 05:00 CET, deployed via Declarative Automation Bundle (dev/prod targets)
-- Scale: ~3.3 M rows of 10-minute SCADA, aggregated to turbine-day features; more turbines/sensors/CMS spectra scale out on serverless
-- Freshness: daily fits the 14-day horizon; sync can go triggered/continuous
-- Open formats: Delta + UC, Postgres, MLflow""",
-      kicker="Appendix · technical questions")
-
-slide("Backup: data quality, model validation and the GenAI guard-rails",
-      f"""<div class="grid3 dense">
-        <div class="card"><b>Data quality</b><p>Expectations at silver drop physically impossible readings: {N['dq_dropped']:,} bad readings in this run (999 °C oil, negative wind, missing power). Results sit in the pipeline event log and can be alerted on. Features are <b>relative to the fleet on the same day</b>, so weather and seasonality don't look like degradation.</p></div>
-        <div class="card"><b>Model validation</b><p>Gradient-boosted classifier with a 14-day horizon, validated on a <b>time split</b> (trained before August, tested Aug–Sep) to avoid leakage. A quality gate (PR-AUC ≥ 0.30 and ≥ 60 % of failures caught ≥ 3 days ahead) must pass before <code>@champion</code> moves. Each run logs metrics and back-test tables to MLflow. The pilot adds drift monitoring and a monthly retrain.</p></div>
-        <div class="card"><b>GenAI guard-rails</b><p>Claude via Databricks Foundation Model APIs, called with <code>ai_query</code> in SQL. Briefs use only the score, measured residuals and the technician's own notes, and the prompt forbids invented numbers. Outputs are tagged <code>ai_generated</code> and shown next to the evidence. A human approves every work order.</p></div>
-      </div>
-      <p class="note" style="margin-top:18px">Security: Unity Catalog grants and lineage on every table. Technician names are tagged <code>class.name</code> and masked by a column-mask function in every tool, Genie included. The app runs as a least-privilege service principal that reads gold/serving and owns only its work-order schema.</p>""",
-      f"""## Backup: data quality, model validation and GenAI guard-rails
-- Data quality: expectations drop impossible readings ({N['dq_dropped']:,} this run), visible in the event log; fleet-relative features remove weather/seasonality effects
-- Model: gradient-boosted 14-day classifier, time-split validation (train < Aug, test Aug–Sep), quality gate (PR-AUC ≥ 0.30, ≥ 60 % caught ≥ 3 d ahead) before @champion; metrics + back-test logged in MLflow; pilot adds drift monitoring + monthly retrain
-- GenAI: Claude via Databricks Foundation Model APIs (`ai_query`); grounded on score, residuals and the technician's notes; no invented numbers; tagged `ai_generated`; a human approves every work order
-- Security: UC grants + lineage; technician names tagged `class.name` and masked in every tool incl. Genie; app runs as least-privilege service principal""",
-      kicker="Appendix · technical questions")
-
-# Final order: title, setup, outcome, problem, demo intro, demo landing, proof, COO, HoAM, architecture, trust, pilot, appendix
-main, setup, landing, *appendix = SLIDES[:10], SLIDES[10], SLIDES[11], *SLIDES[12:]
-SLIDES[:] = [main[0], setup, main[1], main[2], main[3], landing, *main[4:], *appendix]
-KICKERS = {2: "The outcome", 3: "The problem", 4: "Live demo · what you'll see", 6: "Proof", 7: "Value · executive sponsor",
-           8: "Value · domain owner", 9: "How it works", 10: "Trust", 11: "The ask"}
-for i, kk in KICKERS.items():
-    SLIDES[i]["kicker"] = SLIDES[i]["kicker"] or kk
-
+# ─ Render ───────────────────────────────────────────────────────────────────────────────────────
 CSS = """
+:root { --lava:#FF3621; --navy:#0B2026; --light:#F9F7F4; --line:#E6E1D9; --muted:#5A6B73 }
+* { box-sizing: border-box; margin: 0 }
+html, body { height: 100%; background: var(--navy); font-family: 'DM Sans', 'Helvetica Neue', Arial, sans-serif; color: var(--navy); overflow: hidden }
+#stage { position: absolute; width: 1280px; height: 720px; left: 50%; top: 50%; transform-origin: center; }
+.slide { position: absolute; inset: 0; padding: 64px 80px; background: var(--light); opacity: 0; visibility: hidden; transition: opacity .45s ease, visibility .45s }
+.slide.active { opacity: 1; visibility: visible }
+.kick { color: var(--lava); font-weight: 700; letter-spacing: .1em; font-size: 14px; text-transform: uppercase; margin-bottom: 12px }
+h1 { font-size: 46px; line-height: 1.1; letter-spacing: -.01em; max-width: 1080px; margin-bottom: 48px }
+.a { opacity: 0; transform: translateY(18px) }
+.active .a { animation: up .6s cubic-bezier(.2,.7,.2,1) forwards; animation-delay: calc(var(--d, 0) * .18s + .1s) }
+.active .kick, .active h1 { animation: up .55s cubic-bezier(.2,.7,.2,1) both }
+@keyframes up { to { opacity: 1; transform: none } }
+.brand { position: absolute; bottom: 26px; left: 80px; font-size: 13px; opacity: .45 }
+.title, .ask { background: var(--navy); color: var(--light) }
+.title h1 { font-size: 72px; margin: 110px 0 22px; max-width: 1000px }
+.title .sub { font-size: 24px; opacity: .85 }
+.kpis { display: flex; gap: 72px; margin-top: 64px }
+.kpis b { display: block; font-size: 60px; color: var(--lava); line-height: 1 }
+.kpis span { font-size: 17px; opacity: .75 }
+.foot { position: absolute; bottom: 56px; font-size: 15px; opacity: .6 }
+.trio { display: flex; align-items: stretch; gap: 22px }
+.card { flex: 1; background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 30px 28px }
+.card b { display: block; font-size: 56px; line-height: 1; margin-bottom: 14px }
+.card span { font-size: 18px; line-height: 1.35; color: var(--muted) }
+.card.dark { background: var(--navy); border: none } .card.dark b, .card.dark span { color: var(--light) }
+.card.lava { background: var(--lava); border: none } .card.lava b, .card.lava span { color: #fff }
+.arrow { align-self: center; font-size: 44px; color: var(--lava) }
+.line { font-size: 24px; margin-top: 44px; line-height: 1.4 } .line.small { font-size: 18px; color: var(--muted) }
+.split { display: grid; grid-template-columns: 1.25fr 1fr; gap: 64px; align-items: start }
+.bars .bar { display: grid; grid-template-columns: 170px 1fr 92px; align-items: center; gap: 14px; margin-bottom: 22px; font-size: 18px }
+.bars.wide .bar { grid-template-columns: 250px 1fr 84px; font-size: 17px }
+.lbl { text-transform: capitalize } .bars.wide .lbl { text-transform: none }
+.track { height: 30px; background: #ECE7DF; border-radius: 6px; overflow: hidden }
+.fill { display: block; height: 100%; width: var(--w); background: #9AA8B0; border-radius: 6px; transform: scaleX(0); transform-origin: left }
+.fill.hot, .fill.tot { background: var(--lava) } .fill.neg { background: var(--navy) }
+.active .fill { transition: transform 1s cubic-bezier(.2,.7,.2,1) .5s; transform: scaleX(1) }
+.val { font-weight: 700; text-align: right }
+.cnt { font-size: inherit !important; color: inherit !important; opacity: 1 !important; line-height: inherit }
+.note { font-size: 14px; color: var(--muted); margin-top: 10px }
+.facts .fact { border-left: 5px solid var(--lava); padding: 4px 0 4px 20px; margin-bottom: 30px }
+.fact b { display: block; font-size: 38px; line-height: 1.05 } .fact span { font-size: 17px; color: var(--muted) }
+.fact.muted { border-color: #C4CCD6 }
+.steps { display: flex; align-items: center; gap: 14px; margin-top: 20px }
+.step { flex: 1; background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 28px 22px; min-height: 190px }
+.step i { font-style: normal; display: inline-grid; place-items: center; width: 38px; height: 38px; border-radius: 50%; background: var(--lava); color: #fff; font-weight: 700; margin-bottom: 18px }
+.step b { display: block; font-size: 26px; margin-bottom: 8px } .step span { font-size: 16px; color: var(--muted) }
+.chev { font-size: 40px; color: var(--lava) }
+.rows .row { display: grid; grid-template-columns: 200px 1fr 330px; gap: 24px; align-items: center; background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 20px 26px; margin-bottom: 12px; font-size: 19px }
+.row b { font-size: 21px } .row em { font-style: normal; font-weight: 700; color: var(--lava); text-align: right }
+.leads { display: flex; align-items: flex-end; gap: 18px; height: 300px; padding-top: 10px; border-bottom: 2px solid var(--navy) }
+.lead { flex: 1; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 6px }
+.lead .lf { width: 100%; height: var(--h); background: var(--lava); border-radius: 6px 6px 0 0; transform: scaleY(0); transform-origin: bottom; order: 2 }
+.lead small { font-weight: 700; font-size: 15px; order: 1 }
+.active .lead .lf { transition: transform .9s cubic-bezier(.2,.7,.2,1) .4s; transform: scaleY(1) }
+.tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px }
+.tiles.six { grid-template-columns: repeat(3, 1fr) }
+.tile { background: #fff; border: 1px solid var(--line); border-top: 6px solid var(--lava); border-radius: 14px; padding: 26px 24px; min-height: 180px }
+.tile b { display: block; font-size: 30px; margin-bottom: 10px } .tile span { font-size: 17px; color: var(--muted); line-height: 1.4 }
+.tile.sm { min-height: 150px } .tile.sm b { font-size: 25px }
+.flow { display: flex; align-items: center; margin-top: 30px }
+.node { flex: 1; background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 26px 18px; text-align: center; min-height: 170px }
+.node b { display: block; font-size: 23px; margin-bottom: 10px } .node span { font-size: 15.5px; color: var(--muted) }
+.link { width: 36px; height: 4px; background: var(--lava); flex: none; transform-origin: left }
+.timeline { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; margin-top: 30px; border-top: 4px solid rgba(249,247,244,.25) }
+.ms { padding: 26px 22px 0 0; position: relative }
+.ms i { position: absolute; top: -14px; left: 0; width: 24px; height: 24px; border-radius: 50%; background: var(--lava) }
+.ms b { display: block; font-size: 24px; margin: 8px 0 8px; color: var(--lava) } .ms span { font-size: 18px; opacity: .85 }
+.decide { margin-top: 64px; background: rgba(255,54,33,.12); border: 1px solid var(--lava); border-radius: 14px; padding: 24px 30px }
+.decide b { display: block; font-size: 26px; margin-bottom: 6px } .decide span { font-size: 21px }
+.qgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px }
+.card.q { padding: 22px 24px } .card.q b { font-size: 22px; margin-bottom: 8px } .card.q span { font-size: 16px }
+.ask .brand, .title .brand { color: var(--light) }
+#bar { position: fixed; left: 0; bottom: 0; height: 4px; background: var(--lava); transition: width .4s ease; z-index: 5 }
+#num { position: fixed; right: 18px; bottom: 12px; color: rgba(249,247,244,.55); font-size: 13px; z-index: 5 }
+#hint { position: fixed; left: 50%; bottom: 14px; transform: translateX(-50%); color: rgba(249,247,244,.5); font-size: 13px; transition: opacity 1s; z-index: 5 }
+@media print {
+  html, body { overflow: visible; height: auto; background: none }
+  #stage { position: static; transform: none !important; width: auto; height: auto }
+  .slide { position: relative; width: 1280px; height: 720px; opacity: 1; visibility: visible; page-break-after: always; break-after: page }
+  .a, .kick, h1 { opacity: 1 !important; transform: none !important; animation: none !important }
+  .fill, .lead .lf { transform: none !important; transition: none !important }
+  #bar, #num, #hint { display: none }
+}
 @page { size: 1280px 720px; margin: 0 }
-* { box-sizing: border-box }
-body { margin: 0; font-family: 'DM Sans', 'Helvetica Neue', Arial, sans-serif; color: #0B2026; background: #ddd }
-.slide { width: 1280px; height: 720px; padding: 52px 64px; background: #F9F7F4; position: relative; page-break-after: always; overflow: hidden; margin: 0 auto 12px }
-.slide h1 { font-size: 34px; line-height: 1.15; margin: 0 0 26px; max-width: 1100px }
-.slide .kick { color: #FF3621; font-weight: 700; letter-spacing: .08em; font-size: 13px; text-transform: uppercase; margin-bottom: 8px }
-.slide .num { position: absolute; bottom: 22px; right: 40px; font-size: 12px; opacity: .5 }
-.slide .brand { position: absolute; bottom: 22px; left: 64px; font-size: 12px; opacity: .5 }
-.title { background: #0B2026; color: #F9F7F4 }
-.title h1 { font-size: 58px; margin-top: 120px; max-width: 980px }
-.title .sub { font-size: 22px; opacity: .85 }
-.title .titlekpis { display: flex; gap: 56px; margin-top: 54px }
-.title .titlekpis b { display: block; font-size: 44px; color: #FF3621 }
-.title .titlekpis span { font-size: 15px; opacity: .8 }
-.title .foot { position: absolute; bottom: 48px; font-size: 14px; opacity: .7 }
-.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 40px }
-.grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 22px }
-.card { background: #fff; border-radius: 12px; padding: 20px 22px; border: 1px solid #e6e1d9; font-size: 15px }
-.card.lava { background: #FF3621; color: #fff; border: none }
-.card .big { font-size: 40px; font-weight: 700; margin-bottom: 8px }
-.card p { margin: 8px 0 0; font-size: 14.5px; line-height: 1.4 }
-.pts { font-size: 18px; line-height: 1.45; padding-left: 22px }
-.pts li { margin-bottom: 11px }
-table { border-collapse: collapse; width: 100%; font-size: 15.5px; background: #fff }
-th { background: #0B2026; color: #F9F7F4; text-align: left; padding: 8px 10px; font-weight: 600 }
-td { padding: 7px 10px; border-bottom: 1px solid #ece7df }
-tr.tot td { font-weight: 700; background: #FFE8E3 }
-h3 { font-size: 17px; margin: 0 0 10px }
-.note { font-size: 13px; opacity: .75 }
-.caveat { font-size: 13.5px; background: #fff4d6; padding: 10px 14px; border-radius: 8px; margin-top: 18px }
-.quote { background: #fff; border: 1px solid #C4CCD6; border-radius: 12px; padding: 20px 24px; font-size: 15.5px; line-height: 1.45 }
-.quote .qh::before { content: 'AI-GENERATED BRIEF'; display: block; font-size: 11px; letter-spacing: .08em; color: #4A5568; margin-bottom: 6px; font-weight: 600 }
-.quote .qh { font-weight: 700; font-size: 18px; margin-bottom: 6px }
-.flow { display: flex; align-items: stretch; gap: 10px; margin-top: 30px }
-.flow .st { flex: 1; background: #fff; border-top: 6px solid #FF3621; border-radius: 10px; padding: 18px 16px; font-size: 14px; line-height: 1.4 }
-.flow .st b { display: block; font-size: 19px; margin-bottom: 8px }
-.flow .ar { align-self: center; font-size: 30px; color: #FF3621 }
-code { background: #eee; padding: 1px 5px; border-radius: 4px; font-size: 90% }
-.dense .pts { font-size: 15.5px; line-height: 1.4 } .dense .card p { font-size: 14px }
-@media print { body { background: none } .slide { margin: 0 } }
 """
 
-html = ["<!doctype html><html><head><meta charset='utf-8'><title>VentoGuard</title>",
-        "<link href='https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700&display=swap' rel='stylesheet'>",
-        f"<style>{CSS}</style></head><body>"]
-for i, s in enumerate(SLIDES, 1):
-    cls = "slide title" if s["kind"] == "title" else "slide"
+JS = """
+const PRINT = location.search.includes('print');
+const slides = [...document.querySelectorAll('.slide')], stage = document.getElementById('stage');
+let i = Math.min(Math.max(parseInt(location.hash.slice(1)) - 1 || 0, 0), slides.length - 1);
+function fit() { const s = Math.min(innerWidth / 1280, innerHeight / 720); stage.style.transform = `translate(-50%,-50%) scale(${s})`; }
+function count(el) {
+  const v = parseFloat(el.dataset.v), dec = +el.dataset.dec, pre = el.dataset.pre, suf = el.dataset.suf, t0 = performance.now(), dur = 1200;
+  const f = (t) => { const p = Math.min((t - t0) / dur, 1), e = 1 - Math.pow(1 - p, 3);
+    el.textContent = pre + (v * e).toLocaleString('en-US', {minimumFractionDigits: dec, maximumFractionDigits: dec}) + suf;
+    if (p < 1) requestAnimationFrame(f); };
+  requestAnimationFrame(f);
+}
+function show(n) {
+  i = Math.min(Math.max(n, 0), slides.length - 1);
+  slides.forEach((s, j) => s.classList.toggle('active', j === i));
+  if (!PRINT) slides[i].querySelectorAll('.cnt').forEach(count);
+  document.getElementById('bar').style.width = ((i + 1) / slides.length * 100) + '%';
+  document.getElementById('num').textContent = (i + 1) + ' / ' + slides.length;
+  history.replaceState(null, '', '#' + (i + 1));
+}
+addEventListener('keydown', (e) => {
+  if (['ArrowRight', 'ArrowDown', 'PageDown', ' ', 'Enter'].includes(e.key)) { e.preventDefault(); show(i + 1); }
+  else if (['ArrowLeft', 'ArrowUp', 'PageUp', 'Backspace'].includes(e.key)) { e.preventDefault(); show(i - 1); }
+  else if (e.key === 'Home') show(0); else if (e.key === 'End') show(slides.length - 1);
+  else if (e.key === 'f' || e.key === 'F') { document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen(); }
+});
+addEventListener('click', (e) => show(e.clientX > innerWidth / 3 ? i + 1 : i - 1));
+addEventListener('resize', fit);
+setTimeout(() => document.getElementById('hint').style.opacity = 0, 3500);
+fit(); show(i);
+"""
+
+html = ["<!doctype html><html lang='en'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'>",
+        f"<title>VentoGuard · {CUSTOMER}</title>",
+        "<link href='https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap' rel='stylesheet'>",
+        f"<style>{CSS}</style></head><body><div id='stage'>"]
+for n, s in enumerate(SLIDES, 1):
+    cls = f"slide {s['kind']}".strip()
     kick = f"<div class='kick'>{s['kicker']}</div>" if s["kicker"] else ""
-    html.append(f"<section class='{cls}'>{kick}<h1>{s['title']}</h1>{s['body']}"
-                f"<div class='brand'>VentoGuard · Databricks Data Intelligence Platform</div><div class='num'>{i}/{len(SLIDES)}</div></section>")
-html.append("</body></html>")
+    html.append(f"<section class='{cls}' data-n='{n}'>{kick}<h1>{s['title']}</h1>{s['body']}"
+                f"<div class='brand'>VentoGuard · {CUSTOMER} · Databricks Data Intelligence Platform</div></section>")
+html.append("</div><div id='bar'></div><div id='num'></div><div id='hint'>← → to navigate · F for full screen</div>")
+html.append(f"<script>{JS}</script></body></html>")
 (HERE / "VentoGuard_deck.html").write_text("\n".join(html))
-(HERE / "VentoGuard_deck.md").write_text("\n\n---\n\n".join((f"_{s['kicker']}_\n\n" if s["kicker"] else "") + s["md"] for s in SLIDES) + "\n")
+
+md = [f"<!-- Generated by deck/build_deck.py from deck/numbers.json. {CUSTOMER} is a fictional customer; all data is synthetic. -->"]
+for n, s in enumerate(SLIDES, 1):
+    block = (f"_Slide {n} · {s['kicker']}_\n\n" if s["kicker"] else f"_Slide {n}_\n\n") + s["md"]
+    if s["notes"]:
+        block += f"\n\n> Speaker notes: {s['notes']}"
+    md.append(block)
+(HERE / "VentoGuard_deck.md").write_text("\n\n---\n\n".join(md) + "\n")
 
 chrome = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
-subprocess.run([chrome, "--headless=new", "--disable-gpu", "--no-pdf-header-footer", "--virtual-time-budget=4000",
-                f"--print-to-pdf={HERE / 'VentoGuard_deck.pdf'}", f"file://{(HERE / 'VentoGuard_deck.html').resolve()}"], check=True,
+subprocess.run([chrome, "--headless=new", "--disable-gpu", "--no-pdf-header-footer", "--virtual-time-budget=6000",
+                f"--print-to-pdf={HERE / 'VentoGuard_deck.pdf'}", f"file://{(HERE / 'VentoGuard_deck.html').resolve()}?print=1"], check=True,
                capture_output=True)
 print("deck built:", len(SLIDES), "slides")
