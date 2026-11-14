@@ -1,6 +1,6 @@
 # Role views (COO, asset management): API execution evidence
 
-Captured 2026-11-14 20:06 UTC by `scripts/views_evidence.sh`. The app's FastAPI back end (`app/backend/routers/views.py`)
+Captured 2026-11-14 20:11 UTC by `scripts/views_evidence.sh`. The app's FastAPI back end (`app/backend/routers/views.py`)
 ran locally against the **production** Lakebase project `ventoguard` (synced tables in `ventoguard_serving`, work orders in `vg_ops`).
 Read-only GET requests. The deployed app serves the same code; its status at capture time:
 
@@ -55,10 +55,10 @@ so it matches the deck (net benefit €4,188,999 a year, unplanned cost €11,32
     "high": 1,
     "avoidable_now_eur": 805598.33015625,
     "risk_weighted_eur": 849349.0,
-    "at_risk_without_order": 2,
-    "unprotected_eur": 374264.1994791667,
-    "open_orders": 2,
-    "protected_eur": 420889
+    "at_risk_without_order": 3,
+    "unprotected_eur": 580787.2004687501,
+    "open_orders": 1,
+    "protected_eur": 215327
   },
   "fleet_30d": {
     "availability": 0.9774074166666666,
@@ -191,13 +191,13 @@ so it matches the deck (net benefit €4,188,999 a year, unplanned cost €11,32
     },
     {
       "tone": "action",
-      "title": "2 at-risk turbines have no work order yet",
-      "detail": "€374 k is avoidable if they are planned this week. Each needs a crane slot and a spare booked.",
+      "title": "3 at-risk turbines have no work order yet",
+      "detail": "€581 k is avoidable if they are planned this week. Each needs a crane slot and a spare booked.",
       "link": "/"
     },
     {
       "tone": "good",
-      "title": "€421 k already protected by 2 open work orders",
+      "title": "€215 k already protected by 1 open work order",
       "detail": "These failures are now planned repairs instead of surprises.",
       "link": "/work-orders"
     },
@@ -360,21 +360,10 @@ so it matches the deck (net benefit €4,188,999 a year, unplanned cost €11,32
       "planned_date": "2026-10-12",
       "crew": "North crew (Uckermark)",
       "expected_avoidable_eur": 215327
-    },
-    {
-      "wo_id": 3,
-      "turbine_id": "F03-T07",
-      "farm_name": "Hunsrueck Hoehe",
-      "component": "gearbox",
-      "priority": "P1",
-      "status": "OPEN",
-      "planned_date": "2026-11-16",
-      "crew": "West crew (Eifel / Hunsrück)",
-      "expected_avoidable_eur": 205562
     }
   ],
   "mix": {
-    "planned_orders": 2,
+    "planned_orders": 1,
     "unplanned_failures_90d": 15
   }
 }
