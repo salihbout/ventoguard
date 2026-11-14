@@ -259,8 +259,48 @@ backup("Data quality, model validation, AI guard-rails",
 - Security: UC grants, column mask on technician names, least-privilege app service principal""",
        "Technical pushback on models and AI. Stay concrete.")
 
-# Story order: promise (title) → problem → where the € comes from → demo
+# ─ Industry context: how the industry fixes this, and what leaders already show (all figures from public sources)
+ladder = [("1", "Fix it when it breaks", "time-based service and fixed SCADA alarms", "today"),
+          ("2", "Watch each component", "vibration and oil sensors per turbine (CMS)", ""),
+          ("3", "Predict across the fleet", "SCADA, CMS and work orders combined with AI, weeks ahead", "vg"),
+          ("4", "Act automatically", "AI writes the brief, plans crew, crane and low-wind window", "vg")]
+lh = "".join(f"<div class='a rung {c}' style='--d:{i+1}'><i>{n}</i><b>{t}</b><span>{d}</span>"
+             + ("<em>Aerion today</em>" if c == "today" else "<em>VentoGuard</em>" if c == "vg" else "") + "</div>"
+             for i, (n, t, d, c) in enumerate(ladder))
+slide("How the industry fixes it", "From fixing failures to predicting them",
+      f"""<div class="ladder">{lh}</div>
+      <p class="a line" style="--d:5">Leading operators moved from step 1 to steps 3–4. <b>The data already exists at Aerion</b>; what's missing is one place that connects it.</p>""",
+      """## How the industry fixes it: from fixing failures to predicting them
+1. Fix it when it breaks: time-based service, fixed SCADA alarms (**Aerion today**)
+2. Watch each component: vibration and oil sensors per turbine (condition monitoring)
+3. Predict across the fleet: SCADA, CMS and work orders combined with AI, weeks ahead (**VentoGuard**)
+4. Act automatically: AI writes the brief and plans crew, crane and a low-wind window (**VentoGuard**)
+- Leading operators moved from step 1 to steps 3–4. The data already exists at Aerion; what's missing is one place that connects it.""",
+      "Frame this as a journey the industry is already on. Aerion is not behind on data, only on connecting it.")
+
+peers = [("Siemens Gamesa", "99 %", "of drivetrain failures detected, predicted up to 3 years ahead, from 600 TB of AI training data"),
+         ("Vestas", "51,000+", "turbines monitored centrally, with wear predicted and repairs planned into low-wind periods"),
+         ("Enel · Endesa", "15–95 %", "of major-component repair cost saved by ML vibration analysis on 1,400+ turbines"),
+         ("RWE", "−5 %", "corrective maintenance frequency projected from an AI trial on an offshore wind farm")]
+ph2 = "".join(f"<div class='a peer' style='--d:{i+1}'><small>{n}</small><b>{v}</b><span>{d}</span></div>" for i, (n, v, d) in enumerate(peers))
+slide("The competition", "Leaders already turn data and AI into availability",
+      f"""<div class="peers">{ph2}</div>
+      <div class="a edge" style="--d:5"><b>Aerion's edge</b><span>OEM tools see their own turbines. Aerion runs a mixed fleet (Hansa Drives and NordGear gearboxes), so <b>owning one governed view of every turbine</b> is what keeps the margin in-house.</span></div>
+      <p class="a src" style="--d:6">Sources: Siemens Gamesa, <i>Vibration Diagnostics</i> brochure · Vestas, <i>AOM 5000</i> brochure · Endesa press release, 3 Dec 2018 · ORE Catapult press release on RWE's Wind AI trial, 15 Dec 2021</p>""",
+      """## The competition: leaders already turn data and AI into availability
+- **Siemens Gamesa:** 99 % drivetrain detection hit rate; component failures predicted up to 3 years in advance; 600 TB of data for its AI (Vibration Diagnostics brochure)
+- **Vestas:** the Performance & Diagnostic Centre monitors 51,000+ turbines; wear is predicted and repairs planned during low-wind periods (AOM 5000 brochure)
+- **Enel / Endesa:** machine-learning vibration analysis on 1,400+ turbines saves 15–95 % of main-component repair cost (Endesa press release, 3 Dec 2018)
+- **RWE:** ORE Catapult analysis of an AI trial on an offshore wind farm: corrective maintenance frequency could fall by 5 % (ORE Catapult, 15 Dec 2021)
+- Also: peer-reviewed research shows SCADA data alone flags gearbox and generator failures months ahead (Vrije Universiteit Brussel, *Wind Energy Science* 10, 2025); Plenitude (Eni) turns wind and solar maintenance reports into queryable data with Databricks Genie and agents (Databricks blog, 8 Jun 2026)
+- **Aerion's edge:** OEM tools see their own turbines. Aerion runs a mixed fleet (Hansa Drives and NordGear), so owning one governed view of every turbine keeps the margin in-house.""",
+      "This answers 'why now' for the COO: competitors and OEMs are already doing this. Then pivot to the edge: OEMs only see their own turbines.")
+
+# Story order: promise (title) → problem → how the industry fixes it → competitors → where the € comes from → demo
+competition = SLIDES.pop()      # defined last
+industry = SLIDES.pop()         # defined just before it
 SLIDES[1], SLIDES[2] = SLIDES[2], SLIDES[1]
+SLIDES[2:2] = [industry, competition]
 
 # ─ Render ───────────────────────────────────────────────────────────────────────────────────────
 CSS = """
@@ -340,6 +380,20 @@ h1 { font-size: 46px; line-height: 1.1; letter-spacing: -.01em; max-width: 1080p
 .qgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px }
 .card.q { padding: 22px 24px } .card.q b { font-size: 22px; margin-bottom: 8px } .card.q span { font-size: 16px }
 .ask .brand { color: var(--light) }
+.ladder { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; align-items: end }
+.rung { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 22px 20px; position: relative }
+.rung:nth-child(1) { min-height: 170px } .rung:nth-child(2) { min-height: 210px } .rung:nth-child(3) { min-height: 250px } .rung:nth-child(4) { min-height: 290px }
+.rung i { font-style: normal; display: inline-grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: var(--navy); color: #fff; font-weight: 700; margin-bottom: 14px }
+.rung b { display: block; font-size: 22px; margin-bottom: 8px } .rung span { font-size: 16px; color: var(--muted); line-height: 1.35 }
+.rung em { position: absolute; top: 18px; right: 16px; font-style: normal; font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; padding: 4px 10px; border-radius: 999px; background: #ECE7DF; color: var(--navy) }
+.rung.vg { border-color: var(--navy) } .rung.vg i { background: var(--lava) } .rung.vg em { background: var(--navy); color: #fff }
+.peers { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px }
+.peer { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 22px 20px }
+.peer small { display: block; font-size: 13px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px }
+.peer b { display: block; font-size: 44px; line-height: 1; margin-bottom: 12px } .peer span { font-size: 15.5px; color: var(--muted); line-height: 1.4 }
+.edge { margin-top: 28px; background: var(--navy); color: var(--light); border-radius: 14px; padding: 20px 26px; display: grid; grid-template-columns: 160px 1fr; gap: 20px; align-items: center }
+.edge b { font-size: 20px; color: var(--lava) } .edge span { font-size: 18px; line-height: 1.4 } .edge span b { color: var(--light); font-size: inherit }
+.src { margin-top: 16px; font-size: 12px; color: var(--muted) }
 .cobrand { position: absolute; top: 56px; left: 80px; right: 80px; display: flex; justify-content: space-between; align-items: center }
 .active .cobrand { animation: up .6s cubic-bezier(.2,.7,.2,1) both }
 .cobrand .dbx { width: 190px; height: auto }

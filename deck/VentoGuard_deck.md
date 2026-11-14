@@ -28,7 +28,34 @@ _Slide 2 · The problem_
 
 ---
 
-_Slide 3 · The outcome_
+_Slide 3 · How the industry fixes it_
+
+## How the industry fixes it: from fixing failures to predicting them
+1. Fix it when it breaks: time-based service, fixed SCADA alarms (**Aerion today**)
+2. Watch each component: vibration and oil sensors per turbine (condition monitoring)
+3. Predict across the fleet: SCADA, CMS and work orders combined with AI, weeks ahead (**VentoGuard**)
+4. Act automatically: AI writes the brief and plans crew, crane and a low-wind window (**VentoGuard**)
+- Leading operators moved from step 1 to steps 3–4. The data already exists at Aerion; what's missing is one place that connects it.
+
+> Speaker notes: Frame this as a journey the industry is already on. Aerion is not behind on data, only on connecting it.
+
+---
+
+_Slide 4 · The competition_
+
+## The competition: leaders already turn data and AI into availability
+- **Siemens Gamesa:** 99 % drivetrain detection hit rate; component failures predicted up to 3 years in advance; 600 TB of data for its AI (Vibration Diagnostics brochure)
+- **Vestas:** the Performance & Diagnostic Centre monitors 51,000+ turbines; wear is predicted and repairs planned during low-wind periods (AOM 5000 brochure)
+- **Enel / Endesa:** machine-learning vibration analysis on 1,400+ turbines saves 15–95 % of main-component repair cost (Endesa press release, 3 Dec 2018)
+- **RWE:** ORE Catapult analysis of an AI trial on an offshore wind farm: corrective maintenance frequency could fall by 5 % (ORE Catapult, 15 Dec 2021)
+- Also: peer-reviewed research shows SCADA data alone flags gearbox and generator failures months ahead (Vrije Universiteit Brussel, *Wind Energy Science* 10, 2025); Plenitude (Eni) turns wind and solar maintenance reports into queryable data with Databricks Genie and agents (Databricks blog, 8 Jun 2026)
+- **Aerion's edge:** OEM tools see their own turbines. Aerion runs a mixed fleet (Hansa Drives and NordGear), so owning one governed view of every turbine keeps the margin in-house.
+
+> Speaker notes: This answers 'why now' for the COO: competitors and OEMs are already doing this. Then pivot to the edge: OEMs only see their own turbines.
+
+---
+
+_Slide 5 · The outcome_
 
 ## The outcome: where the €4.2 M comes from
 - Today: **€11.3 M/yr** lost to unplanned drivetrain failures (22 failures in 192 days, repair + lost revenue)
@@ -39,7 +66,7 @@ _Slide 3 · The outcome_
 
 ---
 
-_Slide 4 · Live demo · what you'll see_
+_Slide 6 · Live demo · what you'll see_
 
 ## Live demo · what you'll see: Monday 07:00 at the reliability desk
 1. Risk board: critical turbines ranked by € at stake
@@ -51,7 +78,7 @@ _Slide 4 · Live demo · what you'll see_
 
 ---
 
-_Slide 5 · Live demo · what it means_
+_Slide 7 · Live demo · what it means_
 
 ## Live demo · what it means: four clicks, a five-week surprise became a one-week plan
 - Risk board: Only the turbines that matter, ranked by money (€806 k avoidable now)
@@ -64,7 +91,7 @@ _Slide 5 · Live demo · what it means_
 
 ---
 
-_Slide 6 · Proof_
+_Slide 8 · Proof_
 
 ## Proof
 - Back-test: 8/8 hold-out failures flagged ahead; lead times 7 d, 5 d, 14 d, 14 d, 14 d, 13 d, 12 d, 13 d
@@ -76,7 +103,7 @@ _Slide 6 · Proof_
 
 ---
 
-_Slide 7 · Value · COO_
+_Slide 9 · Value · COO_
 
 ## Value for the COO: €4.2 M a year net, €2.7 M even at half the catch rate
 - Avoidable at 100 %: €5.8 M · at 75 %: €4.4 M · minus false-alarm inspections −€194 k · **net €4.2 M/yr**
@@ -86,7 +113,7 @@ _Slide 7 · Value · COO_
 
 ---
 
-_Slide 8 · Value · Head of Asset Management_
+_Slide 10 · Value · Head of Asset Management_
 
 ## Value for the Head of Asset Management: from firefighting to a planned maintenance calendar
 - **13 days**: matches crane booking and spare-pool lead times
@@ -99,7 +126,7 @@ _Slide 8 · Value · Head of Asset Management_
 
 ---
 
-_Slide 9 · How it works_
+_Slide 11 · How it works_
 
 ## How it works: one governed platform
 **Lakeflow** (ingest SCADA, notes, assets, prices) → **Unity Catalog** (govern, mask, lineage) → **ML + GenAI** (14-day risk and AI briefs) → **Lakebase** (millisecond serving and work orders) → **App + Genie** (where the business works)
@@ -109,7 +136,7 @@ _Slide 9 · How it works_
 
 ---
 
-_Slide 10 · Trust_
+_Slide 12 · Trust_
 
 ## Trust: governed data, explainable models, grounded AI
 - **Data quality**: 7,717 bad readings dropped before the model
@@ -123,7 +150,7 @@ _Slide 10 · Trust_
 
 ---
 
-_Slide 11 · The ask_
+_Slide 13 · The ask_
 
 ## The ask: an 8-week pilot on Hunsrück Höhe
 - Weeks 1–2: connect real SCADA and SAP PM
@@ -137,7 +164,7 @@ _Slide 11 · The ask_
 
 ---
 
-_Slide 12 · Backup · Q&A_
+_Slide 14 · Backup · Q&A_
 
 ## Backup: cost, risk and time to value
 - Cost: serverless + scale-to-zero, measured in the pilot; one gearbox ≈ €430 k · Downside: €2.7 M/yr at 50 % caught
@@ -148,7 +175,7 @@ _Slide 12 · Backup · Q&A_
 
 ---
 
-_Slide 13 · Backup · Q&A_
+_Slide 15 · Backup · Q&A_
 
 ## Backup: architecture and integration
 - Ingest: Auto Loader; pilot = historian exports or Zerobus (SCADA), Lakeflow Connect (SAP PM)
@@ -159,7 +186,7 @@ _Slide 13 · Backup · Q&A_
 
 ---
 
-_Slide 14 · Backup · Q&A_
+_Slide 16 · Backup · Q&A_
 
 ## Backup: data quality, model validation, AI guard-rails
 - Data quality: expectations dropped 7,717 readings; fleet-relative features

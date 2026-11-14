@@ -2,7 +2,7 @@
 
 **Customer:** **Aerion Windkraft AG** (fictional): a German onshore wind operator with 4 farms and 120 turbines.
 **Audience:** the **COO** (business stakeholder, funds the decision) and the **Head of Data / Architect** (technical stakeholder, has to live with the build). They are both in the room for one session.
-**Deck:** open `deck/VentoGuard_deck.html` in Chrome and press **F** for full screen. **→ / Space** goes to the next slide and **←** goes back. Slides 1–11 are the main story and 12–14 are backup for Q&A; jump to one by typing `#12` at the end of the URL. The PDF has the same slides.
+**Deck:** open `deck/VentoGuard_deck.html` in Chrome and press **F** for full screen. **→ / Space** goes to the next slide and **←** goes back. Slides 1–13 are the main story and 14–16 are backup for Q&A; jump to one by typing `#14` at the end of the URL. The PDF has the same slides.
 **App:** https://ventoguard-7474660468503815.aws.databricksapps.com
 **Rule of thumb:** tell → show → tell. Every screen ends with *"what this means for you is …"*.
 
@@ -11,28 +11,30 @@
 | Rubric item | Where in this flow |
 |---|---|
 | Demo setup (customer, problem, what you'll show) | Spoken on slide 1, in 30 seconds. You know Aerion, so frame the session: *why we're here, what you'll see, what we'll ask* |
-| Tell-show-tell | Slide 4 (tell) → live app (show) → slide 5 (tell) |
-| Value at executive altitude | Slides 1, 3, 7 and 11. Talk in € and availability, never in features |
+| Tell-show-tell | Slide 6 (tell) → live app (show) → slide 7 (tell) |
+| Value at executive altitude | Slides 1, 4, 5, 9 and 13. Talk in € and availability, never in features |
 | Reading the room | Q&A bank below: lead with the headline, then the detail, then bridge back to €. Name who you are answering |
 | Professionalism and objections | Acknowledge → answer → evidence → bridge. Never defensive. Concede the synthetic-data caveat up front |
 
-## Timed run of show (≈ 21 min + Q&A)
+## Timed run of show (≈ 24 min + Q&A)
 
 | Min | Slide / screen | Say (key lines) |
 |---|---|---|
 | 0–1 | **1 Title** *(setup, spoken)* | "Thank you both. Last time we spoke you told us surprise gearbox failures were the biggest hit to your year. Today: what this is worth to you, the problem behind it, then a **live Monday morning** from alert to booked repair, then proof, and **one decision**: an 8-week pilot on Hunsrück Höhe." |
 | 1–2 | **2 Problem** | "Here's the pain behind that number. Gearboxes and main bearings are 90 % of the cost, about **€430 k** per surprise gearbox, and Hunsrück is at **95 %** against 97 %. The signals were in your SCADA and your technicians' notes weeks ahead. Nothing connected them." |
-| 2–4 | **3 Where the €4.2 M comes from** | "Today **€11.3 M** a year is lost to surprises. **€4.2 M** of it comes back, net, every year, plus 664 turbine-days of production. We get there by seeing failures **13 days ahead**, so a five-week outage becomes a one-week planned swap. Let me show you how." |
-| 4–5 | **4 What you'll see** *(tell)* | "One Monday morning as your reliability lead: **risk board → AI brief → work order → a question to Genie**. Watch for the moment a €400 k surprise becomes a planned job." |
-| 5–13 | **LIVE APP** *(show)* | See the demo click path below |
-| 13–14 | **5 What it means** *(tell)* | "Four clicks. The week starts with the turbines that matter, a decision in minutes, the crane booked in a low-wind window. Run every morning, that's the €4.2 M." |
-| 14–15 | **6 Proof** | "8 of 8 hold-out failures flagged in advance, and the 4 turbines on today's board are exactly the 4 degrading now. The data is synthetic, so we assume only 75 % on your fleet, and the pilot measures the real number." |
-| 15–16 | **7 Value · COO** | Look at the COO: "€4.2 M net. If we only catch half, still **€2.7 M**. The pilot measures the run cost exactly, and one avoided gearbox covers it many times over." |
-| 16–17 | **8 Value · Asset Management** | Look at the domain owner: "13 days matches your crane and spare-pool lead times. Every alert is explained, and your team's notes finally count." |
-| 17–18 | **9 How it works** | Look at the architect: "One governed platform, from raw SCADA to the dispatcher's screen. One job, one bundle, open formats. Happy to go deep." |
-| 18–19 | **10 Trust** | "Data quality, GDPR masking, a model gate, grounded AI, and lineage from the raw file to the risk board." |
-| 19–21 | **11 The ask** | "8 weeks on Hunsrück Höhe, shadow mode from week 5, go/no-go on measured € avoided. **Two decisions today:** your sponsorship and access to 24 months of SCADA and CMMS data. Can we agree on that?" |
-| 21–30 | **Q&A** | Use the bank below. Jump to backup slides 12–14 when it helps |
+| 2–3 | **3 How the industry fixes it** | "The industry has moved from fixing failures to predicting them: from fixed alarms, to sensors per component, to AI across the whole fleet. **Aerion has the data already.** What's missing is one place that connects it." |
+| 3–5 | **4 The competition** | "Your competitors and OEMs are already there. Siemens Gamesa detects **99 %** of drivetrain failures, Vestas monitors **51,000+** turbines centrally, Endesa saves **15–95 %** of major repair costs. But OEM tools only see their own turbines. **Your edge** is one governed view of a mixed fleet that you own." |
+| 5–7 | **5 Where the €4.2 M comes from** | "Today **€11.3 M** a year is lost to surprises. **€4.2 M** of it comes back, net, every year, plus 664 turbine-days of production. We get there by seeing failures **13 days ahead**, so a five-week outage becomes a one-week planned swap. Let me show you how." |
+| 7–8 | **6 What you'll see** *(tell)* | "One Monday morning as your reliability lead: **risk board → AI brief → work order → a question to Genie**. Watch for the moment a €400 k surprise becomes a planned job." |
+| 8–16 | **LIVE APP** *(show)* | See the demo click path below |
+| 16–17 | **7 What it means** *(tell)* | "Four clicks. The week starts with the turbines that matter, a decision in minutes, the crane booked in a low-wind window. Run every morning, that's the €4.2 M." |
+| 17–18 | **8 Proof** | "8 of 8 hold-out failures flagged in advance, and the 4 turbines on today's board are exactly the 4 degrading now. The data is synthetic, so we assume only 75 % on your fleet, and the pilot measures the real number." |
+| 18–19 | **9 Value · COO** | Look at the COO: "€4.2 M net. If we only catch half, still **€2.7 M**. The pilot measures the run cost exactly, and one avoided gearbox covers it many times over." |
+| 19–20 | **10 Value · Asset Management** | Look at the domain owner: "13 days matches your crane and spare-pool lead times. Every alert is explained, and your team's notes finally count." |
+| 20–21 | **11 How it works** | Look at the architect: "One governed platform, from raw SCADA to the dispatcher's screen. One job, one bundle, open formats. Happy to go deep." |
+| 21–22 | **12 Trust** | "Data quality, GDPR masking, a model gate, grounded AI, and lineage from the raw file to the risk board." |
+| 22–24 | **13 The ask** | "8 weeks on Hunsrück Höhe, shadow mode from week 5, go/no-go on measured € avoided. **Two decisions today:** your sponsorship and access to 24 months of SCADA and CMMS data. Can we agree on that?" |
+| 24–30 | **Q&A** | Use the bank below. Jump to backup slides 14–16 when it helps |
 
 ## Live demo click path (≈ 8 min)
 
@@ -62,7 +64,7 @@ Before each screen, say one line about what they'll see. After it, say one line 
    - *Architect aside:* "Same Lakebase tables as the operations screen, so the numbers agree everywhere. The value case is computed live with the same model as the deck."
    - Optional: **"View as → Asset management"** for the Head of Asset Management (MTTR, crane share, supplier and age cohorts, maintenance calendar).
 
-**Fallback if the app or the network fails:** stay calm and say *"Let me show you the same moment from this morning's run."* Then use slides 4 and 5 to talk through the flow, and quote the F03-T07 brief from `evidence/queries/ai_briefs.result.json`. All outputs are also in `evidence/app.md` and `evidence/genie_conversations.md`.
+**Fallback if the app or the network fails:** stay calm and say *"Let me show you the same moment from this morning's run."* Then use slides 6 and 7 to talk through the flow, and quote the F03-T07 brief from `evidence/queries/ai_briefs.result.json`. All outputs are also in `evidence/app.md` and `evidence/genie_conversations.md`.
 
 ## Q&A bank: two altitudes per answer
 
@@ -73,13 +75,14 @@ For example: *"[to the architect] … detail … [to the COO] what that means fo
 
 | Question | Headline answer (exec altitude) | If they push |
 |---|---|---|
-| "What does this cost?" | "The run cost is small next to one gearbox. It's serverless and scales to zero, with no cluster running overnight. The pilot measures it to the euro from the billing tables, and it's a go/no-go input." | Backup slide 12. One avoided gearbox ≈ €430 k. Don't quote a platform price you haven't measured |
-| "Your data is synthetic. Why believe €4.2 M?" | "Fair challenge. That's why the case assumes only 75 %, and why at 50 % it's still €2.7 M. The pilot replaces my assumptions with your measured numbers in 8 weeks." | Slide 6 caveat. The cost inputs (crane, downtime, prices) are your operating reality, not model output |
+| "What does this cost?" | "The run cost is small next to one gearbox. It's serverless and scales to zero, with no cluster running overnight. The pilot measures it to the euro from the billing tables, and it's a go/no-go input." | Backup slide 14. One avoided gearbox ≈ €430 k. Don't quote a platform price you haven't measured |
+| "Your data is synthetic. Why believe €4.2 M?" | "Fair challenge. That's why the case assumes only 75 %, and why at 50 % it's still €2.7 M. The pilot replaces my assumptions with your measured numbers in 8 weeks." | Slide 8 caveat. The cost inputs (crane, downtime, prices) are your operating reality, not model output |
 | "What if it raises false alarms?" | "A false alarm costs an inspection, about €2.5 k. A miss costs €430 k. We already deduct €194 k a year for false alarms, and the pilot target is ≤ 1 per 10 turbines per month." | Tiers and € ranking keep the list short |
-| "How fast do I see value?" | "First live alerts in week 5, a go/no-go on measured € in week 8. One avoided gearbox in the pilot pays for the year." | Slides 11 / 12 |
+| "How fast do I see value?" | "First live alerts in week 5, a go/no-go on measured € in week 8. One avoided gearbox in the pilot pays for the year." | Slides 13 / 14 |
 | "What's the risk to operations?" | "Zero during the pilot. It runs in shadow mode, your crews decide, and SAP stays the system of record." | Human approves every work order |
-| "Why not our OEM's condition-monitoring system?" | "Keep it. CMS spectra become another input. The OEM sees one component. This combines SCADA, CMS, your technicians' notes and the cost of downtime across the whole fleet, and you own it." | Multi-vendor fleet (Hansa Drives vs NordGear insight) |
+| "Why not our OEM's condition-monitoring system?" | "Keep it (slide 4: OEMs are good at their own turbines). CMS spectra become another input. The OEM sees one component. This combines SCADA, CMS, your technicians' notes and the cost of downtime across the whole fleet, and you own it." | Multi-vendor fleet (Hansa Drives vs NordGear insight) |
 | "Do I need to hire data scientists?" | "No. It runs as one daily job. Your team works in the app and asks Genie. We'd enable one engineer on your side during the pilot." | Everything is code in one bundle |
+| "Are those competitor numbers comparable to ours?" | "Not one-to-one, and I won't pretend they are. They are each company's own published figures, with different scopes: OEM detection rates, Endesa's repair-cost savings. The point is the direction: everyone serious is predicting failures with data. Our own number comes from your cost model, and the pilot measures it." | Slide 4 sources line: Siemens Gamesa and Vestas brochures, Endesa (Dec 2018), ORE Catapult on RWE (Dec 2021) |
 | "What do you need from me today?" | "Two things: your sponsorship for Hunsrück Höhe, and access to 24 months of SCADA and CMMS exports." | Close |
 
 ### Technical stakeholder (architect / data lead): architecture, data quality, security, integration

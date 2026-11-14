@@ -10,7 +10,7 @@ _Last updated 2026-11-14. Workspace `fevm-serverless-stable-7zqte5`, CLI profile
 - **Genie space** `01f1c4d953cb132e838ecd828813a354`. **Lakebase** project `ventoguard`, synced tables in `ventoguard_serving`; the app writes work orders to `vg_ops.work_orders`.
 - **App** `ventoguard`: https://ventoguard-7474660468503815.aws.databricksapps.com. React + Du Bois source in `app_ui/`, built into `app/static`; FastAPI in `app/backend`.
   The UI was browser-tested locally; the deployed app was verified through its API (see `evidence/app.md`).
-- **Evidence** (all text) in `evidence/`. **Deck** in `deck/VentoGuard_deck.pdf` and `.md` (14 slides for Aerion Windkraft AG, a fictional customer; the HTML is an arrow-key presentation, rebuilt 2026-11-14 for the AI role-play); its numbers come from `deck/extract_numbers.py`. The role-play talk track and Q&A are in `deck/ROLEPLAY_PLAYBOOK.md`.
+- **Evidence** (all text) in `evidence/`. **Deck** in `deck/VentoGuard_deck.pdf` and `.md` (16 slides for Aerion Windkraft AG, a fictional customer; the HTML is an arrow-key presentation, rebuilt 2026-11-14 for the AI role-play); its numbers come from `deck/extract_numbers.py`. The role-play talk track and Q&A are in `deck/ROLEPLAY_PLAYBOOK.md`.
 - Git: pushed to the public repo https://github.com/salihbout/ventoguard (`main`, remote `personal`), which is the one to submit. It is mirrored to the private EMU repo https://github.com/salih-boutadghart_data/ventoguard (remote `origin`).
 
 ## Pending
