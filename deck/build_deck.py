@@ -13,6 +13,16 @@ import subprocess
 from pathlib import Path
 
 HERE = Path(__file__).parent
+
+
+def embed(name, mime):
+    """Inline an asset as a data URI so the deck works wherever the HTML file is opened."""
+    import base64
+    return f"data:{mime};base64," + base64.b64encode((HERE / "assets" / name).read_bytes()).decode()
+
+
+DBX_LOGO = embed("databricks-logo.png", "image/png")
+SPARK_MARK = embed("databricks-spark-mark.svg", "image/svg+xml")
 N = json.loads((HERE / "numbers.json").read_text())
 CUSTOMER = "Aerion Windkraft AG"
 
@@ -50,7 +60,7 @@ cmax = max(c["total_eur"] for c in comp)
 
 # 1 ─ Title
 slide("", "Stop paying for surprise gearbox failures",
-      f"""<div class="cobrand">{AERION_LOGO}<img class="dbx" src="assets/databricks-logo.png" alt="Databricks" width="190" height="30"></div><div class="a sub" style="--d:1">VentoGuard for <b>{CUSTOMER}</b>: predictive drivetrain reliability for 120 turbines</div>
+      f"""<div class="cobrand">{AERION_LOGO}<img class="dbx" src="{DBX_LOGO}" alt="Databricks" width="190" height="30"></div><div class="a sub" style="--d:1">VentoGuard for <b>{CUSTOMER}</b>: predictive drivetrain reliability for 120 turbines</div>
       <div class="kpis">
         <div class="a" style="--d:2"><b>{cnt(net/1e6, 1, '€', ' M')}</b><span>net benefit per year</span></div>
         <div class="a" style="--d:3"><b>{cnt(N['availability_uplift_pp'], 1, '+', ' pp')}</b><span>technical availability</span></div>
@@ -197,7 +207,7 @@ plan = [("Weeks 1–2", "connect real SCADA and SAP PM"), ("Weeks 3–4", "retra
         ("Weeks 5–8", "live shadow mode on Hunsrück Höhe"), ("Week 8", "go/no-go on € avoided")]
 ph = "".join(f"<div class='a ms' style='--d:{i+1}'><i></i><b>{a}</b><span>{b}</span></div>" for i, (a, b) in enumerate(plan))
 slide("The ask", "An 8-week pilot on Hunsrück Höhe",
-      f"""<img class="logo" src="assets/databricks-spark-mark.svg" alt="Databricks" width="44" height="49"><div class="timeline">{ph}</div>
+      f"""<img class="logo" src="{SPARK_MARK}" alt="Databricks" width="44" height="49"><div class="timeline">{ph}</div>
       <div class="a decide" style="--d:5"><b>Two decisions today</b><span>① your sponsorship &nbsp; ② access to 24 months of SCADA and CMMS data</span></div>""",
       "## The ask: an 8-week pilot on Hunsrück Höhe\n" + "\n".join(f"- {a}: {b}" for a, b in plan) +
       "\n- Success: ≥ 60 % of major failures flagged ≥ 7 days ahead; ≤ 1 false alarm per 10 turbines per month; ≥ 1 documented planned-instead-of-unplanned repair\n- Two decisions today: sponsorship, and access to 24 months of SCADA and CMMS data",
